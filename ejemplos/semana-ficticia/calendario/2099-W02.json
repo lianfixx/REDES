@@ -1,0 +1,42 @@
+{
+ "semana": "2099-W02",
+ "ficticio": true,
+ "tope_minutos_emi": 120,
+ "items": [
+  {
+   "id": "ej-x-1",
+   "idea": "ej-reforma",
+   "fecha": "2099-01-06T09:00:00-06:00",
+   "red": "x",
+   "skill": "x-viral",
+   "titulo": "Reforma (X)",
+   "texto": "Ejemplo ficticio para X: una reforma que casi nadie leyó completa, y lo que cambia para quien trabaja.",
+   "estado": "aprobada",
+   "aprobado_huella": "3f63f9739038",
+   "minutos_emi": 20
+  },
+  {
+   "id": "ej-x-2",
+   "idea": "ej-gym-rutina",
+   "fecha": "2099-01-06T15:00:00-06:00",
+   "red": "x",
+   "skill": "x-viral",
+   "titulo": "Gym (X)",
+   "texto": "Ejemplo ficticio: rutina de las 6.",
+   "estado": "publicada",
+   "aprobado_huella": "222e9178ec6a",
+   "minutos_emi": 10
+  },
+  {
+   "id": "ej-li-1",
+   "idea": "ej-reforma",
+   "fecha": "2099-01-07T08:30:00-06:00",
+   "red": "linkedin",
+   "skill": "linkedin-pro",
+   "titulo": "Reforma (LinkedIn)",
+   "texto": "Ejemplo ficticio para LinkedIn. Leí completa una reforma inventada y les cuento tres cosas que cambian en la práctica diaria de un abogado.",
+   "estado": "lista para aprobar",
+   "minutos_emi": 20
+  }
+ ]
+}

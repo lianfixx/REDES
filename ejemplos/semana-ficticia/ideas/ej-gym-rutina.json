@@ -1,0 +1,32 @@
+{
+ "id": "ej-gym-rutina",
+ "ficticio": true,
+ "fecha_alta": "2099-01-05",
+ "origen": "emi",
+ "espacio": "personal",
+ "pilar": "lifestyle",
+ "tesis": "Entrenar a las 6 me ordena el día más que cualquier app.",
+ "tipo": "perenne",
+ "evidencia": [
+  {
+   "fuente": "FICTICIO: dato inventado para probar el sistema.",
+   "nivel": "criterio"
+  }
+ ],
+ "riesgo_juridico": {
+  "nivel": 0,
+  "motivo": "FICTICIO: dato inventado para probar el sistema."
+ },
+ "riesgo_politico": {
+  "nivel": 0,
+  "motivo": "FICTICIO: dato inventado para probar el sistema."
+ },
+ "riesgo_reputacional": {
+  "nivel": 0,
+  "motivo": "FICTICIO: dato inventado para probar el sistema."
+ },
+ "costo": {
+  "minutos_emi": 30
+ },
+ "estado": "publicada"
+}

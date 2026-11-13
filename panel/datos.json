@@ -1,0 +1,505 @@
+{
+ "generado": "2026-11-13",
+ "redes": {
+  "x": {
+   "skill": "x-viral",
+   "repo": "lianfixx/X",
+   "cuenta": "@emilianomilla_",
+   "activa": true,
+   "cadencia": {
+    "max_por_dia": 2,
+    "separacion_min_h": 4,
+    "max_por_semana": 14
+   },
+   "fuente_cadencia": "lianfixx/X cuenta/perfil.json (max_originales_dia, separacion_min_h)"
+  },
+  "linkedin": {
+   "skill": "linkedin-pro",
+   "repo": "lianfixx/LinkedIn",
+   "cuenta": "linkedin.com/in/emiliano-milla",
+   "activa": true,
+   "cadencia": {
+    "max_por_dia": 1,
+    "separacion_min_h": 24,
+    "max_por_semana": 2
+   },
+   "fuente_cadencia": "sesión de LinkedIn, 13/11/2026: cadencia fijada por Emi"
+  },
+  "tiktok": {
+   "skill": "tiktok",
+   "repo": "lianfixx/TikTok",
+   "cuenta": "",
+   "activa": false,
+   "cadencia": {
+    "max_por_dia": 1,
+    "separacion_min_h": 0,
+    "max_por_semana": 5
+   },
+   "fuente_cadencia": "provisional de la Matriz hasta que la skill de TikTok la declare"
+  },
+  "instagram": {
+   "skill": "instagram-studio",
+   "repo": "lianfixx/Instagram",
+   "cuenta": "",
+   "activa": false,
+   "cadencia": {
+    "max_por_dia": 1,
+    "separacion_min_h": 0,
+    "max_por_semana": 5
+   },
+   "fuente_cadencia": "sesión de Instagram, 13/11/2026: 3 a 5 por semana (terceros: Buffer)"
+  },
+  "instagram-historias": {
+   "skill": "historias-studio",
+   "repo": "lianfixx/HISTORIAS-",
+   "cuenta": "",
+   "activa": false,
+   "cadencia": {
+    "max_por_dia": 10,
+    "separacion_min_h": 0,
+    "max_por_semana": 70
+   },
+   "fuente_cadencia": "provisional"
+  }
+ },
+ "ideas": [
+  {
+   "id": "2026-11-13-lanzamiento",
+   "fecha_alta": "2026-11-13",
+   "origen": "emi",
+   "espacio": "personal",
+   "pilar": "ia-derecho",
+   "tesis": "Soy abogado, no programador, y desde el 7 de noviembre construí con IA herramientas que me quitan tareas: la IA reemplaza tareas, no criterio.",
+   "postura_emi": {
+    "texto": "la IA reemplaza tareas, no criterio",
+    "fuente": "chat de la Matriz de Redes, 13/11/2026 (eligió la opción a)"
+   },
+   "tipo": "perenne",
+   "evidencia": [
+    {
+     "fuente": "lianfixx/dof-juridico-monitor README: revisión del DOF martes y jueves, cobertura íntegra",
+     "nivel": "oficial",
+     "tipo": "hecho propio"
+    },
+    {
+     "fuente": "lianfixx/MATRIZ: actualización diaria a las 06:17",
+     "nivel": "oficial",
+     "tipo": "hecho propio"
+    },
+    {
+     "fuente": "Emi: empezó «full IA» el 07/11/2026",
+     "nivel": "criterio",
+     "tipo": "dicho de Emi"
+    }
+   ],
+   "riesgo_juridico": {
+    "nivel": 1,
+    "motivo": "describe herramientas usadas en un despacho; nada de clientes ni asuntos; boletines solo con datos inventados"
+   },
+   "riesgo_politico": {
+    "nivel": 0,
+    "motivo": "no toca política"
+   },
+   "riesgo_reputacional": {
+    "nivel": 2,
+    "motivo": "el panel y GitHub muestran Castorena e INDEP: toda captura se recorta o se tapa; tono agresivo pedido por Emi"
+   },
+   "activos_disponibles": [
+    "video del DOF (pagos digitales), con subtítulos",
+    "foto profesional",
+    "panel público de la Matriz (recortado)"
+   ],
+   "activos_necesarios": [
+    "4 videos grabados por Emi (Matriz, DOF, Boletines, Vox)",
+    "grabaciones de pantalla sin nombres",
+    "datos de ejemplo para boletines"
+   ],
+   "costo": {
+    "minutos_emi": 180,
+    "creditos_kie": 0,
+    "caracteres_elevenlabs": 0,
+    "usd": 0
+   },
+   "estado": "decidida",
+   "pendiente_de_emi": [
+    "Quitar el candado de X",
+    "Crear cuentas de TikTok e Instagram (@emilianomilla_, Instagram tipo Creador)",
+    "Elegir día de grabación",
+    "Elegir texto de LinkedIn para el video del DOF (A o B)",
+    "Elegir post de lanzamiento de X (A o B)"
+   ]
+  }
+ ],
+ "calendario": [
+  {
+   "id": "li-dof-video",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-13T08:30:00-06:00",
+   "red": "linkedin",
+   "cuenta": "linkedin.com/in/emiliano-milla",
+   "skill": "linkedin-pro",
+   "titulo": "Video del DOF (tal cual) con texto A o B",
+   "estado": "lista para aprobar",
+   "minutos_emi": 20,
+   "semana": "2026-W46"
+  },
+  {
+   "id": "li-documento",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-17T08:30:00-06:00",
+   "red": "linkedin",
+   "skill": "linkedin-pro",
+   "titulo": "Documento de 8 láminas: herramientas que construí",
+   "estado": "en produccion",
+   "minutos_emi": 20,
+   "semana": "2026-W47"
+  },
+  {
+   "id": "x-lanzamiento",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-17T09:00:00-06:00",
+   "red": "x",
+   "skill": "x-viral",
+   "titulo": "Post de lanzamiento (A o B)",
+   "estado": "borrador",
+   "minutos_emi": 30,
+   "condicion": "cuenta sin candado",
+   "semana": "2026-W47"
+  },
+  {
+   "id": "ig-reel-matriz",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-17T19:00:00-06:00",
+   "red": "instagram",
+   "skill": "instagram-studio",
+   "titulo": "Reel 1 · Matriz",
+   "estado": "idea",
+   "minutos_emi": 20,
+   "productora": "editor-studio",
+   "semana": "2026-W47"
+  },
+  {
+   "id": "tt-matriz",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-17T19:30:00-06:00",
+   "red": "tiktok",
+   "skill": "tiktok",
+   "titulo": "Video 1 · Matriz",
+   "estado": "idea",
+   "minutos_emi": 10,
+   "productora": "editor-studio",
+   "semana": "2026-W47"
+  },
+  {
+   "id": "ig-reel-dof",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-19T19:00:00-06:00",
+   "red": "instagram",
+   "skill": "instagram-studio",
+   "titulo": "Reel 2 · DOF",
+   "estado": "idea",
+   "minutos_emi": 20,
+   "productora": "editor-studio",
+   "semana": "2026-W47"
+  },
+  {
+   "id": "tt-dof",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-19T19:30:00-06:00",
+   "red": "tiktok",
+   "skill": "tiktok",
+   "titulo": "Video 2 · DOF",
+   "estado": "idea",
+   "minutos_emi": 10,
+   "productora": "editor-studio",
+   "semana": "2026-W47"
+  },
+  {
+   "id": "x-dof",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-20T09:00:00-06:00",
+   "red": "x",
+   "skill": "x-viral",
+   "titulo": "Video del DOF nativo",
+   "estado": "borrador",
+   "minutos_emi": 20,
+   "condicion": "cuenta sin candado",
+   "semana": "2026-W47"
+  },
+  {
+   "id": "tt-dof-animado",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-21T12:00:00-06:00",
+   "red": "tiktok",
+   "skill": "tiktok",
+   "titulo": "Video animado del DOF (tal cual)",
+   "estado": "idea",
+   "minutos_emi": 10,
+   "semana": "2026-W47"
+  },
+  {
+   "id": "ig-reel-boletines",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-24T19:00:00-06:00",
+   "red": "instagram",
+   "skill": "instagram-studio",
+   "titulo": "Reel 3 · Boletines (datos de ejemplo)",
+   "estado": "idea",
+   "minutos_emi": 20,
+   "productora": "editor-studio",
+   "semana": "2026-W48"
+  },
+  {
+   "id": "tt-boletines",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-24T19:30:00-06:00",
+   "red": "tiktok",
+   "skill": "tiktok",
+   "titulo": "Video 3 · Boletines",
+   "estado": "idea",
+   "minutos_emi": 10,
+   "productora": "editor-studio",
+   "semana": "2026-W48"
+  },
+  {
+   "id": "ig-carrusel",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-25T13:00:00-06:00",
+   "red": "instagram",
+   "skill": "instagram-studio",
+   "titulo": "Carrusel · 4 herramientas",
+   "estado": "idea",
+   "minutos_emi": 15,
+   "semana": "2026-W48"
+  },
+  {
+   "id": "ig-reel-vox",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-26T19:00:00-06:00",
+   "red": "instagram",
+   "skill": "instagram-studio",
+   "titulo": "Reel 4 · Vox, el estudio de video que construí",
+   "estado": "idea",
+   "minutos_emi": 20,
+   "productora": "editor-studio",
+   "semana": "2026-W48"
+  },
+  {
+   "id": "tt-vox",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-26T19:30:00-06:00",
+   "red": "tiktok",
+   "skill": "tiktok",
+   "titulo": "Video 4 · Vox",
+   "estado": "idea",
+   "minutos_emi": 10,
+   "productora": "editor-studio",
+   "semana": "2026-W48"
+  }
+ ],
+ "semana": [
+  {
+   "id": "li-dof-video",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-13T08:30:00-06:00",
+   "red": "linkedin",
+   "cuenta": "linkedin.com/in/emiliano-milla",
+   "skill": "linkedin-pro",
+   "titulo": "Video del DOF (tal cual) con texto A o B",
+   "estado": "lista para aprobar",
+   "minutos_emi": 20,
+   "semana": "2026-W46"
+  }
+ ],
+ "proximas": [
+  {
+   "id": "li-dof-video",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-13T08:30:00-06:00",
+   "red": "linkedin",
+   "cuenta": "linkedin.com/in/emiliano-milla",
+   "skill": "linkedin-pro",
+   "titulo": "Video del DOF (tal cual) con texto A o B",
+   "estado": "lista para aprobar",
+   "minutos_emi": 20,
+   "semana": "2026-W46"
+  },
+  {
+   "id": "li-documento",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-17T08:30:00-06:00",
+   "red": "linkedin",
+   "skill": "linkedin-pro",
+   "titulo": "Documento de 8 láminas: herramientas que construí",
+   "estado": "en produccion",
+   "minutos_emi": 20,
+   "semana": "2026-W47"
+  },
+  {
+   "id": "x-lanzamiento",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-17T09:00:00-06:00",
+   "red": "x",
+   "skill": "x-viral",
+   "titulo": "Post de lanzamiento (A o B)",
+   "estado": "borrador",
+   "minutos_emi": 30,
+   "condicion": "cuenta sin candado",
+   "semana": "2026-W47"
+  },
+  {
+   "id": "ig-reel-matriz",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-17T19:00:00-06:00",
+   "red": "instagram",
+   "skill": "instagram-studio",
+   "titulo": "Reel 1 · Matriz",
+   "estado": "idea",
+   "minutos_emi": 20,
+   "productora": "editor-studio",
+   "semana": "2026-W47"
+  },
+  {
+   "id": "tt-matriz",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-17T19:30:00-06:00",
+   "red": "tiktok",
+   "skill": "tiktok",
+   "titulo": "Video 1 · Matriz",
+   "estado": "idea",
+   "minutos_emi": 10,
+   "productora": "editor-studio",
+   "semana": "2026-W47"
+  },
+  {
+   "id": "ig-reel-dof",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-19T19:00:00-06:00",
+   "red": "instagram",
+   "skill": "instagram-studio",
+   "titulo": "Reel 2 · DOF",
+   "estado": "idea",
+   "minutos_emi": 20,
+   "productora": "editor-studio",
+   "semana": "2026-W47"
+  },
+  {
+   "id": "tt-dof",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-19T19:30:00-06:00",
+   "red": "tiktok",
+   "skill": "tiktok",
+   "titulo": "Video 2 · DOF",
+   "estado": "idea",
+   "minutos_emi": 10,
+   "productora": "editor-studio",
+   "semana": "2026-W47"
+  },
+  {
+   "id": "x-dof",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-20T09:00:00-06:00",
+   "red": "x",
+   "skill": "x-viral",
+   "titulo": "Video del DOF nativo",
+   "estado": "borrador",
+   "minutos_emi": 20,
+   "condicion": "cuenta sin candado",
+   "semana": "2026-W47"
+  },
+  {
+   "id": "tt-dof-animado",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-21T12:00:00-06:00",
+   "red": "tiktok",
+   "skill": "tiktok",
+   "titulo": "Video animado del DOF (tal cual)",
+   "estado": "idea",
+   "minutos_emi": 10,
+   "semana": "2026-W47"
+  },
+  {
+   "id": "ig-reel-boletines",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-24T19:00:00-06:00",
+   "red": "instagram",
+   "skill": "instagram-studio",
+   "titulo": "Reel 3 · Boletines (datos de ejemplo)",
+   "estado": "idea",
+   "minutos_emi": 20,
+   "productora": "editor-studio",
+   "semana": "2026-W48"
+  },
+  {
+   "id": "tt-boletines",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-24T19:30:00-06:00",
+   "red": "tiktok",
+   "skill": "tiktok",
+   "titulo": "Video 3 · Boletines",
+   "estado": "idea",
+   "minutos_emi": 10,
+   "productora": "editor-studio",
+   "semana": "2026-W48"
+  },
+  {
+   "id": "ig-carrusel",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-25T13:00:00-06:00",
+   "red": "instagram",
+   "skill": "instagram-studio",
+   "titulo": "Carrusel · 4 herramientas",
+   "estado": "idea",
+   "minutos_emi": 15,
+   "semana": "2026-W48"
+  },
+  {
+   "id": "ig-reel-vox",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-26T19:00:00-06:00",
+   "red": "instagram",
+   "skill": "instagram-studio",
+   "titulo": "Reel 4 · Vox, el estudio de video que construí",
+   "estado": "idea",
+   "minutos_emi": 20,
+   "productora": "editor-studio",
+   "semana": "2026-W48"
+  },
+  {
+   "id": "tt-vox",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-26T19:30:00-06:00",
+   "red": "tiktok",
+   "skill": "tiktok",
+   "titulo": "Video 4 · Vox",
+   "estado": "idea",
+   "minutos_emi": 10,
+   "productora": "editor-studio",
+   "semana": "2026-W48"
+  }
+ ],
+ "pendientes_emi": [
+  "Aprobar: Video del DOF (tal cual) con texto A o B (linkedin, 2026-11-13 08:30)",
+  "Quitar el candado de X · idea 2026-11-13-lanzamiento",
+  "Crear cuentas de TikTok e Instagram (@emilianomilla_, Instagram tipo Creador) · idea 2026-11-13-lanzamiento",
+  "Elegir día de grabación · idea 2026-11-13-lanzamiento",
+  "Elegir texto de LinkedIn para el video del DOF (A o B) · idea 2026-11-13-lanzamiento",
+  "Elegir post de lanzamiento de X (A o B) · idea 2026-11-13-lanzamiento"
+ ],
+ "avisos": [],
+ "lecciones": [],
+ "experimentos": [],
+ "registro": [],
+ "estados_skills": {},
+ "pesos": {
+  "encaje": 0.2,
+  "objetivo": 0.2,
+  "balance": 0.1,
+  "capacidad": 0.1,
+  "costo": 0.1,
+  "riesgo": 0.1,
+  "novedad": 0.1,
+  "urgencia": 0.1
+ },
+ "pesos_estado": "propuesta"
+}

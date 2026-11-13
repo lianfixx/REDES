@@ -1,0 +1,11 @@
+{
+ "id": "ej-exp-1",
+ "ficticio": true,
+ "hipotesis": "Una hora concreta en el gancho sube las respuestas.",
+ "red": "instagram",
+ "variable": "gancho con hora",
+ "metrica": "respuestas por cada mil vistas",
+ "duracion_min_dias": 21,
+ "inicio": "2099-01-12",
+ "estado": "en curso"
+}

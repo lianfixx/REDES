@@ -1,0 +1,14 @@
+{
+ "id": "ej-leccion-1",
+ "ficticio": true,
+ "fecha": "2099-01-09",
+ "que_paso": "FICTICIO: dato inventado para probar el sistema.",
+ "evidencia": "registro/ej-x-2.json",
+ "regla": "Hipótesis: los posts de gym con hora concreta traen más respuestas.",
+ "alcance": "todas",
+ "tipo": "hipotesis",
+ "para": [
+  "x-viral",
+  "instagram-studio"
+ ]
+}

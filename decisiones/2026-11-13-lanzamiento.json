@@ -1,0 +1,23 @@
+{
+  "id": "dec-2026-11-13-lanzamiento",
+  "fecha": "2026-11-13",
+  "idea": "2026-11-13-lanzamiento",
+  "piezas": [
+    {"red": "linkedin", "formato": "video (DOF, tal cual)", "skill": "linkedin-pro", "fecha_objetivo": "2026-11-13"},
+    {"red": "linkedin", "formato": "documento PDF de 8 láminas", "skill": "linkedin-pro", "fecha_objetivo": "2026-11-17"},
+    {"red": "x", "formato": "post original con una imagen", "skill": "x-viral", "fecha_objetivo": "2026-11-17"},
+    {"red": "x", "formato": "video nativo (DOF)", "skill": "x-viral", "fecha_objetivo": "2026-11-20"},
+    {"red": "instagram", "formato": "4 Reels + 1 carrusel", "skill": "instagram-studio", "fecha_objetivo": "2026-11-17"},
+    {"red": "tiktok", "formato": "4 videos + video animado del DOF", "skill": "tiktok", "fecha_objetivo": "2026-11-17"}
+  ],
+  "productoras": {"videos grabados": "editor-studio", "video del DOF": "ya hecho (vox-studio, espacio castorena), se publica tal cual por decisión de Emi"},
+  "alternativas": [
+    {"opcion": "dos videos generales", "puntuacion": 0, "nota": "propuesta inicial de la Matriz"},
+    {"opcion": "un video por herramienta (Matriz, DOF, Boletines, Vox)", "puntuacion": 0, "nota": "elegida por Emi"}
+  ],
+  "gano": "un video por herramienta: lo pidió Emi y da una serie de 4 piezas con un hilo",
+  "perdio": "dos videos generales: menos trabajo de grabación, pero menos piezas y menos claridad por herramienta",
+  "razonamiento": "Una sola historia («soy abogado, no programador, y construí herramientas con IA») contada con el ángulo de cada red. LinkedIn sale primero porque es la cuenta con público. TikTok e Instagram arrancan cuando existan las cuentas. X solo cuando quite el candado. Puntuación: no se usó, porque los pesos aún no están aprobados por Emi; decidió Emi.",
+  "decidio": "emi",
+  "fuente_emi": "chat de la Matriz de Redes, 13/11/2026 (tres rondas de respuestas)"
+}

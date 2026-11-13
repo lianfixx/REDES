@@ -1,0 +1,16 @@
+{
+ "id": "ej-x-2",
+ "ficticio": true,
+ "red": "x",
+ "fecha": "2099-01-06T15:00:00-06:00",
+ "pilar": "lifestyle",
+ "metricas": {
+  "capturado": "2099-01-08",
+  "fuente": "captura de Emi (FICTICIA)",
+  "valores": {
+   "impresiones": 312,
+   "respuestas": 4,
+   "seguidores_ganados": 2
+  }
+ }
+}

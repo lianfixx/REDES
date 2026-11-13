@@ -1,0 +1,39 @@
+{
+ "id": "dec-ej-reforma",
+ "ficticio": true,
+ "fecha": "2099-01-05",
+ "idea": "ej-reforma",
+ "piezas": [
+  {
+   "red": "x",
+   "formato": "post de texto",
+   "skill": "x-viral",
+   "fecha_objetivo": "2099-01-06"
+  },
+  {
+   "red": "linkedin",
+   "formato": "texto largo",
+   "skill": "linkedin-pro",
+   "fecha_objetivo": "2099-01-07"
+  }
+ ],
+ "alternativas": [
+  {
+   "opcion": "x",
+   "puntuacion": 71.5
+  },
+  {
+   "opcion": "linkedin",
+   "puntuacion": 64.0
+  },
+  {
+   "opcion": "tiktok",
+   "puntuacion": 40.0
+  }
+ ],
+ "gano": "X primero: la noticia caduca y X premia la conversación temprana",
+ "perdio": "TikTok: sin video y sin cupo esa semana",
+ "razonamiento": "FICTICIO: dato inventado para probar el sistema.",
+ "decidio": "emi",
+ "fuente_emi": "FICTICIO: dato inventado para probar el sistema."
+}

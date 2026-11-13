@@ -1,0 +1,38 @@
+{
+ "id": "ej-reforma",
+ "ficticio": true,
+ "fecha_alta": "2099-01-05",
+ "origen": "noticia",
+ "espacio": "personal",
+ "pilar": "politica",
+ "tesis": "Una reforma ficticia que nadie leyó completa.",
+ "tipo": "noticia",
+ "caduca": "2099-01-09",
+ "postura_emi": {
+  "texto": "FICTICIO: dato inventado para probar el sistema.",
+  "fuente": "FICTICIO: dato inventado para probar el sistema."
+ },
+ "evidencia": [
+  {
+   "fuente": "https://www.dof.gob.mx (ejemplo)",
+   "nivel": "oficial",
+   "tipo": "derecho"
+  }
+ ],
+ "riesgo_juridico": {
+  "nivel": 1,
+  "motivo": "FICTICIO: dato inventado para probar el sistema."
+ },
+ "riesgo_politico": {
+  "nivel": 2,
+  "motivo": "FICTICIO: dato inventado para probar el sistema."
+ },
+ "riesgo_reputacional": {
+  "nivel": 1,
+  "motivo": "FICTICIO: dato inventado para probar el sistema."
+ },
+ "costo": {
+  "minutos_emi": 20
+ },
+ "estado": "aprobada"
+}
