@@ -57,8 +57,12 @@ function revisar(texto, red) {
 
 // ---------------------------------------------------------------- vistas previas
 function enlazar(t) { return esc(t).replace(URL_RE, (u) => `<span class="lnk">${u}</span>`); }
+const HOSTS_MEDIA = ["drive.google.com", "lh3.googleusercontent.com", "pbs.twimg.com", "media.licdn.com"];
+const seguro = (u) => { try { const x = new URL(u); return x.protocol === "https:" ? x.href : ""; } catch { return ""; } };
+const mediaPermitida = (u) => { try { return HOSTS_MEDIA.includes(new URL(u).hostname); } catch { return false; } };
 function media(m) {
   if (!m) return "";
+  if (!mediaPermitida(m)) return `<div class="pv-media">Archivo: ${esc(m)}</div>`;
   if (/\.(mp4|mov|webm)(\?|$)/i.test(m)) return `<div class="pv-media"><video src="${esc(m)}" muted playsinline controls></video></div>`;
   if (/^https:\/\//.test(m)) return `<div class="pv-media"><img src="${esc(m)}" alt=""></div>`;
   return `<div class="pv-media">${esc(m)}</div>`;
@@ -77,8 +81,9 @@ function previaLi(p) {
     <div class="reac"><span>👍 Recomendar</span><span>💬 Comentar</span><span>🔁 Compartir</span><span>✈️ Enviar</span></div></div>`;
 }
 function previaTel(p, red) {
-  const m = p.media && /\.(mp4|mov|webm)(\?|$)/i.test(p.media) ? `<video src="${esc(p.media)}" muted playsinline loop autoplay></video>` :
-    p.media && /^https:/.test(p.media) ? `<img src="${esc(p.media)}" alt="">` : "";
+  const ok = p.media && mediaPermitida(p.media);
+  const m = ok && /\.(mp4|mov|webm)(\?|$)/i.test(p.media) ? `<video src="${esc(p.media)}" muted playsinline loop autoplay></video>` :
+    ok ? `<img src="${esc(p.media)}" alt="">` : "";
   return `<div class="telefono"><div class="pantalla">${m}<div class="pie"><b>${red === "tiktok" ? "@emilianomilla_" : "emilianomilla_"}</b>${esc(p.texto)}</div></div></div>`;
 }
 const previa = (p) => p.red === "x" ? `${previaX(p)}<div style="height:12px"></div>${previaX(p, true)}` : p.red === "linkedin" ? previaLi(p) : previaTel(p, p.red);
@@ -126,24 +131,25 @@ V.pieza = (id) => {
   return `<a href="#piezas" class="tenue chico">← Piezas</a><div class="dos" style="margin-top:10px">
     <form id="editor" class="tarjeta vidrio"><h2>${id === "nueva" ? "Nueva pieza" : esc(p.titulo || "Pieza")}</h2>
       <div class="fila">${chipEstado(p.estado)} ${p.aprobado ? `<span class="chip ok">aprobada ${fmt(p.aprobado.fecha)} · ${esc(p.aprobado_huella)}</span>` : ""}
-        ${p.publicada?.url ? `<a class="chip ok" href="${esc(p.publicada.url)}" target="_blank" rel="noopener">ver publicada ↗</a>` : ""}</div>
+        ${p.publicada?.url ? `<a class="chip ok" href="${esc(seguro(p.publicada.url))}" target="_blank" rel="noopener">ver publicada ↗</a>` : ""}</div>
       ${p.error ? `<p class="revision"><span class="e">${esc(p.error)}</span></p>` : ""}
       <label>Red</label><select name="red">${Object.entries(REDES).filter(([k]) => k !== "instagram-historias").map(([k, v]) => `<option value="${k}" ${k === p.red ? "selected" : ""}>${v}</option>`).join("")}</select>
       <label>Título interno</label><input name="titulo" value="${esc(p.titulo)}" maxlength="120" placeholder="Ej.: Lanzamiento · Matriz">
       <label>Texto</label><textarea name="texto" spellcheck="true">${esc(p.texto)}</textarea><div class="contador" id="cont"></div>
       <div class="revision" id="rev"></div>
       <label>Fecha y hora (centro de México)</label><input type="datetime-local" name="fecha" value="${fechaLocal}">
-      <label>Imagen o video (enlace https, opcional)</label><input name="media" value="${esc(p.media)}" placeholder="https://…">
+      <label>Imagen o video (enlace https de Drive, opcional; X y LinkedIn por ahora publican solo texto)</label><input name="media" value="${esc(p.media)}" placeholder="https://…">
       <label>Nota</label><input name="nota" value="${esc(p.nota)}" maxlength="600">
       <div class="fila" style="margin-top:16px">
         <button class="boton" name="guardar">Guardar</button>
         ${id !== "nueva" ? `<button class="boton acento" type="button" id="aprobar" ${["publicada", "publicando"].includes(p.estado) ? "disabled" : ""}>Aprobar este texto</button>
         ${publicable ? `<button class="boton" type="button" id="publicar" ${["aprobada", "programada"].includes(p.estado) ? "" : "disabled"}>Publicar ahora</button>` : ""}
+        ${p.estado === "publicando" ? `<button class="boton suave" type="button" id="salio">Sí salió</button><button class="boton suave" type="button" id="nosalio">No salió</button>` : ""}
         <button class="boton suave" type="button" id="copiar">Copiar texto</button>
         ${p.red === "x" && p.publicada?.id ? `<button class="boton suave" type="button" id="metricas">Leer métricas</button>` : ""}
         <button class="boton peligro" type="button" id="cancelar">Cancelar</button>` : ""}
       </div>
-      <p class="tenue chico" style="margin-top:12px">${publicable ? "Al aprobar, se publica a su hora por la API oficial. Si cambias el texto, hay que volver a aprobar." : "Esta red aún no publica por API: aprueba, copia el texto y publícalo desde la app."}</p>
+      <p class="tenue chico" style="margin-top:12px">${publicable ? "Al aprobar, se publica a su hora por la API oficial. Si cambias el texto, la red, la hora o el archivo, hay que volver a aprobar." : "Esta red aún no publica por API: aprueba, copia el texto y publícalo desde la app."}</p>
     </form>
     <div><div class="previa" id="previa">${previa(p)}</div>
       ${p.metricas ? `<div class="tarjeta vidrio seccion"><h3>Métricas · ${esc(p.metricas.fuente)} · ${fmt(p.metricas.fecha)}</h3>${tablaValores(p.metricas.valores)}</div>` : ""}
@@ -207,7 +213,7 @@ V.metricas = () => {
     ${g ? `<div class="tarjeta vidrio"><h3>Gasto en la API de X este mes</h3><p><b>${g.usd.toFixed(3)} USD</b> de ${S.estado.tope_x} USD de tope · ${g.llamadas.length} llamadas</p></div>` : ""}
     <div class="rejilla seccion">${[...ps.map((p) => ({ red: p.red, titulo: p.titulo || p.texto.slice(0, 50), fecha: p.publicada?.fecha, m: p.metricas, url: p.publicada?.url })),
       ...reg.map((r) => ({ red: r.red, titulo: r.id, fecha: r.fecha, m: r.metricas }))].map((x) => `<div class="tarjeta vidrio"><div class="fila">${chipRed(x.red)}<span class="tenue chico">${fmt(x.fecha)}</span></div>
-      <h3 style="margin-top:8px">${x.url ? `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.titulo)} ↗</a>` : esc(x.titulo)}</h3>${tablaValores(x.m.valores)}<p class="tenue chico">${esc(x.m.fuente)}</p></div>`).join("") || `<div class="vacio vidrio">Aún no hay métricas. Llegan cuando se publique la primera pieza.</div>`}</div>
+      <h3 style="margin-top:8px">${x.url ? `<a href="${esc(seguro(x.url))}" target="_blank" rel="noopener">${esc(x.titulo)} ↗</a>` : esc(x.titulo)}</h3>${tablaValores(x.m.valores)}<p class="tenue chico">${esc(x.m.fuente)}</p></div>`).join("") || `<div class="vacio vidrio">Aún no hay métricas. Llegan cuando se publique la primera pieza.</div>`}</div>
     <div class="tarjeta vidrio seccion"><h2>Lecciones y experimentos</h2><ul class="lista">${(S.datos?.lecciones || []).map((l) => `<li><span class="chip">${esc(l.alcance)}</span>${esc(l.regla)}</li>`).join("")}
       ${(S.datos?.experimentos || []).map((e) => `<li><span class="chip aviso">experimento</span>${esc(e.hipotesis)} · ${esc(e.estado)}</li>`).join("") || ""}</ul>
       ${!(S.datos?.lecciones || []).length && !(S.datos?.experimentos || []).length ? `<p class="tenue">Sin lecciones todavía: salen de las primeras métricas.</p>` : ""}</div>`;
@@ -223,9 +229,11 @@ V.recursos = () => {
       <div class="fila" style="margin-top:8px"><select name="para" style="width:auto"><option value="matriz-redes">Matriz de Redes</option>${(r.skills || []).map((s) => `<option value="${esc(s.nombre)}">${esc(s.nombre)}</option>`).join("")}</select><button class="boton">Dejar encargo</button></div></form>` : entrarPrimero("Entra para dejar encargos.")}
       <ul class="lista seccion">${enc.map((e) => `<li style="display:block"><div class="fila"><span class="chip ${e.estado === "hecho" ? "ok" : "aviso"}">${esc(e.estado)}</span><span class="chip">${esc(e.para)}</span><span class="tenue chico">${fmt(e.fecha)}</span></div>
         <p style="margin:6px 0">${esc(e.texto)}</p>${e.respuestas.map((x) => `<p class="tenue chico">↳ ${esc(x.quien)}: ${esc(x.texto)}</p>`).join("")}</li>`).join("")}</ul></div></div>
-    <div><div class="tarjeta vidrio"><h2>Skills</h2><ul class="lista">${(r.skills || []).map((s) => `<li><a href="${esc(s.repo)}" target="_blank" rel="noopener"><b>${esc(s.nombre)}</b></a><span class="tenue">${esc(s.que)}</span></li>`).join("")}</ul></div>
-    <div class="tarjeta vidrio seccion"><h2>Drive</h2><ul class="lista">${(r.drive || []).map((d) => `<li><a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.nombre)} ↗</a></li>`).join("")}</ul></div>
-    <div class="tarjeta vidrio seccion"><h2>Enlaces</h2><ul class="lista">${(r.enlaces || []).map((d) => `<li><a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.nombre)} ↗</a></li>`).join("")}</ul></div>
+    <div><div class="tarjeta vidrio"><h2>Skills</h2><ul class="lista">${(r.skills || []).map((s) => `<li><a href="${esc(seguro(s.repo))}" target="_blank" rel="noopener"><b>${esc(s.nombre)}</b></a><span class="tenue">${esc(s.que)}</span></li>`).join("")}</ul></div>
+    <div class="tarjeta vidrio seccion"><h2>Drive y enlaces privados</h2>${S.editor ? `<ul class="lista">${(S.estado.enlaces || []).map((d) => `<li><span class="chip">${esc(d.grupo)}</span><a href="${esc(seguro(d.url))}" target="_blank" rel="noopener">${esc(d.nombre)} ↗</a></li>`).join("") || `<li class="tenue">Sin enlaces todavía.</li>`}</ul>
+      <form id="enlace" class="fila" style="margin-top:10px"><input name="nombre" placeholder="Nombre" style="flex:1;min-width:120px"><input name="url" placeholder="https://drive.google.com/…" style="flex:2;min-width:160px"><button class="boton">Agregar</button></form>` :
+      `<p class="tenue chico">Carpetas: ${(r.drive || []).map((d) => esc(d.nombre)).join(" · ")}. Los enlaces se ven al entrar (no son públicos).</p>`}</div>
+    <div class="tarjeta vidrio seccion"><h2>Enlaces</h2><ul class="lista">${(r.enlaces || []).map((d) => `<li><a href="${esc(seguro(d.url))}" target="_blank" rel="noopener">${esc(d.nombre)} ↗</a></li>`).join("")}</ul></div>
     <div class="tarjeta vidrio seccion"><h2>Estado de cada skill</h2><ul class="lista">${Object.entries(estados).map(([k, e]) => `<li>${chipRed(k)}${e.error ? `<span class="tenue chico">sin red/estado.json todavía</span>` : `<span>al día: ${esc(e.actualizado)} · ${e.publicados?.length || 0} publicados</span>`}</li>`).join("") || `<li class="tenue">Se llena con la actualización diaria.</li>`}</ul></div>
     ${S.editor ? `<div class="tarjeta vidrio seccion"><h2>Bitácora</h2><ul class="lista">${(S.estado.bitacora || []).slice(0, 25).map((b) => `<li><span class="tenue chico">${fmt(b.fecha)}</span> ${esc(b.quien)}: ${esc(b.que)}</li>`).join("")}</ul></div>` : ""}
     </div></div>`;
@@ -245,6 +253,7 @@ V.ajustes = (q) => {
       <form id="llaves-li"><label>Client ID</label><input name="client_id" autocomplete="off"><label>Client Secret</label><input name="client_secret" type="password" autocomplete="off">
       <div class="fila" style="margin-top:14px"><button class="boton">Guardar app</button><button class="boton acento" type="button" id="conectar-li" ${c.linkedin_app ? "" : "disabled"}>Conectar LinkedIn</button>
       ${c.linkedin ? `<button class="boton peligro" type="button" data-borrar="linkedin">Desconectar</button>` : ""}</div></form></div></div>
+    <div class="tarjeta vidrio seccion"><h2>Seguridad</h2><p class="tenue chico">Cierra la sesión en todos tus equipos (por ejemplo, si perdiste el teléfono).</p><button class="boton peligro" type="button" id="salir-todo">Salir de todos lados</button></div>
     <div class="tarjeta vidrio seccion"><h2>Apariencia</h2><div class="fila"><button class="boton suave" data-tema="light">Claro</button><button class="boton suave" data-tema="dark">Oscuro</button><button class="boton suave" data-tema="">Automático</button></div></div>`;
 };
 
@@ -284,7 +293,19 @@ function conectar(vista, arg) {
       if (confirmar && !confirm(confirmar)) return;
       await api(`/api/pieza/${arg}/${ruta}`, {}); aviso(msg);
     }));
-    btn("#aprobar", "aprobar", "Aprobada.", "¿Apruebas este texto tal cual? Si tiene fecha futura, se publicará solo a esa hora.");
+    const actual = (S.estado?.piezas || []).find((x) => x.id === arg);
+    $("#aprobar")?.addEventListener("click", (ev) => accion(ev, async () => {
+      const cuerpo = {};
+      if (actual?.estado === "fallo") {
+        if (!confirm("Esta pieza falló al publicarse. ¿Ya revisaste en la red que NO salió?")) return;
+        cuerpo.confirmo_que_no_salio = true;
+      } else if (!confirm("¿Apruebas este texto tal cual, en esta red y a esta hora? Si tiene fecha futura, se publicará solo.")) return;
+      await api(`/api/pieza/${arg}/aprobar`, cuerpo); aviso("Aprobada.");
+    }));
+    for (const [id, salio] of [["#salio", true], ["#nosalio", false]]) $(id)?.addEventListener("click", (ev) => accion(ev, async () => {
+      const url = salio ? prompt("Pega el enlace del post (opcional):") || "" : "";
+      await api(`/api/pieza/${arg}/resolver`, { salio, url }); aviso("Anotado.");
+    }));
     btn("#publicar", "publicar", "Enviado a la red.", "¿Publicar ahora en la red?");
     btn("#cancelar", "cancelar", "Cancelada.", "¿Cancelar esta pieza?");
     btn("#metricas", "metricas", "Métricas leídas.");
@@ -296,10 +317,12 @@ function conectar(vista, arg) {
     await api("/api/pieza/captura", { id: arg, valores }); aviso("Métricas guardadas.");
   }));
   $("#nota")?.addEventListener("submit", (ev) => accion(ev, async () => { await api("/api/nota", Object.fromEntries(new FormData(ev.target))); aviso("Anotado."); }));
+  $("#enlace")?.addEventListener("submit", (ev) => accion(ev, async () => { await api("/api/enlace", Object.fromEntries(new FormData(ev.target))); aviso("Enlace guardado."); }));
   $("#encargo")?.addEventListener("submit", (ev) => accion(ev, async () => { await api("/api/encargo", Object.fromEntries(new FormData(ev.target))); aviso("Encargo guardado."); }));
   $("#llaves-x")?.addEventListener("submit", (ev) => accion(ev, async () => { await api("/api/llaves/x", Object.fromEntries(new FormData(ev.target))); aviso("Llaves de X guardadas."); }));
   $("#llaves-li")?.addEventListener("submit", (ev) => accion(ev, async () => { await api("/api/llaves/linkedin-app", Object.fromEntries(new FormData(ev.target))); aviso("App de LinkedIn guardada."); }));
   $("#conectar-li")?.addEventListener("click", (ev) => accion(ev, async () => { const r = await api("/api/linkedin/conectar", {}); location.href = r.url; }, false));
+  $("#salir-todo")?.addEventListener("click", (ev) => accion(ev, async () => { if (!confirm("¿Cerrar la sesión en todos tus equipos?")) return; await api("/api/salir-todo", {}); aviso("Listo."); }));
   document.querySelectorAll("[data-borrar]").forEach((b) => b.addEventListener("click", (ev) => accion(ev, async () => {
     if (!confirm("¿Borrar estas credenciales del panel?")) return; await api("/api/llaves/borrar", { nombre: b.dataset.borrar }); aviso("Borradas.");
   })));

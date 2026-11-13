@@ -4,8 +4,9 @@
   "main": "worker/index.js",
   "compatibility_date": "2026-11-01",
   "kv_namespaces": [{ "binding": "REDES", "id": "69a752d292f54583b4892fbcaccbc6e9" }],
-  "durable_objects": { "bindings": [{ "name": "INTENTOS", "class_name": "Intentos" }] },
-  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Intentos"] }],
+  // PANEL guarda todo el estado (piezas, notas, credenciales cifradas) con consistencia fuerte; KV queda solo para migrar.
+  "durable_objects": { "bindings": [{ "name": "INTENTOS", "class_name": "Intentos" }, { "name": "PANEL", "class_name": "Panel" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Intentos"] }, { "tag": "v2", "new_sqlite_classes": ["Panel"] }],
   // Cada 5 minutos: publica lo programado y lee métricas de X a las 48 h y a los 7 días.
   "triggers": { "crons": ["*/5 * * * *"] },
   "vars": { "TOPE_X_USD": "10", "LINKEDIN_VERSION": "202510" },

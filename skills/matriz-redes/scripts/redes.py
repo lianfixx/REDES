@@ -55,10 +55,32 @@ def huella(texto: str) -> str:
     return hashlib.sha256(nfc(texto).strip().encode("utf-8")).hexdigest()[:12]
 
 
+LEET = str.maketrans({"0": "o", "1": "i", "3": "e", "4": "a", "5": "s", "7": "t"})
+
+
 def aplanar(t: str) -> str:
+    """Igual que el Worker: sin acentos, minúsculas, sin signos, números «leet» a letras y letras sueltas unidas."""
     t = unicodedata.normalize("NFD", nfc(t).lower())
-    t = "".join(c for c in t if unicodedata.category(c) != "Mn")
-    return " ".join(re.sub(r"[^a-z0-9 ]+", " ", t).split())
+    t = "".join(c for c in t if unicodedata.category(c) != "Mn").translate(LEET)
+    t = " ".join(re.sub(r"[^a-z0-9 ]+", " ", t).split())
+    return re.sub(r"\b(?:[a-z] ){1,}[a-z]\b", lambda m: m.group(0).replace(" ", ""), t)
+
+
+IA = r"(?:ia|inteligencia artificial|chatgpt|gpt|claude|gemini|deepseek|copilot|muse|un robot|una maquina)"
+HECHO = (r"(?:hizo|hecho|hecha|escrito|escrita|escribio|redacto|redactado|redactada|generado|generada|genero|creado|creada|armo|"
+         r"armado|armada|edito|editado|editada|produjo|producido|producida|diseno|disenado|disenada|monto|montado|montada)")
+RE_AUTORIA = [
+    re.compile(rf"\b{HECHO}\b(?: \w+){{0,3}} (?:por|con|usando|desde|mediante)?(?: \w+){{0,1}} ?{IA}\b"),
+    re.compile(rf"\b{HECHO} (?:una |la |el )?{IA}\b"),
+    re.compile(rf"\b(?:la |una |el )?{IA} (?:lo |la |me lo |me la |se )?(?:hizo|escribio|redacto|genero|creo|armo|edito|produjo|diseno|monto)\b"),
+    re.compile(r"\bnadie lo (?:edito|hizo|escribio)\b"),
+    re.compile(r"\btexto de ia\b"),
+]
+
+
+def autoria_ia(texto: str) -> bool:
+    p = aplanar(texto)
+    return any(r.search(p) for r in RE_AUTORIA)
 
 
 def parecido(a: str, b: str) -> float:
@@ -101,8 +123,51 @@ def leer_json(p: Path):
 
 
 def prohibidas(texto: str, cfg: dict) -> list[str]:
+    """Frases que atribuyen la pieza a una IA (regla de Emi). Devuelve un motivo por coincidencia."""
     plano = aplanar(texto)
-    return [f for f in cfg.get("frases_prohibidas", []) if aplanar(f) and f" {aplanar(f)} " in f" {plano} "]
+    hallado = [f for f in cfg.get("frases_prohibidas", []) if aplanar(f) and f" {aplanar(f)} " in f" {plano} "]
+    if not hallado and autoria_ia(texto):
+        hallado.append("atribuye la pieza a una IA")
+    return hallado
+
+
+def textos_de(d) -> str:
+    """Todo el texto de un objeto (para revisar la regla de autoría en cualquier campo)."""
+    if isinstance(d, str):
+        return d
+    if isinstance(d, dict):
+        return "\n".join(textos_de(v) for k, v in d.items() if k not in ("id", "fecha", "fuente_emi"))
+    if isinstance(d, list):
+        return "\n".join(textos_de(v) for v in d)
+    return ""
+
+
+ZONA_MX = None
+
+
+def a_mx(d: dt.datetime) -> dt.datetime:
+    global ZONA_MX
+    if ZONA_MX is None:
+        try:
+            from zoneinfo import ZoneInfo
+            ZONA_MX = ZoneInfo("America/Mexico_City")
+        except Exception:  # sin base de zonas: el centro de México no tiene horario de verano desde 2022
+            ZONA_MX = dt.timezone(dt.timedelta(hours=-6))
+    return d.astimezone(ZONA_MX)
+
+
+def largo_x(texto: str) -> int:
+    """Aproximación de x-viral: cada enlace cuenta 23 y cada emoji 2 (el conteo exacto lo da x-viral)."""
+    total = 0
+    patron = r"https?://\S+|\b[a-z0-9-]+(?:\.[a-z0-9-]+)*\.(?:com|mx|org|net|site|dev|io|ai)(?:/\S*)?"
+    sin, n = re.subn(patron, "", nfc(texto), flags=re.I)
+    total += 23 * n
+    for c in sin:
+        o = ord(c)
+        if o in (0x200D, 0xFE0E, 0xFE0F) or 0x1F3FB <= o <= 0x1F3FF:
+            continue
+        total += 2 if o > 0x10FF and not (0x2000 <= o <= 0x206F) else 1
+    return total
 
 
 # ---------------------------------------------------------------- validadores
@@ -161,9 +226,11 @@ def validar_idea(d: dict, cfg: dict) -> list[str]:
     c = d.get("costo", {})
     if c and (not isinstance(c, dict) or any(not isinstance(v, (int, float)) or v < 0 for v in c.values())):
         err.append(f"{donde}: «costo» debe ser {{concepto: número ≥ 0}}")
-    for campo in ("tesis",):
-        for f in prohibidas(str(d.get(campo, "")), cfg):
-            err.append(f"{donde}: «{f}» rompe la regla de Emi (ninguna pieza dice que la hizo una IA)")
+    for f in prohibidas(textos_de({k: v for k, v in d.items() if k not in ("evidencia",)}), cfg):
+        err.append(f"{donde}: «{f}» rompe la regla de Emi (ninguna pieza dice que la hizo una IA)")
+    m = (d.get("costo") or {}).get("minutos_emi", 0) if isinstance(d.get("costo"), dict) else 0
+    if not isinstance(m, (int, float)):
+        err.append(f"{donde}: costo.minutos_emi debe ser número")
     return err
 
 
@@ -177,8 +244,11 @@ def requiere_emi(idea: dict, cfg: dict) -> list[str]:
         motivos.append(f"riesgo {riesgo_max(idea)}")
     if idea.get("pilar") == "politica":
         motivos.append("habla de política")
-    if sum((idea.get("costo") or {}).get(k, 0) for k in ("creditos_kie", "caracteres_elevenlabs", "usd")) > 0:
-        motivos.append("gasta créditos")
+    costo = idea.get("costo") if isinstance(idea.get("costo"), dict) else {}
+    if any(isinstance(v, (int, float)) and v > 0 for k, v in costo.items() if k != "minutos_emi"):
+        motivos.append("gasta créditos o dinero")
+    if isinstance(costo.get("minutos_emi"), (int, float)) and costo["minutos_emi"] > cfg.get("minutos_emi_semana", 120):
+        motivos.append("pide más minutos de Emi de los que tiene en la semana")
     if idea.get("espacio") != "personal":
         motivos.append(f"espacio {idea.get('espacio')}")
     return motivos
@@ -203,6 +273,9 @@ def validar_decision(d: dict, ideas: dict, cfg: dict) -> list[str]:
     if not isinstance(piezas, list) or not piezas:
         err.append(f"{donde}: «piezas» vacío")
     for i, p in enumerate(piezas if isinstance(piezas, list) else []):
+        if not isinstance(p, dict):
+            err.append(f"{donde}: pieza {i + 1} debe ser un objeto")
+            continue
         if p.get("red") not in cfg["redes"]:
             err.append(f"{donde}: pieza {i + 1}: red «{p.get('red')}» no existe")
         _req(p, ["red", "formato", "skill", "fecha_objetivo"], f"{donde} pieza {i + 1}", err)
@@ -216,16 +289,65 @@ def validar_decision(d: dict, ideas: dict, cfg: dict) -> list[str]:
     return err
 
 
-def validar_calendario(cal: dict, cfg: dict) -> list[str]:
-    """Cadencia por red, separación, tope de minutos de Emi, textos repetidos entre redes y regla de autoría."""
+def _items_vigentes(cal: dict, cfg: dict, donde: str, err: list) -> list[tuple]:
+    """Elementos no cancelados con su fecha ya en hora del centro de México."""
+    out = []
+    for i, it in enumerate(cal.get("items") or []):
+        if not isinstance(it, dict):
+            err.append(f"{donde}: el elemento {i + 1} no es un objeto")
+            continue
+        if it.get("red") not in cfg["redes"] or it.get("estado") == "cancelada":
+            continue
+        try:
+            out.append((a_mx(fecha_mx(it.get("fecha"))), it))
+        except Fallo:
+            pass  # el error ya lo anota validar_calendario
+    return out
+
+
+def revisar_cadencia(lista: list[tuple], cfg: dict, donde: str, semanal: bool) -> list[str]:
+    """Tope diario y separación (en hora de México); tope semanal solo dentro de un archivo de semana."""
     err: list[str] = []
+    por_red: dict[str, list] = {}
+    for f, it in lista:
+        por_red.setdefault(it["red"], []).append((f, it))
+    for red, l in por_red.items():
+        cad = cfg["redes"][red]["cadencia"]
+        l.sort(key=lambda x: x[0])
+        if semanal and len(l) > cad["max_por_semana"]:
+            err.append(f"{donde}: {red} lleva {len(l)} piezas y su tope semanal es {cad['max_por_semana']} ({cfg['redes'][red]['fuente_cadencia']})")
+        conteo: dict[dt.date, int] = {}
+        for f, _ in l:
+            conteo[f.date()] = conteo.get(f.date(), 0) + 1
+        for d_, n in sorted(conteo.items()):
+            if n > cad["max_por_dia"]:
+                err.append(f"{donde}: {red} lleva {n} piezas el {d_} (hora de México) y su tope diario es {cad['max_por_dia']}")
+        for (f1, a), (f2, b) in zip(l, l[1:]):
+            h = (f2 - f1).total_seconds() / 3600
+            if h < cad["separacion_min_h"]:
+                err.append(f"{donde}: {red}: «{a.get('id')}» y «{b.get('id')}» van a {h:.1f} h y la separación mínima es {cad['separacion_min_h']} h")
+    return err
+
+
+def validar_calendario(cal: dict, cfg: dict) -> list[str]:
+    """Cadencia por red, semana correcta, tope de minutos de Emi, textos repetidos entre redes y regla de autoría."""
+    err: list[str] = []
+    if not isinstance(cal, dict):
+        return ["calendario: no es un objeto"]
     donde = f"calendario {cal.get('semana', '?')}"
     _req(cal, ["semana", "items"], donde, err)
+    m = re.fullmatch(r"(\d{4})-W(\d{2})", str(cal.get("semana", "")))
+    if cal.get("semana") and not m:
+        err.append(f"{donde}: «semana» debe ser AAAA-Wnn")
     items = cal.get("items") or []
+    if not isinstance(items, list):
+        return err + [f"{donde}: «items» debe ser una lista"]
     vistos_id = set()
-    por_red: dict[str, list] = {}
     minutos = 0
     for i, it in enumerate(items):
+        if not isinstance(it, dict):
+            err.append(f"{donde}: el elemento {i + 1} no es un objeto")
+            continue
         d2 = f"{donde} · {it.get('id', i + 1)}"
         _req(it, ["id", "fecha", "red", "skill", "estado", "titulo"], d2, err)
         if it.get("id") in vistos_id:
@@ -240,37 +362,30 @@ def validar_calendario(cal: dict, cfg: dict) -> list[str]:
         if it.get("estado") == "cancelada":
             continue
         try:
-            f = fecha_mx(it.get("fecha"))
+            f = a_mx(fecha_mx(it.get("fecha")))
         except Fallo as e:
             err.append(f"{d2}: {e}")
             continue
-        por_red.setdefault(red, []).append((f, it))
-        minutos += int(it.get("minutos_emi", 0) or 0)
-        for frase in prohibidas(str(it.get("texto", "")) + " " + str(it.get("titulo", "")), cfg):
+        if m and tuple(f.isocalendar()[:2]) != (int(m.group(1)), int(m.group(2))):
+            err.append(f"{d2}: la fecha {f.date()} no cae en la semana {cal.get('semana')}")
+        mins = it.get("minutos_emi", 0) or 0
+        if not isinstance(mins, (int, float)) or mins < 0:
+            err.append(f"{d2}: «minutos_emi» debe ser un número ≥ 0")
+        else:
+            minutos += mins
+        for frase in prohibidas(str(it.get("texto", "")) + "\n" + str(it.get("titulo", "")), cfg):
             err.append(f"{d2}: «{frase}» rompe la regla de Emi (ninguna pieza dice que la hizo una IA)")
+        if it.get("texto"):
+            errores, _ = validar_texto(it["texto"], red, cfg)
+            err += [f"{d2}: {e}" for e in errores if "IA" not in e]
         if it.get("estado") in ("aprobada", "programada", "publicada") and it.get("texto"):
             if it.get("aprobado_huella") != huella(it["texto"]):
                 err.append(f"{d2}: el texto cambió después de aprobarse (huella distinta): vuelve a aprobarlo")
-    for red, lista in por_red.items():
-        cad = cfg["redes"][red]["cadencia"]
-        lista.sort(key=lambda x: x[0])
-        if len(lista) > cad["max_por_semana"]:
-            err.append(f"{donde}: {red} lleva {len(lista)} piezas y su tope semanal es {cad['max_por_semana']} ({cfg['redes'][red]['fuente_cadencia']})")
-        conteo: dict[dt.date, int] = {}
-        for f, it in lista:
-            conteo[f.date()] = conteo.get(f.date(), 0) + 1
-        for d_, n in conteo.items():
-            if n > cad["max_por_dia"]:
-                err.append(f"{donde}: {red} lleva {n} piezas el {d_} y su tope diario es {cad['max_por_dia']}")
-        for (f1, a), (f2, b) in zip(lista, lista[1:]):
-            h = (f2 - f1).total_seconds() / 3600
-            if h < cad["separacion_min_h"]:
-                err.append(f"{donde}: {red}: «{a.get('id')}» y «{b.get('id')}» van a {h:.1f} h y la separación mínima es {cad['separacion_min_h']} h")
+    err += revisar_cadencia(_items_vigentes(cal, cfg, donde, []), cfg, donde, semanal=True)
     tope = cal.get("tope_minutos_emi") or cfg.get("minutos_emi_semana", 120)
     if minutos > tope:
         err.append(f"{donde}: pide {minutos} min de Emi y su tope es {tope}")
-    # Mismo texto en dos redes: prohibido (cada red tiene su adaptación).
-    con_texto = [it for it in items if it.get("texto") and it.get("estado") != "cancelada"]
+    con_texto = [it for it in items if isinstance(it, dict) and it.get("texto") and it.get("estado") != "cancelada"]
     for i, a in enumerate(con_texto):
         for b in con_texto[i + 1:]:
             if a.get("red") != b.get("red") and parecido(a["texto"], b["texto"]) >= cfg.get("parecido_max", 0.85):
@@ -323,6 +438,11 @@ def validar_leccion(d: dict) -> list[str]:
     # Una lección de una red llega a otra solo como hipótesis.
     if d.get("alcance") == "todas" and d.get("tipo") != "hipotesis" and not d.get("experimento"):
         err.append(f"{donde}: una lección para todas las redes es hipótesis (tipo: hipotesis) o necesita un experimento")
+    if d.get("fecha"):
+        try:
+            dia(d["fecha"])
+        except Fallo as e:
+            err.append(f"{donde}: {e}")
     return err
 
 
@@ -330,8 +450,16 @@ def validar_experimento(d: dict) -> list[str]:
     err: list[str] = []
     donde = f"experimento {d.get('id', '?')}"
     _req(d, ["id", "hipotesis", "red", "variable", "metrica", "duracion_min_dias", "inicio", "estado"], donde, err)
-    if isinstance(d.get("duracion_min_dias"), (int, float)) and d["duracion_min_dias"] < 14:
+    dur = d.get("duracion_min_dias")
+    if "duracion_min_dias" in d and (not isinstance(dur, (int, float)) or isinstance(dur, bool)):
+        err.append(f"{donde}: «duracion_min_dias» debe ser un número")
+    elif isinstance(dur, (int, float)) and dur < 14:
         err.append(f"{donde}: menos de 14 días no alcanza para cambiar una regla")
+    if d.get("inicio"):
+        try:
+            dia(d["inicio"])
+        except Fallo as e:
+            err.append(f"{donde}: {e}")
     if d.get("estado") == "cerrado" and not (d.get("resultado") and d.get("decision")):
         err.append(f"{donde}: cerrado sin resultado y decisión")
     return err
@@ -354,8 +482,9 @@ def validar_texto(texto: str, red: str, cfg: dict) -> tuple[list[str], list[str]
     for f in prohibidas(texto, cfg):
         errores.append(f"«{f}»: ninguna pieza dice que la hizo una IA (regla de Emi, 13/11/2026)")
     limites = {"x": 280, "linkedin": 3000, "instagram": 2200, "tiktok": 4000}
-    if red in limites and len(nfc(texto)) > limites[red]:
-        (avisos if red == "x" else errores).append(f"pasa de {limites[red]} caracteres en {red} (en X, el conteo exacto lo da x-viral)")
+    largo = largo_x(texto) if red == "x" else len(nfc(texto))
+    if red in limites and largo > limites[red]:
+        errores.append(f"pasa de {limites[red]} caracteres en {red} ({largo}; en X el conteo exacto lo da x-viral)")
     if re.search(r"\bcastorena\b|\bindep\b", aplanar(texto)):
         errores.append("nombra al despacho o a un cliente: fuera de la cuenta personal")
     if re.search(r"(comenta|escribe)\s+\S+\s+(y|para)\s+(te|les)\s+(mando|paso|envio)", aplanar(texto)):
@@ -366,7 +495,13 @@ def validar_texto(texto: str, red: str, cfg: dict) -> tuple[list[str], list[str]
 # ---------------------------------------------------------------- puntuación
 
 def _balance(idea: dict, red: str, publicados: list, cfg: dict, hoy: dt.date) -> tuple[float, str]:
-    ultimos = [p for p in publicados if p.get("red") == red and 0 <= (hoy - dia(p.get("fecha", "1900-01-01"))).days <= 30]
+    ultimos = []
+    for p in publicados:
+        try:
+            if p.get("red") == red and 0 <= (hoy - dia(p.get("fecha", "1900-01-01"))).days <= 30:
+                ultimos.append(p)
+        except Fallo:
+            continue
     if not ultimos:
         return 1.0, "sin publicaciones en 30 días: cualquier pilar suma"
     mismo = sum(1 for p in ultimos if p.get("pilar") == idea.get("pilar")) / len(ultimos)
@@ -383,6 +518,8 @@ def puntuar(idea: dict, cfg: dict, contexto: dict | None = None, hoy: dt.date | 
     contexto = contexto or {}
     hoy = hoy or dt.date.today()
     pesos = cfg["pesos"]
+    if set(pesos) != set(CRITERIOS) or any(not isinstance(v, (int, float)) or v < 0 for v in pesos.values()):
+        raise Fallo("config.json: los pesos deben ser los 8 criterios, cada uno ≥ 0")
     total_pesos = sum(pesos.values()) or 1
     salida = []
     for red, rc in cfg["redes"].items():
@@ -417,7 +554,7 @@ def puntuar(idea: dict, cfg: dict, contexto: dict | None = None, hoy: dt.date | 
                 p["urgencia"] = (0.0, "ya caducó")
         else:
             p["urgencia"] = (0.3, "perenne: sin prisa")
-        total = sum(pesos[k] * max(0.0, min(1.0, float(p[k][0]))) for k in CRITERIOS) / total_pesos * 100
+        total = max(0.0, min(100.0, sum(pesos[k] * max(0.0, min(1.0, float(p[k][0]))) for k in CRITERIOS) / total_pesos * 100))
         salida.append({"red": red, "puntuacion": round(total, 1),
                        "criterios": {k: {"valor": round(float(p[k][0]), 3), "peso": pesos[k], "por_que": p[k][1]} for k in CRITERIOS}})
     salida.sort(key=lambda x: -x["puntuacion"])
@@ -443,6 +580,13 @@ def cargar_todo(raiz: Path) -> dict:
 
 
 def validar_todo(raiz: Path, cfg: dict) -> list[str]:
+    try:
+        return _validar_todo(raiz, cfg)
+    except Exception as e:  # noqa: BLE001 — un dato roto no tumba el tablero: se reporta
+        return [f"error al validar ({type(e).__name__}): {e}"]
+
+
+def _validar_todo(raiz: Path, cfg: dict) -> list[str]:
     err: list[str] = []
     try:
         datos = cargar_todo(raiz)
@@ -463,13 +607,23 @@ def validar_todo(raiz: Path, cfg: dict) -> list[str]:
             err.append(f"{p.name}: reemplaza a «{d['reemplaza']}», que no existe")
     for p, d in datos["calendario"]:
         err += [f"{p.name}: {e}" for e in validar_calendario(d, cfg)]
-        for it in d.get("items", []):
-            if it.get("idea") and it["idea"] not in ideas:
+        for it in (d.get("items") or []) if isinstance(d, dict) else []:
+            if isinstance(it, dict) and it.get("idea") and it["idea"] not in ideas:
                 err.append(f"{p.name}: «{it.get('id')}» apunta a la idea «{it['idea']}», que no existe")
     for p, d in datos["registro"]:
         err += [f"{p.name}: {e}" for e in validar_registro(d, cfg)]
+    exps = {d.get("id") for _, d in datos["experimentos"]}
     for p, d in datos["lecciones"]:
         err += [f"{p.name}: {e}" for e in validar_leccion(d)]
+        if d.get("experimento") and d["experimento"] not in exps:
+            err.append(f"{p.name}: el experimento «{d['experimento']}» no existe")
+    todos = []
+    for p, d in datos["calendario"]:
+        todos += _items_vigentes(d, cfg, p.name, [])
+    # Entre semanas contiguas: separación y tope diario con todos los archivos juntos.
+    globales = revisar_cadencia(todos, cfg, "calendario (todas las semanas)", semanal=False)
+    ya = set(err)
+    err += [g for g in globales if not any(g.split(": ", 1)[1] in e for e in ya)]
     for p, d in datos["experimentos"]:
         err += [f"{p.name}: {e}" for e in validar_experimento(d)]
     return err
@@ -481,10 +635,18 @@ def generar_tablero(raiz: Path, cfg: dict, hoy: dt.date | None = None, estados: 
     hoy = hoy or dt.date.today()
     datos = cargar_todo(raiz)
     ideas = [d for _, d in datos["ideas"]]
-    items = [dict(it, semana=c.get("semana")) for _, c in datos["calendario"] for it in c.get("items", [])]
+    items = []
+    for _, c in datos["calendario"]:
+        for it in (c.get("items") or []) if isinstance(c, dict) else []:
+            try:
+                if isinstance(it, dict):
+                    fecha_mx(it.get("fecha"))
+                    items.append(dict(it, semana=c.get("semana")))
+            except Fallo:
+                pass  # el aviso sale del validador
     lunes = hoy - dt.timedelta(days=hoy.weekday())
-    semana = [it for it in items if lunes <= fecha_mx(it["fecha"]).date() < lunes + dt.timedelta(days=7)]
-    proximas = sorted([it for it in items if fecha_mx(it["fecha"]).date() >= hoy and it.get("estado") != "cancelada"],
+    semana = [it for it in items if lunes <= a_mx(fecha_mx(it["fecha"])).date() < lunes + dt.timedelta(days=7)]
+    proximas = sorted([it for it in items if a_mx(fecha_mx(it["fecha"])).date() >= hoy and it.get("estado") != "cancelada"],
                       key=lambda x: x["fecha"])[:20]
     pendientes = []
     for it in items:
@@ -494,7 +656,10 @@ def generar_tablero(raiz: Path, cfg: dict, hoy: dt.date | None = None, estados: 
         for q in d.get("pendiente_de_emi", []) or []:
             pendientes.append(str(q))
         if d.get("caduca") and d.get("estado") not in ("publicada", "medida", "cerrada", "descartada"):
-            dias = (dia(d["caduca"]) - hoy).days
+            try:
+                dias = (dia(d["caduca"]) - hoy).days
+            except Fallo:
+                continue
             if dias <= 3:
                 pendientes.append(f"Caduca {'hoy' if dias == 0 else f'en {dias} días' if dias > 0 else 'YA CADUCÓ'}: {d['tesis']}")
     avisos = validar_todo(raiz, cfg)

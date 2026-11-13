@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-13 · Auditoría independiente: 16 hallazgos y 8 menores corregidos
+- Agente: Claude Code (sesión en la nube); revisor: agente independiente sin el contexto de quien construyó.
+- Solicitud: encargo de la Matriz de Redes (auditoría adversarial); Emi, 13/11/2026: «que sea perfecta».
+- Cambios: todo el estado del panel pasa a un Durable Object «PANEL» (consistencia fuerte; KV solo para migrar); la aprobación cubre texto, red, fecha y archivo; no se reaprueba lo publicado; «fallo» exige confirmar que no salió; «publicando» atascado se resuelve tras 10 min; cron sin publicaciones dobles y resistente a errores; regreso de LinkedIn protegido por `state` sin cookie; regla de autoría de IA con variantes en Worker y Python; topes y límites para Claude; alta de contraseña sin carrera y sin revivir; «Salir de todos lados»; Origin obligatorio; enlaces privados (Drive fuera del repositorio); medios solo de dominios permitidos; cadencia en hora de México, semana ISO y separación entre semanas; validadores robustos; detalle en `docs/AUDITORIA-2026-11-13.md`.
+- Archivos: `worker/index.js`, `worker/prueba.mjs`, `panel/app.js`, `wrangler.jsonc`, `skills/matriz-redes/scripts/{redes.py,test_redes.py}`, `skills/matriz-redes/{SKILL.md,references/panel.md}`, `crecimiento/recursos.json`, `.github/workflows/publicar-panel.yml`, `docs/AUDITORIA-2026-11-13.md`, este registro; se quita `__pycache__` del repositorio.
+- Verificación: `python3 ia/verificar.py ci` → aprobado (46 pruebas de Python, 14 del Worker); despliegue → en este push.
+- Pendiente: probar con llaves reales de X y LinkedIn (las pone Emi).
+
 ## 2026-11-13 · Crecer: correcciones de Instagram con fuente oficial
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: mensaje de la sesión de Instagram (13/11), tras leer el Centro de ayuda oficial.

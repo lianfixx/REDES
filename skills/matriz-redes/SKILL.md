@@ -18,7 +18,7 @@ La capa que decide y coordina por encima de las skills de cada red y de video. N
 2. **Ninguna pieza dice que la hizo, la armó o la editó una IA** (Emi, 13/11/2026). Sí se puede decir que Emi construyó herramientas con IA.
 3. **Cuenta personal:** nada de Castorena, sus licenciados, INDEP, clientes ni asuntos, ni siquiera anonimizados. Boletines solo con datos inventados y rotulados.
 4. **Nadie inicia sesión en las cuentas de Emi.** Solo se publica por la API oficial (X y LinkedIn) lo que Emi aprobó en el panel con esa misma huella de texto.
-5. **Cada red, su texto.** Prohibido pegar el mismo texto en dos redes; el validador lo detecta.
+5. **Cada red, su texto.** Prohibido pegar el mismo texto en dos redes: el panel no deja aprobarlo y el validador lo detecta dentro de cada semana (por parecido de palabras; una paráfrasis cercana puede pasar, así que se revisa también a ojo).
 6. **Las reglas de cada red las declara su skill.** Aquí se enlazan, no se copian; una lección de una red pasa a otra solo como hipótesis con experimento.
 7. **Nada se inventa:** ni vivencias, ni posturas, ni cifras. Las métricas, en las unidades de cada red.
 8. **Repositorio público:** borradores sin publicar, solo en el panel (KV) o en `privado/` (fuera de git).

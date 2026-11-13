@@ -2,16 +2,19 @@
 // Sirve el panel (dist/) y una API con contraseña para: ver y editar piezas, aprobarlas, publicarlas por la
 // API oficial (X y LinkedIn), programarlas, leer métricas, anotar ideas y dejar encargos para Claude.
 //
+// Todo el estado vive en UN Durable Object («PANEL»): cada petición de la API se atiende ahí, una a la vez,
+// con almacenamiento fuertemente consistente. Así no hay dos publicaciones por carrera ni listas pisadas.
+// (Antes vivía en KV; si el Durable Object no tiene una clave, la lee una vez de KV y la copia.)
+//
 // Secretos del Worker:
-//   ALTA          enlace de un solo uso para que Emi cree su contraseña (/#alta=…); después ya no sirve.
+//   ALTA          enlace de un solo uso para que Emi cree su contraseña (/#alta=…); después no sirve aunque siga cargado.
 //   PANEL_CLAVE   (opcional) contraseña fija; si no existe, vale la que Emi creó con el enlace de alta.
-//   CIFRADO       llave para cifrar en KV las credenciales de X y LinkedIn (32+ caracteres al azar).
-//   CLAUDE_LLAVE  llave para que las sesiones de Claude lean y dejen borradores (nunca aprueban ni publican).
-// Enlaces: KV «REDES» (piezas, notas, encargos, credenciales cifradas, bitácora), Durable Object «INTENTOS».
-// Reglas que el Worker hace cumplir (no se pueden saltar desde el navegador):
-//   - Solo se publica lo que Emi aprobó en el panel, con la misma huella de texto.
-//   - Ningún texto dice que lo hizo una IA; ninguno nombra al despacho ni a clientes.
-//   - Tope de gasto mensual en la API de X; sin reintentos en bucle; si algo falla, se detiene y avisa.
+//   CIFRADO       llave para cifrar las credenciales de X y LinkedIn (32+ caracteres al azar).
+//   CLAUDE_LLAVE  llave (32+ caracteres) para que las sesiones de Claude lean y dejen borradores; nunca aprueban ni publican.
+// Reglas que el servidor hace cumplir (no se pueden saltar desde el navegador):
+//   - Solo se publica lo que Emi aprobó, con la misma huella de texto, red y fecha.
+//   - Ningún texto dice que lo hizo una IA; ninguno nombra al despacho ni a clientes; ninguno repite el de otra red.
+//   - Tope de gasto mensual en la API de X; sin reintentos en bucle; si algo falla, se detiene y espera a Emi.
 
 const SEGURIDAD = {
   "X-Content-Type-Options": "nosniff",
@@ -28,21 +31,39 @@ const ahoraISO = () => new Date().toISOString();
 
 // ---------------------------------------------------------------- reglas de texto (iguales a redes.py)
 
-export const FRASES_PROHIBIDAS = ["lo hizo una ia", "lo armo una ia", "lo edito una ia", "lo escribio una ia", "generado por ia",
-  "generado con ia", "hecho por ia", "hecho por una ia", "creado por ia", "creado por una ia", "texto de ia", "nadie lo edito"];
+const LEET = { 0: "o", 1: "i", 3: "e", 4: "a", 5: "s", 7: "t" };
 export function aplanar(t) {
-  return String(t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9 ]+/g, " ").split(/\s+/).filter(Boolean).join(" ");
+  let s = String(t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+  s = s.replace(/[0134579]/g, (d) => LEET[d] ?? d).replace(/[^a-z0-9 ]+/g, " ").split(/\s+/).filter(Boolean).join(" ");
+  // Une letras sueltas seguidas («i a», «c a s t o r e n a» → «ia», «castorena»).
+  return s.replace(/\b(?:[a-z] ){1,}[a-z]\b/g, (m) => m.replace(/ /g, ""));
+}
+const IA = "(?:ia|inteligencia artificial|chatgpt|gpt|claude|gemini|deepseek|copilot|muse|un robot|una maquina)";
+const HECHO = "(?:hizo|hecho|hecha|escrito|escrita|escribio|redacto|redactado|redactada|generado|generada|genero|creado|creada|armo|armado|armada|edito|editado|editada|produjo|producido|producida|diseno|disenado|disenada|monto|montado|montada)";
+const RE_AUTORIA = [
+  new RegExp(`\\b${HECHO}\\b(?: \\w+){0,3} (?:por|con|usando|desde|mediante)?(?: \\w+){0,1} ?${IA}\\b`),
+  new RegExp(`\\b${HECHO} (?:una |la |el )?${IA}\\b`),
+  new RegExp(`\\b(?:la |una |el )?${IA} (?:lo |la |me lo |me la |se )?(?:hizo|escribio|redacto|genero|creo|armo|edito|produjo|diseno|monto)\\b`),
+  /\bnadie lo (?:edito|hizo|escribio)\b/,
+  /\btexto de ia\b/,
+];
+export function autoriaIA(texto) {
+  const p = aplanar(texto);
+  return RE_AUTORIA.some((r) => r.test(p));
 }
 export async function huella(texto) {
   const t = String(texto || "").normalize("NFC").trim();
   return hex(await crypto.subtle.digest("SHA-256", enc.encode(t))).slice(0, 12);
 }
-const URL_RE = /https?:\/\/\S+|\b[a-z0-9-]+(?:\.[a-z0-9-]+)*\.(?:com|mx|org|net|site|dev|io|gob\.mx|ai)(?:\/\S*)?/gi;
+// La aprobación cubre texto, red, fecha y archivo: si cualquiera cambia, deja de valer.
+async function huellaAprobacion(p) {
+  return huella(`${p.red}\n${p.fecha || ""}\n${p.media || ""}\n${String(p.texto || "").normalize("NFC").trim()}`);
+}
+const URL_RE = () => /https?:\/\/\S+|\b[a-z0-9-]+(?:\.[a-z0-9-]+)*\.(?:com|mx|org|net|site|dev|io|gob\.mx|ai)(?:\/\S*)?/gi;
 export function largoX(texto) {
   // Aproximación de x-viral: cada enlace cuenta 23 y cada emoji 2. El conteo final lo confirma x-viral.
-  const t = String(texto || "").normalize("NFC");
   let total = 0;
-  const sin = t.replace(URL_RE, () => { total += 23; return ""; });
+  const sin = String(texto || "").normalize("NFC").replace(URL_RE(), () => { total += 23; return ""; });
   for (const ch of sin) {
     const o = ch.codePointAt(0);
     if (o === 0x200d || o === 0xfe0f || o === 0xfe0e || (o >= 0x1f3fb && o <= 0x1f3ff)) continue;
@@ -50,21 +71,33 @@ export function largoX(texto) {
   }
   return total;
 }
+export function parecido(a, b) {
+  const A = aplanar(a), B = aplanar(b);
+  if (!A || !B) return 0;
+  if (A === B) return 1;
+  const va = new Set(A.split(" ")), vb = new Set(B.split(" "));
+  let comun = 0;
+  for (const w of va) if (vb.has(w)) comun++;
+  return comun / (va.size + vb.size - comun);
+}
 const LIMITES = { x: 280, linkedin: 3000, instagram: 2200, tiktok: 4000 };
-export function revisarTexto(texto, red) {
+const REDES = ["x", "linkedin", "instagram", "tiktok"];
+export function revisarTexto(texto, red, titulo = "") {
   const errores = [], avisos = [];
-  const plano = ` ${aplanar(texto)} `;
-  for (const f of FRASES_PROHIBIDAS) if (plano.includes(` ${f} `)) errores.push(`«${f}»: ninguna pieza dice que la hizo una IA.`);
+  const plano = ` ${aplanar(texto)} ${aplanar(titulo)} `;
+  if (autoriaIA(texto) || autoriaIA(titulo)) errores.push("Dice o insinúa que la pieza la hizo una IA: ninguna pieza lo dice (regla de Emi).");
   if (/\b(castorena|indep)\b/.test(plano)) errores.push("Nombra al despacho o a un cliente: no va en la cuenta personal.");
-  if (/(comenta|escribe) \S+ (y|para) (te|les) (mando|paso|envio)/.test(plano)) errores.push("Anzuelo de interacción («comenta X y te mando…»): las redes lo castigan.");
+  if (/(comenta|escribe|responde|pon) \S+ (y|para) (te|les) (mando|paso|envio|comparto)/.test(plano)) errores.push("Anzuelo de interacción («comenta X y te mando…»): las redes lo castigan.");
   const largo = red === "x" ? largoX(texto) : [...String(texto || "")].length;
   if (LIMITES[red] && largo > LIMITES[red]) errores.push(`Pasa de ${LIMITES[red]} caracteres (${largo}).`);
   if (!String(texto || "").trim()) errores.push("El texto está vacío.");
   if (red === "linkedin" && [...String(texto || "").split("\n")[0]].length > 140) avisos.push("La primera línea pasa de 140 caracteres: en LinkedIn se corta antes de «ver más».");
   return { errores, avisos, largo };
 }
+// LinkedIn interpreta su formato «little text»: estos caracteres se escapan para que salgan tal cual.
+export const escaparLinkedIn = (t) => String(t).replace(/[\\|{}@\[\]()<>#*_~]/g, (c) => "\\" + c);
 
-// ---------------------------------------------------------------- sesión de Emi (mismo diseño que el panel de la Matriz)
+// ---------------------------------------------------------------- sesión de Emi
 
 async function hmac(clave, texto, algo = "SHA-256") {
   const k = await crypto.subtle.importKey("raw", typeof clave === "string" ? enc.encode(clave) : clave, { name: "HMAC", hash: algo }, false, ["sign"]);
@@ -80,8 +113,7 @@ async function iguales(a, b) {
 }
 const SESION = "redes_sesion";
 const DIAS = 30;
-// La contraseña la crea Emi una sola vez con un enlace de alta (secreto ALTA, de un solo uso); se guarda como
-// PBKDF2 (100 000 vueltas, SHA-256: el máximo que admite Cloudflare Workers) en KV. Si existe el secreto PANEL_CLAVE, manda ese.
+// PBKDF2 a 100 000 vueltas (SHA-256): el máximo que admite Cloudflare Workers.
 async function pbkdf2(clave, sal) {
   const k = await crypto.subtle.importKey("raw", enc.encode(clave), "PBKDF2", false, ["deriveBits"]);
   return hex(await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt: enc.encode(sal), iterations: 100000 }, k, 256));
@@ -92,9 +124,11 @@ async function claveCorrecta(env, intento) {
   const c = await leer(env, "clave", null);
   return !!c && iguales(await pbkdf2(String(intento), c.sal), c.hash);
 }
+// La firma de la sesión incluye una «época»: cambiarla (Salir de todos lados) invalida todas las cookies.
 async function llaveSesion(env) {
   const c = await leer(env, "clave", null);
-  return `${env.PANEL_CLAVE || c?.hash || ""}·${env.CIFRADO || ""}·redes`;
+  const epoca = await leer(env, "epoca", "0");
+  return `${env.PANEL_CLAVE || c?.hash || ""}·${env.CIFRADO || ""}·${epoca}·redes`;
 }
 async function crearSesion(env) {
   const vence = Date.now() + DIAS * 864e5;
@@ -119,8 +153,8 @@ export class Intentos {
     return Response.json({ permitido: v.filter((t) => ahora - t < 60e3).length < LIMITE_MIN && v.length < LIMITE_HORA });
   }
 }
-async function intentos(request, env, accion) {
-  const ip = request.headers.get("CF-Connecting-IP") || "local";
+async function intentos(request, env, accion, grupo = "") {
+  const ip = (request.headers.get("CF-Connecting-IP") || "local") + grupo;
   if (env.INTENTOS) {
     const r = await env.INTENTOS.get(env.INTENTOS.idFromName(ip)).fetch(`https://intentos/${accion}`, { method: "POST" });
     return (await r.json()).permitido;
@@ -132,16 +166,30 @@ async function intentos(request, env, accion) {
   return v.filter((t) => ahora - t < 60e3).length < LIMITE_MIN && v.length < LIMITE_HORA;
 }
 
-// ---------------------------------------------------------------- almacenamiento
+// ---------------------------------------------------------------- almacenamiento (Durable Object; KV solo para migrar)
 
-const memoria = new Map(); // solo para pruebas locales sin KV
-const kv = (env) => env.REDES || {
-  get: async (k, t) => { const v = memoria.get(k); return v === undefined ? null : t === "json" ? JSON.parse(v) : v; },
-  put: async (k, v) => { memoria.set(k, v); },
-  delete: async (k) => { memoria.delete(k); },
-};
-async function leer(env, k, def) { return (await kv(env).get(k, "json")) ?? def; }
-async function guardar(env, k, v) { await kv(env).put(k, JSON.stringify(v)); }
+const memoria = new Map(); // pruebas locales sin Durable Object
+async function leer(env, k, def) {
+  if (env.ALMACEN) {
+    let v = await env.ALMACEN.get(k);
+    if (v === undefined && env.REDES) {
+      const viejo = await env.REDES.get(k);
+      if (viejo != null) { v = viejo; await env.ALMACEN.put(k, viejo); }
+    }
+    return v === undefined || v === null ? def : JSON.parse(v);
+  }
+  const v = memoria.get(k);
+  return v === undefined ? def : JSON.parse(v);
+}
+async function guardar(env, k, v) {
+  const s = JSON.stringify(v);
+  if (env.ALMACEN) await env.ALMACEN.put(k, s); else memoria.set(k, s);
+}
+async function borrar(env, k) {
+  if (env.ALMACEN) await env.ALMACEN.delete(k); else memoria.delete(k);
+  if (env.REDES) await env.REDES.delete(k).catch(() => {});
+}
+export const _memoria = memoria;
 async function bitacora(env, quien, que) {
   const b = await leer(env, "bitacora", []);
   b.unshift({ fecha: ahoraISO(), quien, que: String(que).slice(0, 300) });
@@ -149,8 +197,8 @@ async function bitacora(env, quien, que) {
 }
 const nuevoId = () => hex(crypto.getRandomValues(new Uint8Array(6)));
 const limpiar = (t, max = 4000) => String(t ?? "").replace(/\r\n/g, "\n").replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, "").slice(0, max);
+const limpiarUrl = (u) => { const s = String(u || "").trim(); return /^https:\/\/[^\s"'<>]+$/.test(s) ? s.slice(0, 400) : ""; };
 
-// Credenciales: cifradas con AES-GCM; la llave sale del secreto CIFRADO. Nunca se devuelven al navegador.
 async function llaveCifrado(env) {
   if (!env.CIFRADO || env.CIFRADO.length < 32) throw new Error("Falta el secreto CIFRADO (32+ caracteres).");
   const d = await crypto.subtle.digest("SHA-256", enc.encode(env.CIFRADO));
@@ -159,10 +207,10 @@ async function llaveCifrado(env) {
 async function guardarSecreto(env, nombre, obj) {
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const c = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, await llaveCifrado(env), enc.encode(JSON.stringify(obj)));
-  await kv(env).put(`cred:${nombre}`, JSON.stringify({ iv: b64(iv), c: b64(c), fecha: ahoraISO() }));
+  await guardar(env, `cred:${nombre}`, { iv: b64(iv), c: b64(c), fecha: ahoraISO() });
 }
 async function leerSecreto(env, nombre) {
-  const s = await kv(env).get(`cred:${nombre}`, "json");
+  const s = await leer(env, `cred:${nombre}`, null);
   if (!s) return null;
   const p = await crypto.subtle.decrypt({ name: "AES-GCM", iv: deb64(s.iv) }, await llaveCifrado(env), deb64(s.c));
   return JSON.parse(new TextDecoder().decode(p));
@@ -186,11 +234,12 @@ export async function firmaOAuth1(metodo, url, cred, extra = {}, nonce, ts) {
   return "OAuth " + Object.entries({ ...o, oauth_signature: firma }).map(([k, v]) => `${pct(k)}="${pct(v)}"`).join(", ");
 }
 const COSTO_X = { post: 0.015, post_con_enlace: 0.2, lectura: 0.005 }; // USD; fuente: x-viral references/api.md (13/11/2026)
+const topeX = (env) => { const t = Number(env.TOPE_X_USD ?? 10); return Number.isFinite(t) && t >= 0 ? t : 0; }; // si no es número, tope 0
 async function gastoX(env, usd, que) {
   const mes = new Date().toISOString().slice(0, 7);
   const g = await leer(env, `gasto:x:${mes}`, { usd: 0, llamadas: [] });
-  const tope = Number(env.TOPE_X_USD || 10);
-  if (g.usd + usd > tope) throw new Error(`Se llegaría al tope de ${tope} USD de este mes en la API de X. No se hizo la llamada.`);
+  const tope = topeX(env);
+  if (g.usd + usd > tope + 1e-9) throw new Error(`Se llegaría al tope de ${tope} USD de este mes en la API de X. No se hizo la llamada.`);
   g.usd = Math.round((g.usd + usd) * 1000) / 1000;
   g.llamadas.unshift({ fecha: ahoraISO(), usd, que });
   g.llamadas = g.llamadas.slice(0, 200);
@@ -199,8 +248,7 @@ async function gastoX(env, usd, que) {
 async function publicarX(env, pieza, fetcher = fetch) {
   const cred = await leerSecreto(env, "x");
   if (!cred) throw new Error("Faltan las llaves de X: pégalas en Ajustes.");
-  const conEnlace = URL_RE.test(pieza.texto); URL_RE.lastIndex = 0;
-  await gastoX(env, conEnlace ? COSTO_X.post_con_enlace : COSTO_X.post, `post ${pieza.id}`);
+  await gastoX(env, URL_RE().test(pieza.texto) ? COSTO_X.post_con_enlace : COSTO_X.post, `post ${pieza.id}`);
   const url = "https://api.x.com/2/tweets";
   const r = await fetcher(url, {
     method: "POST",
@@ -235,7 +283,7 @@ async function publicarLinkedIn(env, pieza, fetcher = fetch) {
       "LinkedIn-Version": env.LINKEDIN_VERSION || "202510", "X-Restli-Protocol-Version": "2.0.0",
     },
     body: JSON.stringify({
-      author: t.persona, commentary: pieza.texto, visibility: "PUBLIC",
+      author: t.persona, commentary: escaparLinkedIn(pieza.texto), visibility: "PUBLIC",
       distribution: { feedDistribution: "MAIN_FEED", targetEntities: [], thirdPartyDistributionChannels: [] },
       lifecycleState: "PUBLISHED", isReshareDisabledByAuthor: false,
     }),
@@ -247,80 +295,123 @@ async function publicarLinkedIn(env, pieza, fetcher = fetch) {
 
 // ---------------------------------------------------------------- piezas
 
-export const ESTADOS = ["borrador", "lista para aprobar", "aprobada", "programada", "publicando", "publicada", "fallo", "cancelada"];
+const PUBLICADORES = { x: publicarX, linkedin: publicarLinkedIn };
+const FINALES = ["publicando", "publicada"];
+const MAX_PIEZAS_CLAUDE_ABIERTAS = 200;
 async function piezas(env) { return leer(env, "piezas", []); }
-async function guardarPiezas(env, lista) { await guardar(env, "piezas", lista.slice(0, 1000)); }
+async function guardarPiezas(env, lista) {
+  // Nunca se recortan piezas de Emi ni piezas activas; solo las más viejas ya cerradas.
+  if (lista.length > 1000) {
+    const cerradas = (p) => ["publicada", "cancelada"].includes(p.estado);
+    let sobran = lista.length - 1000;
+    for (let i = lista.length - 1; i >= 0 && sobran > 0; i--) if (cerradas(lista[i])) { lista.splice(i, 1); sobran--; }
+  }
+  await guardar(env, "piezas", lista);
+}
 
 async function editarPieza(env, datos, quien) {
-  const lista = await piezas(env);
   const red = String(datos.red || "");
-  if (!["x", "linkedin", "instagram", "tiktok"].includes(red)) throw new Error("Red inválida.");
+  if (!REDES.includes(red)) throw new Error("Red inválida.");
   const texto = limpiar(datos.texto, 5000);
+  const fecha = datos.fecha ? new Date(datos.fecha) : null;
+  if (fecha && Number.isNaN(fecha.getTime())) throw new Error("Fecha inválida.");
+  const lista = await piezas(env);
   let p = datos.id ? lista.find((x) => x.id === datos.id) : null;
-  if (p && ["publicando", "publicada"].includes(p.estado)) throw new Error("Ya se publicó: no se edita.");
+  if (datos.id && !p) throw new Error("No existe esa pieza.");
+  if (p && FINALES.includes(p.estado)) throw new Error("Ya se publicó o se está publicando: no se edita.");
+  if (quien === "claude") {
+    if (p && p.creada_por !== "claude") throw new Error("Claude solo edita borradores que dejó Claude.");
+    if (p && !["borrador", "lista para aprobar"].includes(p.estado)) throw new Error("Claude no edita piezas que Emi ya aprobó o cerró.");
+    if (!p && lista.filter((x) => x.creada_por === "claude" && ["borrador", "lista para aprobar"].includes(x.estado)).length >= MAX_PIEZAS_CLAUDE_ABIERTAS)
+      throw new Error("Hay demasiados borradores de Claude sin revisar.");
+  }
   const nueva = !p;
   if (!p) { p = { id: nuevoId(), creada: ahoraISO(), creada_por: quien, historial: [] }; lista.unshift(p); }
-  const cambioTexto = p.texto !== texto;
+  const antes = { red: p.red, texto: p.texto, fecha: p.fecha || null, media: p.media || "" };
   Object.assign(p, {
-    red, texto, titulo: limpiar(datos.titulo || p.titulo || "", 120), idea: limpiar(datos.idea || p.idea || "", 80),
-    media: limpiar(datos.media || p.media || "", 300), nota: limpiar(datos.nota ?? p.nota ?? "", 600),
-    fecha: datos.fecha ? new Date(datos.fecha).toISOString() : p.fecha || null, actualizada: ahoraISO(),
+    red, texto, titulo: limpiar(datos.titulo ?? p.titulo ?? "", 120), idea: limpiar(datos.idea ?? p.idea ?? "", 80),
+    media: datos.media !== undefined ? limpiarUrl(datos.media) : p.media || "", nota: limpiar(datos.nota ?? p.nota ?? "", 600),
+    fecha: fecha ? fecha.toISOString() : datos.fecha === "" || datos.fecha === null ? null : p.fecha || null, actualizada: ahoraISO(),
   });
-  if (cambioTexto || nueva) {
-    // Si el texto cambia, la aprobación anterior deja de valer.
-    delete p.aprobado; delete p.aprobado_huella;
-    p.estado = quien === "claude" ? "lista para aprobar" : (datos.estado === "lista para aprobar" ? "lista para aprobar" : "borrador");
+  const cambio = nueva || antes.red !== p.red || antes.texto !== p.texto || antes.fecha !== p.fecha || antes.media !== p.media;
+  if (cambio) {
+    // Si cambia el texto, la red, la fecha o el archivo, la aprobación anterior deja de valer.
+    delete p.aprobado; delete p.aprobado_huella; delete p.error;
+    p.estado = quien === "claude" || datos.estado === "lista para aprobar" ? "lista para aprobar" : "borrador";
   }
-  p.historial.unshift({ fecha: ahoraISO(), quien, que: nueva ? "creada" : cambioTexto ? "texto editado" : "datos editados" });
+  p.historial.unshift({ fecha: ahoraISO(), quien, que: nueva ? "creada" : cambio ? "editada (la aprobación se reinicia)" : "datos editados" });
   p.historial = p.historial.slice(0, 50);
-  p.revision = revisarTexto(texto, red);
+  p.revision = revisarTexto(texto, red, p.titulo);
   await guardarPiezas(env, lista);
   await bitacora(env, quien, `${nueva ? "Pieza nueva" : "Pieza editada"} (${red}): ${p.titulo || texto.slice(0, 60)}`);
   return p;
 }
 
-async function aprobar(env, id) {
+async function aprobar(env, id, cuerpo = {}) {
   const lista = await piezas(env);
   const p = lista.find((x) => x.id === id);
   if (!p) throw new Error("No existe esa pieza.");
-  const rev = revisarTexto(p.texto, p.red);
+  if (FINALES.includes(p.estado)) throw new Error("Ya se publicó o se está publicando: no se vuelve a aprobar.");
+  if (p.estado === "fallo" && !cuerpo.confirmo_que_no_salio)
+    throw new Error("Esta pieza falló al publicarse. Antes de aprobarla otra vez, revisa en la red que no haya salido.");
+  const rev = revisarTexto(p.texto, p.red, p.titulo);
   if (rev.errores.length) throw new Error("No se puede aprobar: " + rev.errores.join(" "));
-  p.aprobado = { fecha: ahoraISO(), medio: "panel", por: "Emi" };
-  p.aprobado_huella = await huella(p.texto);
-  p.estado = p.fecha && Date.parse(p.fecha) > Date.now() + 60e3 ? "programada" : "aprobada";
-  p.historial.unshift({ fecha: ahoraISO(), quien: "Emi", que: `aprobada (${p.aprobado_huella})` });
+  const otra = lista.find((x) => x.id !== p.id && x.red !== p.red && x.estado !== "cancelada" && parecido(x.texto, p.texto) >= 0.85);
+  if (otra) throw new Error(`Es casi el mismo texto que una pieza de ${otra.red}: cada red lleva su propia adaptación.`);
+  const h = await huellaAprobacion(p);
+  // Se vuelve a leer y se escribe solo si la pieza no cambió mientras tanto.
+  const q = await actualizarPieza(env, id, (x) => {
+    if (FINALES.includes(x.estado) || x.texto !== p.texto || x.red !== p.red || (x.fecha || null) !== (p.fecha || null) || (x.media || "") !== (p.media || ""))
+      throw new Error("La pieza cambió mientras la aprobabas: revísala otra vez.");
+    x.aprobado = { fecha: ahoraISO(), medio: "panel", por: "Emi" };
+    x.aprobado_huella = h;
+    const futura = x.fecha && Date.parse(x.fecha) > Date.now() + 60e3;
+    x.estado = futura && PUBLICADORES[x.red] ? "programada" : "aprobada";
+    delete x.error;
+    x.historial.unshift({ fecha: ahoraISO(), quien: "Emi", que: `aprobada (${h})` });
+  });
+  await bitacora(env, "Emi", `Aprobó ${q.red}: ${q.titulo || q.texto.slice(0, 60)}`);
+  return q;
+}
+
+async function actualizarPieza(env, id, cambio) {
+  const lista = await piezas(env);
+  const p = lista.find((x) => x.id === id);
+  if (!p) return null;
+  cambio(p);
   await guardarPiezas(env, lista);
-  await bitacora(env, "Emi", `Aprobó ${p.red}: ${p.titulo || p.texto.slice(0, 60)}`);
   return p;
 }
 
-const PUBLICADORES = { x: publicarX, linkedin: publicarLinkedIn };
 export async function publicar(env, id, fetcher = fetch) {
-  const lista = await piezas(env);
-  const p = lista.find((x) => x.id === id);
+  let p = (await piezas(env)).find((x) => x.id === id);
   if (!p) throw new Error("No existe esa pieza.");
   if (!PUBLICADORES[p.red]) throw new Error(`${p.red} todavía no publica por API: copia el texto y publícalo desde la app.`);
   if (!["aprobada", "programada"].includes(p.estado)) throw new Error("Solo se publica lo aprobado.");
-  if (p.aprobado_huella !== (await huella(p.texto))) throw new Error("El texto cambió después de aprobarse: vuelve a aprobarlo.");
-  const rev = revisarTexto(p.texto, p.red);
+  const esperada = await huellaAprobacion(p);
+  if (p.aprobado_huella !== esperada) throw new Error("La pieza cambió después de aprobarse: vuelve a aprobarla.");
+  const rev = revisarTexto(p.texto, p.red, p.titulo);
   if (rev.errores.length) throw new Error(rev.errores.join(" "));
-  p.estado = "publicando"; // candado: evita publicar dos veces si el cron y Emi coinciden
-  await guardarPiezas(env, lista);
-  try {
-    const r = await PUBLICADORES[p.red](env, p, fetcher);
-    p.estado = "publicada"; p.publicada = { fecha: ahoraISO(), ...r };
-    p.historial.unshift({ fecha: ahoraISO(), quien: "panel", que: `publicada: ${r.url || r.id}` });
-    await bitacora(env, "panel", `Publicado en ${p.red}: ${r.url || r.id}`);
-  } catch (e) {
-    p.estado = "fallo"; p.error = String(e.message || e).slice(0, 400);
-    p.historial.unshift({ fecha: ahoraISO(), quien: "panel", que: `falló: ${p.error}` });
-    await bitacora(env, "panel", `Falló ${p.red}: ${p.error}`);
-  }
-  const lista2 = await piezas(env);
-  const i = lista2.findIndex((x) => x.id === id);
-  if (i >= 0) lista2[i] = p;
-  await guardarPiezas(env, lista2);
-  return p;
+  // Candado: dentro del Durable Object, leer y escribir aquí no se intercala con otra petición.
+  let tomado = false;
+  p = await actualizarPieza(env, id, (x) => {
+    if (["aprobada", "programada"].includes(x.estado) && x.aprobado_huella === esperada) {
+      x.estado = "publicando"; x.publicando_desde = ahoraISO(); tomado = true;
+    }
+  });
+  if (!tomado) throw new Error("Otra publicación de esta pieza ya está en curso o cambió.");
+  let resultado, error;
+  try { resultado = await PUBLICADORES[p.red](env, p, fetcher); } catch (e) { error = String(e.message || e).slice(0, 400); }
+  return actualizarPieza(env, id, (x) => {
+    if (resultado) {
+      x.estado = "publicada"; x.publicada = { fecha: ahoraISO(), ...resultado };
+      x.historial.unshift({ fecha: ahoraISO(), quien: "panel", que: `publicada: ${resultado.url || resultado.id}` });
+    } else {
+      x.estado = "fallo"; x.error = error;
+      x.historial.unshift({ fecha: ahoraISO(), quien: "panel", que: `falló: ${error}` });
+    }
+    delete x.publicando_desde;
+  }).then(async (x) => { await bitacora(env, "panel", resultado ? `Publicado en ${x.red}: ${resultado.url || resultado.id}` : `Falló ${x.red}: ${error}`); return x; });
 }
 
 // ---------------------------------------------------------------- API
@@ -329,62 +420,61 @@ const json = (obj, status = 200, extra = {}) =>
   new Response(JSON.stringify(obj), { status, headers: { ...SEGURIDAD, "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", ...extra } });
 
 async function claudeValido(request, env) {
-  const m = (request.headers.get("Authorization") || "").match(/^Bearer (.{20,})$/);
-  return !!(env.CLAUDE_LLAVE && m && (await iguales(m[1], env.CLAUDE_LLAVE)));
+  const m = (request.headers.get("Authorization") || "").match(/^Bearer (\S{32,200})$/);
+  return !!(env.CLAUDE_LLAVE && env.CLAUDE_LLAVE.length >= 32 && m && (await iguales(m[1], env.CLAUDE_LLAVE)));
 }
 
-async function api(request, env, url) {
+export async function api(request, env, url) {
   const ruta = url.pathname.replace(/\/+$/, "");
   const metodo = request.method;
   const configurado = !!((await claveGuardada(env)) && env.CIFRADO);
 
-  // Callback de LinkedIn: GET con redirección, sin JSON.
   if (ruta === "/api/linkedin/volver" && metodo === "GET") return linkedinVolver(request, env, url);
 
   let cuerpo = {};
   if (metodo === "POST") {
-    const origen = request.headers.get("Origin");
     const esClaude = ruta.startsWith("/api/claude/");
-    if (!esClaude && origen && origen !== url.origin) return json({ error: "Origen no permitido." }, 403);
+    if (!esClaude && request.headers.get("Origin") !== url.origin) return json({ error: "Origen no permitido." }, 403);
     if ((request.headers.get("Content-Type") || "").split(";")[0] !== "application/json") return json({ error: "Se esperaba JSON." }, 415);
     try { cuerpo = await request.json(); } catch { return json({ error: "JSON inválido." }, 400); }
     if (!cuerpo || typeof cuerpo !== "object" || Array.isArray(cuerpo)) return json({ error: "JSON inválido." }, 400);
   }
 
-  // --- Claude (llave propia; puede leer y dejar borradores o notas; nunca aprueba ni publica)
+  // --- Claude: puede leer y dejar borradores, notas, enlaces y respuestas; nunca aprueba ni publica.
   if (ruta.startsWith("/api/claude/")) {
-    if (!(await claudeValido(request, env))) return json({ error: "Llave inválida." }, 401);
-    if (ruta === "/api/claude/estado" && metodo === "GET")
-      return json({ piezas: await piezas(env), notas: await leer(env, "notas", []), encargos: await leer(env, "encargos", []), bitacora: (await leer(env, "bitacora", [])).slice(0, 50) });
-    if (ruta === "/api/claude/pieza" && metodo === "POST") {
-      if (cuerpo.id) {
-        const p = (await piezas(env)).find((x) => x.id === cuerpo.id);
-        if (p && p.creada_por !== "claude") return json({ error: "Claude solo edita borradores que dejó Claude." }, 403);
-      }
-      return json(await editarPieza(env, cuerpo, "claude"));
-    }
-    if (ruta === "/api/claude/nota" && metodo === "POST") return json(await agregarNota(env, cuerpo, "claude"));
-    const me = ruta.match(/^\/api\/claude\/encargo\/([a-f0-9]{12})$/);
-    if (me && metodo === "POST") return json(await cambiarEncargo(env, me[1], cuerpo, "claude"));
+    if (!(await intentos(request, env, "estado", "·claude"))) return json({ error: "Demasiados intentos." }, 429);
+    if (!(await claudeValido(request, env))) { await intentos(request, env, "fallo", "·claude"); return json({ error: "Llave inválida." }, 401); }
+    try {
+      if (ruta === "/api/claude/estado" && metodo === "GET")
+        return json({ piezas: await piezas(env), notas: await leer(env, "notas", []), encargos: await leer(env, "encargos", []), enlaces: await leer(env, "enlaces", []), bitacora: (await leer(env, "bitacora", [])).slice(0, 50) });
+      if (ruta === "/api/claude/pieza" && metodo === "POST") return json(await editarPieza(env, cuerpo, "claude"));
+      if (ruta === "/api/claude/nota" && metodo === "POST") return json(await agregarNota(env, cuerpo, "claude"));
+      if (ruta === "/api/claude/enlace" && metodo === "POST") return json(await agregarEnlace(env, cuerpo, "claude"));
+      const me = ruta.match(/^\/api\/claude\/encargo\/([a-f0-9]{12})$/);
+      if (me && metodo === "POST") return json(await cambiarEncargo(env, me[1], cuerpo, "claude"));
+    } catch (e) { return json({ error: String(e.message || e) }, 400); }
     return json({ error: "No encontrado." }, 404);
   }
 
   // --- sesión
   if (ruta === "/api/sesion" && metodo === "GET") return json({ editor: await sesionValida(request, env), configurado });
   if (ruta === "/api/alta" && metodo === "POST") {
-    // Alta de la contraseña: una sola vez, con el enlace que lleva el secreto ALTA.
-    if (await claveGuardada(env)) return json({ error: "La contraseña ya existe. Este enlace ya no sirve." }, 409);
+    if ((await claveGuardada(env)) || (await leer(env, "alta_usada", false))) return json({ error: "La contraseña ya existe. Este enlace ya no sirve." }, 409);
     if (!env.ALTA || !(await intentos(request, env, "estado"))) return json({ error: "Enlace inválido." }, 403);
     if (!(await iguales(String(cuerpo.alta ?? ""), env.ALTA))) { await intentos(request, env, "fallo"); return json({ error: "Enlace inválido." }, 403); }
     const clave = String(cuerpo.clave ?? "");
     if ([...clave].length < 10) return json({ error: "Usa al menos 10 caracteres." }, 400);
     const sal = hex(crypto.getRandomValues(new Uint8Array(16)));
-    await guardar(env, "clave", { sal, hash: await pbkdf2(clave, sal), fecha: ahoraISO() });
+    const hash = await pbkdf2(clave, sal);
+    // Comprobar y escribir sin nada en medio: dentro del Durable Object no se intercala otra petición.
+    if ((await claveGuardada(env)) || (await leer(env, "alta_usada", false))) return json({ error: "La contraseña ya existe. Este enlace ya no sirve." }, 409);
+    await guardar(env, "clave", { sal, hash, fecha: ahoraISO() });
+    await guardar(env, "alta_usada", true);
     await bitacora(env, "Emi", "Creó la contraseña del panel");
     return json({ editor: true }, 200, { "Set-Cookie": cookie(await crearSesion(env), DIAS * 86400) });
   }
   if (ruta === "/api/entrar" && metodo === "POST") {
-    if (!configurado) return json({ error: "El panel aún no tiene contraseña configurada." }, 503);
+    if (!configurado) return json({ error: "El panel aún no tiene contraseña: usa tu enlace de alta." }, 503);
     if (!(await intentos(request, env, "estado"))) return json({ error: "Demasiados intentos. Espera un rato." }, 429, { "Retry-After": "60" });
     if (!(await claveCorrecta(env, cuerpo.clave ?? ""))) {
       await intentos(request, env, "fallo");
@@ -398,51 +488,60 @@ async function api(request, env, url) {
 
   // --- Emi
   try {
+    if (ruta === "/api/salir-todo" && metodo === "POST") {
+      await guardar(env, "epoca", String(Date.now()));
+      return json({ editor: false }, 200, { "Set-Cookie": cookie("", 0) });
+    }
     if (ruta === "/api/estado" && metodo === "GET") {
       const mes = new Date().toISOString().slice(0, 7);
       return json({
         piezas: await piezas(env), notas: await leer(env, "notas", []), encargos: await leer(env, "encargos", []),
-        bitacora: (await leer(env, "bitacora", [])).slice(0, 80), gasto_x: await leer(env, `gasto:x:${mes}`, { usd: 0, llamadas: [] }),
-        tope_x: Number(env.TOPE_X_USD || 10),
-        conexiones: { x: !!(await kv(env).get("cred:x")), linkedin: !!(await kv(env).get("cred:linkedin")), linkedin_app: !!(await kv(env).get("cred:linkedin_app")) },
+        enlaces: await leer(env, "enlaces", []), bitacora: (await leer(env, "bitacora", [])).slice(0, 80),
+        gasto_x: await leer(env, `gasto:x:${mes}`, { usd: 0, llamadas: [] }), tope_x: topeX(env),
+        conexiones: { x: !!(await leer(env, "cred:x", null)), linkedin: !!(await leer(env, "cred:linkedin", null)), linkedin_app: !!(await leer(env, "cred:linkedin_app", null)) },
       });
     }
     if (ruta === "/api/pieza" && metodo === "POST") return json(await editarPieza(env, cuerpo, "Emi"));
-    const mp = ruta.match(/^\/api\/pieza\/([a-f0-9]{12})\/(aprobar|publicar|cancelar|metricas|revisar)$/);
+    const mp = ruta.match(/^\/api\/pieza\/([a-f0-9]{12})\/(aprobar|publicar|cancelar|metricas|resolver)$/);
     if (mp && metodo === "POST") {
       const [, id, accion] = mp;
-      if (accion === "aprobar") return json(await aprobar(env, id));
+      if (accion === "aprobar") return json(await aprobar(env, id, cuerpo));
       if (accion === "publicar") return json(await publicar(env, id));
-      if (accion === "revisar") {
-        const p = (await piezas(env)).find((x) => x.id === id);
-        return json(p ? revisarTexto(p.texto, p.red) : { error: "No existe." });
-      }
-      const lista = await piezas(env);
-      const p = lista.find((x) => x.id === id);
-      if (!p) return json({ error: "No existe esa pieza." }, 404);
       if (accion === "cancelar") {
-        if (["publicando", "publicada"].includes(p.estado)) return json({ error: "Ya se publicó." }, 409);
-        p.estado = "cancelada"; p.historial.unshift({ fecha: ahoraISO(), quien: "Emi", que: "cancelada" });
+        const p = await actualizarPieza(env, id, (x) => {
+          if (FINALES.includes(x.estado)) throw new Error("Ya se publicó o se está publicando.");
+          x.estado = "cancelada"; x.historial.unshift({ fecha: ahoraISO(), quien: "Emi", que: "cancelada" });
+        });
+        return p ? json(p) : json({ error: "No existe esa pieza." }, 404);
+      }
+      if (accion === "resolver") {
+        // Una pieza atorada en «publicando» (el servidor se cortó a la mitad): Emi revisa en la red y dice qué pasó.
+        const p = await actualizarPieza(env, id, (x) => {
+          if (x.estado !== "publicando") throw new Error("Esa pieza no está atorada.");
+          if (Date.now() - Date.parse(x.publicando_desde || 0) < 10 * 60e3) throw new Error("Espera 10 minutos antes de resolverla.");
+          if (cuerpo.salio) { x.estado = "publicada"; x.publicada = { fecha: ahoraISO(), url: limpiarUrl(cuerpo.url), id: "" }; }
+          else { x.estado = "fallo"; x.error = "Se cortó a la mitad; Emi confirmó que no salió."; }
+          delete x.publicando_desde;
+          x.historial.unshift({ fecha: ahoraISO(), quien: "Emi", que: cuerpo.salio ? "confirmó que sí salió" : "confirmó que no salió" });
+        });
+        return p ? json(p) : json({ error: "No existe esa pieza." }, 404);
       }
       if (accion === "metricas") {
-        if (p.red !== "x" || !p.publicada?.id) return json({ error: "Solo hay métricas automáticas de posts publicados en X; las demás se capturan." }, 400);
-        p.metricas = { fecha: ahoraISO(), fuente: "API de X", valores: await metricasX(env, p.publicada.id) };
+        const p = (await piezas(env)).find((x) => x.id === id);
+        if (!p) return json({ error: "No existe esa pieza." }, 404);
+        if (p.red !== "x" || !p.publicada?.id) return json({ error: "Solo hay métricas automáticas de posts publicados en X; las demás se anotan." }, 400);
+        const valores = await metricasX(env, p.publicada.id);
+        return json(await actualizarPieza(env, id, (x) => { x.metricas = { fecha: ahoraISO(), fuente: "API de X", valores }; }));
       }
-      await guardarPiezas(env, lista);
-      return json(p);
     }
     if (ruta === "/api/pieza/captura" && metodo === "POST") {
-      // Métricas que Emi copia de la app (cualquier red), en las unidades de esa red.
-      const lista = await piezas(env);
-      const p = lista.find((x) => x.id === cuerpo.id);
-      if (!p) return json({ error: "No existe esa pieza." }, 404);
       const valores = {};
       for (const [k, v] of Object.entries(cuerpo.valores || {})) if (/^[a-z_]{2,40}$/.test(k) && Number.isFinite(+v)) valores[k] = +v;
-      p.metricas = { fecha: ahoraISO(), fuente: "captura de Emi", valores };
-      await guardarPiezas(env, lista);
-      return json(p);
+      const p = await actualizarPieza(env, String(cuerpo.id || ""), (x) => { x.metricas = { fecha: ahoraISO(), fuente: "anotado por Emi", valores }; });
+      return p ? json(p) : json({ error: "No existe esa pieza." }, 404);
     }
     if (ruta === "/api/nota" && metodo === "POST") return json(await agregarNota(env, cuerpo, "Emi"));
+    if (ruta === "/api/enlace" && metodo === "POST") return json(await agregarEnlace(env, cuerpo, "Emi"));
     if (ruta === "/api/encargo" && metodo === "POST") {
       const e = await leer(env, "encargos", []);
       const nuevo = { id: nuevoId(), fecha: ahoraISO(), texto: limpiar(cuerpo.texto, 2000), para: limpiar(cuerpo.para || "matriz-redes", 60), estado: "pendiente", respuestas: [] };
@@ -473,8 +572,9 @@ async function api(request, env, url) {
     if (ruta === "/api/linkedin/conectar" && metodo === "POST") {
       const app = await leerSecreto(env, "linkedin_app");
       if (!app) return json({ error: "Primero guarda el Client ID y el Client Secret de tu app de LinkedIn." }, 400);
-      const estado = hex(crypto.getRandomValues(new Uint8Array(16)));
-      await kv(env).put(`linkedin_estado:${estado}`, "1", { expirationTtl: 600 });
+      const estado = hex(crypto.getRandomValues(new Uint8Array(24)));
+      // El «state» solo lo crea Emi con sesión; es de un solo uso y vence en 10 minutos.
+      await guardar(env, `linkedin_estado:${estado}`, { vence: Date.now() + 600e3 });
       const u = new URL("https://www.linkedin.com/oauth/v2/authorization");
       u.search = new URLSearchParams({ response_type: "code", client_id: app.client_id, redirect_uri: `${url.origin}/api/linkedin/volver`, state: estado, scope: "openid profile w_member_social" });
       return json({ url: u.toString() });
@@ -482,7 +582,7 @@ async function api(request, env, url) {
     if (ruta === "/api/llaves/borrar" && metodo === "POST") {
       const n = String(cuerpo.nombre || "");
       if (!["x", "linkedin", "linkedin_app"].includes(n)) return json({ error: "Nombre inválido." }, 400);
-      await kv(env).delete(`cred:${n}`);
+      await borrar(env, `cred:${n}`);
       await bitacora(env, "Emi", `Borró las credenciales de ${n}`);
       return json({ ok: true });
     }
@@ -500,24 +600,38 @@ async function agregarNota(env, cuerpo, quien) {
   await bitacora(env, quien, `Nota (${nota.tipo}, ${nota.red}): ${nota.texto.slice(0, 80)}`);
   return nota;
 }
+// Enlaces privados (carpetas de Drive, etc.): solo se ven con sesión; no van al repositorio público.
+async function agregarEnlace(env, cuerpo, quien) {
+  const l = await leer(env, "enlaces", []);
+  const e = { id: nuevoId(), fecha: ahoraISO(), quien, nombre: limpiar(cuerpo.nombre, 120), url: limpiarUrl(cuerpo.url), grupo: limpiar(cuerpo.grupo || "Drive", 40) };
+  if (!e.nombre.trim() || !e.url) throw new Error("Escribe el nombre y un enlace https.");
+  const i = l.findIndex((x) => x.url === e.url);
+  if (i >= 0) l[i] = { ...l[i], nombre: e.nombre, grupo: e.grupo }; else l.unshift(e);
+  await guardar(env, "enlaces", l.slice(0, 200));
+  return e;
+}
 async function cambiarEncargo(env, id, cuerpo, quien) {
   const e = await leer(env, "encargos", []);
   const x = e.find((y) => y.id === id);
   if (!x) throw new Error("No existe ese encargo.");
   if (cuerpo.respuesta) x.respuestas.push({ fecha: ahoraISO(), quien, texto: limpiar(cuerpo.respuesta, 3000) });
+  x.respuestas = x.respuestas.slice(-30);
   if (["pendiente", "en curso", "hecho", "descartado"].includes(cuerpo.estado)) x.estado = cuerpo.estado;
   await guardar(env, "encargos", e);
   return x;
 }
 
 async function linkedinVolver(request, env, url) {
+  // El regreso viene de linkedin.com: el navegador no manda la cookie (SameSite=Strict). Lo protege el «state»,
+  // que solo Emi pudo crear con sesión, es de un solo uso y vence en 10 minutos.
   const volver = (msg) => Response.redirect(`${url.origin}/#ajustes?linkedin=${encodeURIComponent(msg)}`, 302);
-  if (!(await sesionValida(request, env))) return volver("Entra al panel antes de conectar LinkedIn.");
   const estado = url.searchParams.get("state") || "";
-  if (!estado || !(await kv(env).get(`linkedin_estado:${estado}`))) return volver("La conexión venció; inténtalo otra vez.");
-  await kv(env).delete(`linkedin_estado:${estado}`);
+  const guardado = /^[0-9a-f]{48}$/.test(estado) ? await leer(env, `linkedin_estado:${estado}`, null) : null;
+  if (guardado) await borrar(env, `linkedin_estado:${estado}`);
+  if (!guardado || guardado.vence < Date.now()) return volver("La conexión venció; inténtalo otra vez desde Ajustes.");
   if (url.searchParams.get("error")) return volver(`LinkedIn no autorizó: ${url.searchParams.get("error_description") || url.searchParams.get("error")}`);
   const app = await leerSecreto(env, "linkedin_app");
+  if (!app) return volver("Falta la app de LinkedIn.");
   const r = await fetch("https://www.linkedin.com/oauth/v2/accessToken", {
     method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({ grant_type: "authorization_code", code: url.searchParams.get("code") || "", redirect_uri: `${url.origin}/api/linkedin/volver`, client_id: app.client_id, client_secret: app.client_secret }),
@@ -526,7 +640,8 @@ async function linkedinVolver(request, env, url) {
   if (!t.access_token) return volver(`LinkedIn no entregó el permiso (${r.status}).`);
   const yo = await (await fetch("https://api.linkedin.com/v2/userinfo", { headers: { Authorization: `Bearer ${t.access_token}` } })).json().catch(() => ({}));
   if (!yo.sub) return volver("No se pudo leer tu perfil de LinkedIn.");
-  await guardarSecreto(env, "linkedin", { access_token: t.access_token, persona: `urn:li:person:${yo.sub}`, nombre: yo.name || "", vence: new Date(Date.now() + (t.expires_in || 0) * 1000).toISOString() });
+  const dura = Number(t.expires_in) > 0 ? Number(t.expires_in) : 60 * 86400;
+  await guardarSecreto(env, "linkedin", { access_token: t.access_token, persona: `urn:li:person:${yo.sub}`, nombre: yo.name || "", vence: new Date(Date.now() + dura * 1000).toISOString() });
   await bitacora(env, "Emi", "Conectó LinkedIn");
   return volver("ok");
 }
@@ -535,44 +650,63 @@ async function linkedinVolver(request, env, url) {
 
 export async function tic(env, fetcher = fetch) {
   const ahora = Date.now();
-  const lista = await piezas(env);
-  for (const p of lista.filter((x) => x.estado === "programada" && x.fecha && Date.parse(x.fecha) <= ahora)) {
+  const vencidas = (await piezas(env)).filter((x) => x.estado === "programada" && x.fecha && Date.parse(x.fecha) <= ahora).map((x) => x.id);
+  for (const id of vencidas) {
+    const p = (await piezas(env)).find((x) => x.id === id);
+    if (!p || p.estado !== "programada") continue;
     if (ahora - Date.parse(p.fecha) > 6 * 3600e3) {
-      // No se publica algo seis horas tarde sin que Emi lo vea: queda para que decida.
-      p.estado = "aprobada"; p.historial.unshift({ fecha: ahoraISO(), quien: "panel", que: "no salió a su hora; espera a Emi" });
-      await guardarPiezas(env, lista);
+      // Seis horas tarde ya no se publica sola: queda para que Emi decida.
+      await actualizarPieza(env, id, (x) => { x.estado = "aprobada"; x.historial.unshift({ fecha: ahoraISO(), quien: "panel", que: "no salió a su hora; espera a Emi" }); });
       continue;
     }
-    await publicar(env, p.id, fetcher);
+    try { await publicar(env, id, fetcher); } catch (e) {
+      await actualizarPieza(env, id, (x) => { if (x.estado === "programada") { x.estado = "fallo"; x.error = String(e.message || e).slice(0, 300); } });
+    }
   }
   // Métricas de X a las 48 h y a los 7 días (una lectura cada vez).
-  const lista2 = await piezas(env);
-  let cambio = false;
-  for (const p of lista2.filter((x) => x.red === "x" && x.estado === "publicada" && x.publicada?.id)) {
+  for (const p of (await piezas(env)).filter((x) => x.red === "x" && x.estado === "publicada" && x.publicada?.id)) {
     const edad = (ahora - Date.parse(p.publicada.fecha)) / 3600e3;
-    p.lecturas = p.lecturas || [];
     for (const h of [48, 168]) {
-      if (edad >= h && !p.lecturas.includes(h)) {
-        try { p.metricas = { fecha: ahoraISO(), fuente: `API de X (${h} h)`, valores: await metricasX(env, p.publicada.id, fetcher) }; }
-        catch (e) { p.metricas_error = String(e.message || e).slice(0, 200); }
-        p.lecturas.push(h); cambio = true;
+      if (edad >= h && !(p.lecturas || []).includes(h)) {
+        let valores, error;
+        try { valores = await metricasX(env, p.publicada.id, fetcher); } catch (e) { error = String(e.message || e).slice(0, 200); }
+        await actualizarPieza(env, p.id, (x) => {
+          x.lecturas = [...(x.lecturas || []), h];
+          if (valores) x.metricas = { fecha: ahoraISO(), fuente: `API de X (${h} h)`, valores }; else x.metricas_error = error;
+        });
       }
     }
   }
-  if (cambio) await guardarPiezas(env, lista2);
 }
+
+// ---------------------------------------------------------------- Durable Object y entrada del Worker
+
+export class Panel {
+  constructor(state, env) { this.state = state; this.env = { ...env, ALMACEN: this.state.storage }; }
+  async fetch(request) {
+    const url = new URL(request.url);
+    if (url.pathname === "/interno/tic") { await tic(this.env); return new Response("ok"); }
+    try { return await api(request, this.env, url); } catch (e) { return json({ error: "Error del servidor: " + String(e.message || e) }, 500); }
+  }
+}
+const panelDe = (env) => env.PANEL.get(env.PANEL.idFromName("emi"));
 
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.pathname === "/interno/tic") return new Response("No encontrado.", { status: 404 });
     if (url.pathname.startsWith("/api/")) {
+      if (env.PANEL) return panelDe(env).fetch(request);
       try { return await api(request, env, url); } catch (e) { return json({ error: "Error del servidor: " + String(e.message || e) }, 500); }
     }
     const r = await env.ASSETS.fetch(request);
     const h = new Headers(r.headers);
     for (const [k, v] of Object.entries(SEGURIDAD)) h.set(k, v);
-    h.set("Content-Security-Policy", "default-src 'self'; img-src 'self' data: https:; media-src 'self' https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self'; connect-src 'self'; frame-ancestors 'none'");
+    h.set("Content-Security-Policy", "default-src 'self'; img-src 'self' data: https://drive.google.com https://lh3.googleusercontent.com https://pbs.twimg.com https://media.licdn.com; media-src 'self' https://drive.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
     return new Response(r.body, { status: r.status, headers: h });
   },
-  async scheduled(evento, env, ctx) { ctx.waitUntil(tic(env)); },
+  async scheduled(evento, env, ctx) {
+    if (env.PANEL) ctx.waitUntil(panelDe(env).fetch("https://panel/interno/tic"));
+    else ctx.waitUntil(tic(env));
+  },
 };
