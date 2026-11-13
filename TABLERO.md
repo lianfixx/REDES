@@ -4,13 +4,11 @@ Generado el 2026-11-13 por `redes.py tablero`. No se edita a mano.
 
 ## Pendiente de Emi
 
-- [ ] Aprobar: Video del DOF (tal cual) con el texto B de Emi (linkedin, 2026-11-13 12:00)
-- [ ] Abrir cuentas de TikTok e Instagram (@emilianomilla_, Instagram tipo Creador)
-- [ ] Conectar LinkedIn en el panel (Ajustes)
-- [ ] Elegir el post de lanzamiento de X (A o B) en el panel
-- [ ] Elegir día de grabación
-- [ ] Perfil de X: acento en «García» y sitio web emilianomilla.site
-- [ ] Tener créditos en la consola de X antes de aprobar el lanzamiento
+- [ ] **alta** · linkedin · Aprobar: Video del DOF (tal cual) con el texto B de Emi
+- [ ] **alta** · x · Tener créditos en la consola de X antes de que salga el lanzamiento
+- [ ] **media** · TikTok e Instagram · Abrir las cuentas de TikTok e Instagram (@emilianomilla_; Instagram tipo Creador)
+- [ ] **media** · Videos · Elegir el día para grabar los 4 videos (Matriz, DOF, Boletines, Vox)
+- [ ] **baja** · x · Perfil de X: acento en «García» y sitio web emilianomilla.site
 
 ## Esta semana
 
@@ -42,14 +40,4 @@ Generado el 2026-11-13 por `redes.py tablero`. No se edita a mano.
 ## Avisos del validador
 
 - Ninguno.
-
-## Estado de cada skill
-
-| Skill | Leído | Publicados | Lecciones |
-|---|---|---|---|
-| x | no se pudo leer | — | — |
-| linkedin | 2026-11-13 | 0 | 1 |
-| tiktok | no se pudo leer | — | — |
-| instagram | 2026-11-12 | 0 | 3 |
-| instagram-historias | no se pudo leer | — | — |
 

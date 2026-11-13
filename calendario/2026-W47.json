@@ -21,7 +21,8 @@
    "skill": "x-viral",
    "titulo": "Post de lanzamiento (A o B)",
    "estado": "borrador",
-   "minutos_emi": 30
+   "minutos_emi": 30,
+   "en_panel": true
   },
   {
    "id": "ig-reel-matriz",
@@ -75,7 +76,8 @@
    "skill": "x-viral",
    "titulo": "Video del DOF nativo",
    "estado": "borrador",
-   "minutos_emi": 20
+   "minutos_emi": 20,
+   "en_panel": true
   },
   {
    "id": "tt-dof-animado",

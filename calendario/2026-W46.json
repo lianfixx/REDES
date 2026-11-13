@@ -11,7 +11,8 @@
    "skill": "linkedin-pro",
    "titulo": "Video del DOF (tal cual) con el texto B de Emi",
    "estado": "lista para aprobar",
-   "minutos_emi": 20
+   "minutos_emi": 20,
+   "en_panel": true
   }
  ]
 }

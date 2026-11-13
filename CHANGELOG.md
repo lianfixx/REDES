@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-13 · Panel 0.2: Hoy tipo CRM, piezas en vivo con notas y pausa, hora sugerida, ideas por espacio e inspiración
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: Emi, 13/11/2026: fecha más bonita y sin la leyenda «que se ve muy IA»; «Lo que necesito de ti» por prioridad, por sesión y ubicable; «Próximas» más clara, «tipo CRM perfecto»; piezas en tiempo real y un apartado para notas o confirmaciones antes de publicar; ideas divididas por espacios (la Matriz propone y él confirma) con enlaces de inspiración (Pinterest, videos) analizados (estilo, redacción, edición) y un campo de «qué me llamó la atención»; fondo blanco o negro minimalista; «cuando apruebe algo, tú escojas hora… todo listo en el panel con horas sugeridas».
+- Cambios: Hoy con fecha grande, hora de México, pendientes en Alta/Media/Baja con sesión y enlace «Ir →», actividad reciente y tabla «Próximas» por día con hora, red, pieza, estado y siguiente paso (sin repetir lo que ya está en el panel). Piezas agrupadas por lo que toca (aprobar, subir desde la app, programadas, fallo, borradores, publicadas), actualización cada 20 s sin interrumpir lo que escribes, notas y confirmaciones por pieza (las leen las sesiones de Claude), «Pausar/Reanudar» (el cron no publica en pausa). Hora: Claude puede dejar una hora sugerida con su motivo; al aprobar sin fecha, la Matriz pone esa hora o el siguiente hueco libre según hora base y cadencia de cada red. Ideas por espacio (Personal, MILLA, Castorena, PAN, Por confirmar) con propuesta de la Matriz y botón Confirmar o Mover; Inspiración con enlace, plataforma detectada, «qué me llamó la atención» y análisis (estilo, redacción, edición, gancho, formato, ritmo, música, qué tomar, qué evitar). Pendientes de Emi con prioridad, sesión y lugar. Fondo blanco o negro liso.
+- Archivos: `worker/{index.js,prueba.mjs}`, `panel/{app.js,estilo.css,index.html}`, `skills/matriz-redes/scripts/{redes.py,test_redes.py}`, `ideas/2026-11-13-lanzamiento.json`, `calendario/2026-W4{6,7}.json`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado (46 pruebas de Python, 20 del Worker); panel revisado en Chromium con datos de prueba a 1280 y 390 px, blanco y negro: sin errores ni desbordes.
+- Pendiente: que la tarea semanal analice la inspiración y proponga espacios (se actualiza su encargo); subir imágenes y video por API.
+
 ## 2026-11-13 · X conectado al panel
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: Emi, 13/11/2026: «creo ya».

@@ -64,12 +64,14 @@ await t("sesión: sin contraseña no hay datos; otro origen o sin Origin no escr
 await t("aprobación: la invalidan texto, red y fecha; no se reaprueba lo publicado", async () => {
   const env = nuevoEnv(), S = await sesion(env);
   const p = (await S("/api/pieza", { red: "linkedin", texto: "Primer texto." })).j;
-  assert.equal((await S(`/api/pieza/${p.id}/aprobar`, {})).j.estado, "aprobada");
+  const ap = (await S(`/api/pieza/${p.id}/aprobar`, {})).j;
+  assert.equal(ap.estado, "programada", "sin fecha, la Matriz pone la hora y queda programada");
+  assert.ok(ap.fecha && Date.parse(ap.fecha) > Date.now()); assert.equal(ap.hora_asignada_por, "Matriz");
   for (const cambio of [{ texto: "Otro texto." }, { red: "x" }, { fecha: new Date(Date.now() + 864e5).toISOString() }]) {
     await S(`/api/pieza/${p.id}/aprobar`, {});
     const e = (await S("/api/pieza", { id: p.id, red: "linkedin", texto: "Primer texto.", ...cambio })).j;
     assert.equal(e.aprobado_huella, undefined, JSON.stringify(cambio));
-    await S("/api/pieza", { id: p.id, red: "linkedin", texto: "Primer texto.", fecha: null });
+    await S("/api/pieza", { id: p.id, red: "linkedin", texto: "Primer texto.", fecha: "" });
   }
   await S("/api/llaves/x", llavesX);
   const q = (await S("/api/pieza", { red: "x", texto: "Sale una vez." })).j;
@@ -87,7 +89,7 @@ await t("una pieza en «fallo» exige confirmar que no salió antes de reaprobar
   await S(`/api/pieza/${p.id}/aprobar`, {});
   assert.equal((await publicar(env, p.id)).estado, "fallo");
   assert.equal((await S(`/api/pieza/${p.id}/aprobar`, {})).s, 400);
-  assert.equal((await S(`/api/pieza/${p.id}/aprobar`, { confirmo_que_no_salio: true })).j.estado, "aprobada");
+  assert.equal((await S(`/api/pieza/${p.id}/aprobar`, { confirmo_que_no_salio: true })).j.estado, "programada");
 });
 
 await t("mismo texto en dos redes: no se aprueba", async () => {
@@ -259,5 +261,49 @@ await t("X como app pública: si Basic da 401, se pide el token sin secreto", as
   assert.match(r.headers.get("Location"), /x=ok/);
   assert.deepEqual(vistas, [true, false]);
   assert.ok(JSON.parse(env.ALMACEN.m.get("bitacora")).some((b) => /app pública/.test(b.que)));
+});
+await t("hora sugerida: respeta hora base, cadencia y separación de cada red", async () => {
+  const { sugerirHora } = await import("./index.js");
+  const ahora = Date.parse("2026-11-13T17:00:00Z"); // 11:00 en México, viernes
+  const x1 = sugerirHora("x", [], ahora);
+  assert.equal(x1, "2026-11-14T15:00:00.000Z", "X: sábado 9:00 (hoy ya pasó)");
+  const li = sugerirHora("linkedin", [], ahora);
+  assert.equal(li, "2026-11-14T14:30:00.000Z");
+  const ig = sugerirHora("instagram", [], ahora);
+  assert.equal(ig, "2026-11-14T01:00:00.000Z".replace("11-14T01", "11-14T01"), "Instagram: hoy 19:00");
+  const ocupado = [{ id: "a", red: "linkedin", fecha: li, estado: "programada" }];
+  assert.equal(sugerirHora("linkedin", ocupado, ahora), "2026-11-15T14:30:00.000Z", "LinkedIn: 1 al día");
+  assert.equal(sugerirHora("linkedin", [{ ...ocupado[0], estado: "cancelada" }], ahora), li, "las canceladas no ocupan");
+});
+await t("Claude sugiere hora; la aprobación la usa; pausa y notas antes de publicar", async () => {
+  const env = nuevoEnv(), c = llamar(env), S = await sesion(env);
+  const H = { Authorization: "Bearer " + "c".repeat(32) };
+  await S("/api/llaves/x", llavesX);
+  const p = (await c(req("/api/claude/pieza", { red: "x", texto: "Con hora sugerida." }, H))).j;
+  const hora = new Date(Date.now() + 5 * 3600e3).toISOString();
+  assert.equal((await c(req(`/api/claude/pieza/${p.id}/sugerencia`, { hora, motivo: "martes 9:00 por el calendario" }, H))).j.hora_sugerida, hora);
+  const a = (await S(`/api/pieza/${p.id}/aprobar`, {})).j;
+  assert.equal(a.fecha, hora); assert.equal(a.estado, "programada");
+  await c(req(`/api/claude/pieza/${p.id}/comentario`, { texto: "Lista la imagen." }, H));
+  const n = (await S(`/api/pieza/${p.id}/comentario`, { texto: "Espera, quiero cambiar la foto." })).j;
+  assert.equal(n.comentarios.length, 2);
+  assert.equal((await S(`/api/pieza/${p.id}/pausa`, { pausada: true })).j.pausada, true);
+  await assert.rejects(publicar(env, p.id, falsoX({ n: 0 })), /pausa/);
+  cambiar(env, p.id, (x) => { x.fecha = new Date(Date.now() - 60e3).toISOString(); });
+  await tic(env, async () => assert.fail("no debe publicar en pausa"));
+  assert.equal(piezasDe(env).find((x) => x.id === p.id).estado, "programada");
+});
+await t("inspiración: Emi pega el enlace; la Matriz analiza y propone espacio; Emi confirma", async () => {
+  const env = nuevoEnv(), c = llamar(env), S = await sesion(env);
+  const H = { Authorization: "Bearer " + "c".repeat(32) };
+  const e = (await S("/api/inspiracion", { url: "https://pin.it/abc123", que_me_llamo: "Los cortes rápidos" })).j;
+  assert.equal(e.plataforma, "Pinterest"); assert.equal(e.estado, "por analizar");
+  assert.equal((await S("/api/inspiracion", { url: "javascript:alert(1)" })).s, 400);
+  const a = (await c(req(`/api/claude/inspiracion/${e.id}`, { estilo: "collage", edicion: "cortes cada 1.5 s", espacio_propuesto: "personal" }, H))).j;
+  assert.equal(a.estado, "analizada"); assert.equal(a.espacio_propuesto, "personal");
+  const f = (await S(`/api/inspiracion/${e.id}/espacio`, { espacio: "milla" })).j;
+  assert.equal(f.espacio, "milla"); assert.equal(f.espacio_propuesto, null);
+  const n = (await c(req("/api/claude/nota", { texto: "Idea de la Matriz", espacio: "pan" }, H))).j;
+  assert.equal(n.espacio, null); assert.equal(n.espacio_propuesto, "pan");
 });
 console.log(`\n${ok} pruebas aprobadas`);

@@ -291,7 +291,7 @@ class Repositorio(unittest.TestCase):
             md, dp = R.generar_tablero(Path(t), CFG, hoy=dt.date(2099, 1, 6))
             self.assertIn("Pendiente de Emi", md)
             self.assertEqual(len(dp["semana"]), 3)
-            self.assertTrue(any("Aprobar" in p for p in dp["pendientes_emi"]))
+            self.assertTrue(any("Aprobar" in p["que"] and p["prioridad"] == 1 for p in dp["pendientes_emi"]))
 
     def test_json_invalido(self):
         with tempfile.TemporaryDirectory() as t:

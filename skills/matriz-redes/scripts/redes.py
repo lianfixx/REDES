@@ -648,20 +648,27 @@ def generar_tablero(raiz: Path, cfg: dict, hoy: dt.date | None = None, estados: 
     semana = [it for it in items if lunes <= a_mx(fecha_mx(it["fecha"])).date() < lunes + dt.timedelta(days=7)]
     proximas = sorted([it for it in items if a_mx(fecha_mx(it["fecha"])).date() >= hoy and it.get("estado") != "cancelada"],
                       key=lambda x: x["fecha"])[:20]
+    # Pendientes de Emi: {que, prioridad (1 alta, 2 media, 3 baja), sesion (red o área), donde (enlace del panel)}.
     pendientes = []
     for it in items:
         if it.get("estado") in ("lista para aprobar",):
-            pendientes.append(f"Aprobar: {it['titulo']} ({it['red']}, {it['fecha'][:16].replace('T', ' ')})")
+            pendientes.append({"que": f"Aprobar: {it['titulo']}", "prioridad": 1, "sesion": it["red"], "donde": "#piezas"})
     for d in ideas:
         for q in d.get("pendiente_de_emi", []) or []:
-            pendientes.append(str(q))
+            if isinstance(q, dict):
+                pendientes.append({"que": str(q.get("que", "")), "prioridad": int(q.get("prioridad", 2) or 2),
+                                   "sesion": str(q.get("sesion", "general")), "donde": str(q.get("donde", ""))})
+            else:
+                pendientes.append({"que": str(q), "prioridad": 2, "sesion": "general", "donde": ""})
         if d.get("caduca") and d.get("estado") not in ("publicada", "medida", "cerrada", "descartada"):
             try:
                 dias = (dia(d["caduca"]) - hoy).days
             except Fallo:
                 continue
             if dias <= 3:
-                pendientes.append(f"Caduca {'hoy' if dias == 0 else f'en {dias} días' if dias > 0 else 'YA CADUCÓ'}: {d['tesis']}")
+                pendientes.append({"que": f"Caduca {'hoy' if dias == 0 else f'en {dias} días' if dias > 0 else 'YA CADUCÓ'}: {d['tesis']}",
+                                   "prioridad": 1, "sesion": "ideas", "donde": "#ideas"})
+    pendientes.sort(key=lambda x: (x["prioridad"], x["sesion"]))
     avisos = validar_todo(raiz, cfg)
     datos_panel = {
         "generado": hoy.isoformat(),
@@ -673,7 +680,8 @@ def generar_tablero(raiz: Path, cfg: dict, hoy: dt.date | None = None, estados: 
         "pesos": cfg["pesos"], "pesos_estado": cfg.get("pesos_estado"),
     }
     L = [f"# Tablero de la Matriz de Redes", "", f"Generado el {hoy.isoformat()} por `redes.py tablero`. No se edita a mano.", ""]
-    L += ["## Pendiente de Emi", ""] + ([f"- [ ] {p}" for p in pendientes] or ["- Nada por ahora."]) + [""]
+    nombre = {1: "alta", 2: "media", 3: "baja"}
+    L += ["## Pendiente de Emi", ""] + ([f"- [ ] **{nombre.get(p['prioridad'], 'media')}** · {p['sesion']} · {p['que']}" for p in pendientes] or ["- Nada por ahora."]) + [""]
     L += ["## Esta semana", "", "| Día y hora | Red | Pieza | Skill | Estado |", "|---|---|---|---|---|"]
     L += [f"| {it['fecha'][:16].replace('T', ' ')} | {it['red']} | {it['titulo']} | {it['skill']} | {it['estado']} |"
           for it in sorted(semana, key=lambda x: x['fecha'])] or ["| — | — | Nada programado | — | — |"]

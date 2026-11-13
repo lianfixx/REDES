@@ -410,11 +410,19 @@ async function aprobar(env, id, cuerpo = {}) {
   if (rev.errores.length) throw new Error("No se puede aprobar: " + rev.errores.join(" "));
   const otra = lista.find((x) => x.id !== p.id && x.red !== p.red && x.estado !== "cancelada" && parecido(x.texto, p.texto) >= 0.85);
   if (otra) throw new Error(`Es casi el mismo texto que una pieza de ${otra.red}: cada red lleva su propia adaptación.`);
-  const h = await huellaAprobacion(p);
+  // Sin fecha: la Matriz pone la hora (lo pidió Emi el 13/11: «cuando apruebe algo, tú escojas hora»).
+  const fechaOriginal = p.fecha || null;
+  let asignada = null;
+  if (!p.fecha) {
+    const sug = p.hora_sugerida && Date.parse(p.hora_sugerida) > Date.now() + 10 * 60e3 ? p.hora_sugerida : sugerirHora(p.red, lista, Date.now(), p.id);
+    if (sug) asignada = sug;
+  }
+  const h = await huellaAprobacion({ ...p, fecha: asignada || p.fecha });
   // Se vuelve a leer y se escribe solo si la pieza no cambió mientras tanto.
   const q = await actualizarPieza(env, id, (x) => {
-    if (FINALES.includes(x.estado) || x.texto !== p.texto || x.red !== p.red || (x.fecha || null) !== (p.fecha || null) || (x.media || "") !== (p.media || ""))
+    if (FINALES.includes(x.estado) || x.texto !== p.texto || x.red !== p.red || (x.fecha || null) !== fechaOriginal || (x.media || "") !== (p.media || ""))
       throw new Error("La pieza cambió mientras la aprobabas: revísala otra vez.");
+    if (asignada) { x.fecha = asignada; x.hora_asignada_por = "Matriz"; }
     x.aprobado = { fecha: ahoraISO(), medio: "panel", por: "Emi" };
     x.aprobado_huella = h;
     const futura = x.fecha && Date.parse(x.fecha) > Date.now() + 60e3;
@@ -424,6 +432,28 @@ async function aprobar(env, id, cuerpo = {}) {
   });
   await bitacora(env, "Emi", `Aprobó ${q.red}: ${q.titulo || q.texto.slice(0, 60)}`);
   return q;
+}
+
+// Hora sugerida: la que dejó la Matriz (si sigue en el futuro) o el siguiente hueco libre según la red.
+// Horas base de crecimiento/redes.json (hipótesis que se ajustan con métricas); hora del centro de México (UTC−6, sin horario de verano).
+const HORA_BASE = { x: [9, 0], linkedin: [8, 30], instagram: [19, 0], tiktok: [19, 30] };
+const CADENCIA = { x: { dia: 2, sep: 4 }, linkedin: { dia: 1, sep: 24 }, instagram: { dia: 1, sep: 0 }, tiktok: { dia: 1, sep: 0 } };
+const MX = -6 * 3600e3;
+export function sugerirHora(red, lista, ahora = Date.now(), excluir = null) {
+  const [h, m] = HORA_BASE[red] || [10, 0];
+  const cad = CADENCIA[red] || { dia: 1, sep: 0 };
+  const ocupadas = lista.filter((x) => x.id !== excluir && x.red === red && x.fecha && !["cancelada", "fallo"].includes(x.estado)).map((x) => Date.parse(x.fecha));
+  const diaMX = (t) => new Date(t + MX).toISOString().slice(0, 10);
+  const hoy = new Date(ahora + MX);
+  for (let d = 0; d < 60; d++) {
+    const base = Date.UTC(hoy.getUTCFullYear(), hoy.getUTCMonth(), hoy.getUTCDate() + d, h, m) - MX;
+    if (base < ahora + 60 * 60e3) continue; // al menos una hora para revisarla
+    const mismoDia = ocupadas.filter((t) => diaMX(t) === diaMX(base)).length;
+    if (mismoDia >= cad.dia) continue;
+    if (ocupadas.some((t) => Math.abs(t - base) < Math.max(cad.sep, 1) * 3600e3)) continue;
+    return new Date(base).toISOString();
+  }
+  return null;
 }
 
 async function actualizarPieza(env, id, cambio) {
@@ -440,6 +470,7 @@ export async function publicar(env, id, fetcher = fetch) {
   if (!p) throw new Error("No existe esa pieza.");
   if (!PUBLICADORES[p.red]) throw new Error(`${p.red} todavía no publica por API: copia el texto y publícalo desde la app.`);
   if (p.solo_app) throw new Error("Esta pieza lleva video o archivo: cópiala y publícala desde la app.");
+  if (p.pausada) throw new Error("Esta pieza está en pausa: reanúdala para que salga.");
   if (!["aprobada", "programada"].includes(p.estado)) throw new Error("Solo se publica lo aprobado.");
   const esperada = await huellaAprobacion(p);
   if (p.aprobado_huella !== esperada) throw new Error("La pieza cambió después de aprobarse: vuelve a aprobarla.");
@@ -500,10 +531,27 @@ export async function api(request, env, url) {
     if (!(await claudeValido(request, env))) { await intentos(request, env, "fallo", "·claude"); return json({ error: "Llave inválida." }, 401); }
     try {
       if (ruta === "/api/claude/estado" && metodo === "GET")
-        return json({ piezas: await piezas(env), notas: await leer(env, "notas", []), encargos: await leer(env, "encargos", []), enlaces: await leer(env, "enlaces", []), bitacora: (await leer(env, "bitacora", [])).slice(0, 50),
+        return json({ piezas: await piezas(env), notas: await leer(env, "notas", []), encargos: await leer(env, "encargos", []), enlaces: await leer(env, "enlaces", []), inspiracion: await leer(env, "inspiracion", []), bitacora: (await leer(env, "bitacora", [])).slice(0, 50),
           conexiones: Object.fromEntries(await Promise.all(["x", "x2", "x_app", "linkedin", "linkedin_app"].map(async (n) => [n, !!(await leer(env, `cred:${n}`, null))]))) });
       if (ruta === "/api/claude/pieza" && metodo === "POST") return json(await editarPieza(env, cuerpo, "claude"));
       if (ruta === "/api/claude/nota" && metodo === "POST") return json(await agregarNota(env, cuerpo, "claude"));
+      const mc = ruta.match(/^\/api\/claude\/pieza\/([a-f0-9]{12})\/(comentario|sugerencia)$/);
+      if (mc && metodo === "POST") {
+        if (mc[2] === "comentario") return json(await comentar(env, mc[1], cuerpo, "Matriz"));
+        // Sugerencia: hora (y por qué). No toca texto, red, fecha ni archivo, así que no cambia la aprobación.
+        const hs = cuerpo.hora ? new Date(cuerpo.hora) : null;
+        if (hs && Number.isNaN(hs.getTime())) throw new Error("Hora inválida.");
+        const p = await actualizarPieza(env, mc[1], (x) => {
+          if (FINALES.includes(x.estado)) throw new Error("Ya se publicó.");
+          if (hs) x.hora_sugerida = hs.toISOString();
+          if (cuerpo.motivo !== undefined) x.hora_motivo = limpiar(cuerpo.motivo, 300);
+        });
+        return p ? json(p) : json({ error: "No existe esa pieza." }, 404);
+      }
+      const mi = ruta.match(/^\/api\/claude\/inspiracion\/([a-f0-9]{12})$/);
+      if (mi && metodo === "POST") return json(await analizarInspiracion(env, mi[1], cuerpo));
+      const me2 = ruta.match(/^\/api\/claude\/(nota|inspiracion)\/([a-f0-9]{12})\/espacio$/);
+      if (me2 && metodo === "POST") return json(await proponerEspacio(env, me2[1], me2[2], cuerpo, "Matriz"));
       if (ruta === "/api/claude/enlace" && metodo === "POST") return json(await agregarEnlace(env, cuerpo, "claude"));
       const me = ruta.match(/^\/api\/claude\/encargo\/([a-f0-9]{12})$/);
       if (me && metodo === "POST") return json(await cambiarEncargo(env, me[1], cuerpo, "claude"));
@@ -551,7 +599,7 @@ export async function api(request, env, url) {
       const mes = new Date().toISOString().slice(0, 7);
       return json({
         piezas: await piezas(env), notas: await leer(env, "notas", []), encargos: await leer(env, "encargos", []),
-        enlaces: await leer(env, "enlaces", []), bitacora: (await leer(env, "bitacora", [])).slice(0, 80),
+        enlaces: await leer(env, "enlaces", []), inspiracion: await leer(env, "inspiracion", []), bitacora: (await leer(env, "bitacora", [])).slice(0, 80),
         gasto_x: await leer(env, `gasto:x:${mes}`, { usd: 0, llamadas: [] }), tope_x: topeX(env),
         conexiones: { x: !!((await leer(env, "cred:x", null)) || (await leer(env, "cred:x2", null))), x_app: !!(await leer(env, "cred:x_app", null)), linkedin: !!(await leer(env, "cred:linkedin", null)), linkedin_app: !!(await leer(env, "cred:linkedin_app", null)) },
       });
@@ -598,6 +646,19 @@ export async function api(request, env, url) {
       return p ? json(p) : json({ error: "No existe esa pieza." }, 404);
     }
     if (ruta === "/api/nota" && metodo === "POST") return json(await agregarNota(env, cuerpo, "Emi"));
+    if (ruta === "/api/inspiracion" && metodo === "POST") return json(await agregarInspiracion(env, cuerpo));
+    const mesp = ruta.match(/^\/api\/(nota|inspiracion)\/([a-f0-9]{12})\/espacio$/);
+    if (mesp && metodo === "POST") return json(await proponerEspacio(env, mesp[1], mesp[2], cuerpo, "Emi"));
+    const mpc = ruta.match(/^\/api\/pieza\/([a-f0-9]{12})\/(comentario|pausa)$/);
+    if (mpc && metodo === "POST") {
+      if (mpc[2] === "comentario") return json(await comentar(env, mpc[1], cuerpo, "Emi"));
+      const p = await actualizarPieza(env, mpc[1], (x) => {
+        if (FINALES.includes(x.estado)) throw new Error("Ya se publicó.");
+        x.pausada = !!cuerpo.pausada;
+        x.historial.unshift({ fecha: ahoraISO(), quien: "Emi", que: x.pausada ? "en pausa" : "reanudada" });
+      });
+      return p ? json(p) : json({ error: "No existe esa pieza." }, 404);
+    }
     if (ruta === "/api/enlace" && metodo === "POST") return json(await agregarEnlace(env, cuerpo, "Emi"));
     if (ruta === "/api/encargo" && metodo === "POST") {
       const e = await leer(env, "encargos", []);
@@ -672,9 +733,63 @@ export async function api(request, env, url) {
   return json({ error: "No encontrado." }, 404);
 }
 
+const ESPACIOS = ["personal", "milla", "castorena", "pan"];
+async function comentar(env, id, cuerpo, quien) {
+  const texto = limpiar(cuerpo.texto, 1500);
+  if (!texto.trim()) throw new Error("Escribe la nota.");
+  const p = await actualizarPieza(env, id, (x) => {
+    x.comentarios = [...(x.comentarios || []), { fecha: ahoraISO(), quien, texto }].slice(-60);
+  });
+  if (!p) throw new Error("No existe esa pieza.");
+  await bitacora(env, quien, `Nota en «${p.titulo || p.red}»: ${texto.slice(0, 80)}`);
+  return p;
+}
+const plataformaDe = (u) => {
+  try {
+    const h = new URL(u).hostname.replace(/^www\./, "");
+    return [["pinterest", "Pinterest"], ["pin.it", "Pinterest"], ["tiktok", "TikTok"], ["instagram", "Instagram"], ["youtu", "YouTube"], ["x.com", "X"], ["twitter", "X"], ["linkedin", "LinkedIn"], ["vimeo", "Vimeo"]].find(([k]) => h.includes(k))?.[1] || h;
+  } catch { return ""; }
+};
+async function agregarInspiracion(env, cuerpo) {
+  const url = limpiarUrl(cuerpo.url);
+  if (!url) throw new Error("Pega un enlace https.");
+  const l = await leer(env, "inspiracion", []);
+  const e = { id: nuevoId(), fecha: ahoraISO(), url, plataforma: plataformaDe(url), que_me_llamo: limpiar(cuerpo.que_me_llamo, 1000),
+    espacio: ESPACIOS.includes(cuerpo.espacio) ? cuerpo.espacio : null, espacio_propuesto: null, red: limpiar(cuerpo.red || "", 20), estado: "por analizar", analisis: null };
+  l.unshift(e); await guardar(env, "inspiracion", l.slice(0, 500));
+  await bitacora(env, "Emi", `Inspiración (${e.plataforma}): ${e.que_me_llamo.slice(0, 60) || url}`);
+  return e;
+}
+async function analizarInspiracion(env, id, cuerpo) {
+  const l = await leer(env, "inspiracion", []);
+  const e = l.find((x) => x.id === id);
+  if (!e) throw new Error("No existe esa inspiración.");
+  const campos = ["estilo", "redaccion", "edicion", "gancho", "formato", "musica", "ritmo", "que_tomar", "para_que_red", "evitar"];
+  e.analisis = Object.fromEntries(campos.filter((k) => cuerpo[k]).map((k) => [k, limpiar(cuerpo[k], 800)]));
+  e.analisis.fecha = ahoraISO();
+  e.estado = "analizada";
+  if (ESPACIOS.includes(cuerpo.espacio_propuesto) && !e.espacio) e.espacio_propuesto = cuerpo.espacio_propuesto;
+  await guardar(env, "inspiracion", l);
+  return e;
+}
+// La Matriz propone el espacio; Emi lo confirma o lo cambia. Lo de Emi manda.
+async function proponerEspacio(env, tipo, id, cuerpo, quien) {
+  const clave = tipo === "nota" ? "notas" : "inspiracion";
+  const l = await leer(env, clave, []);
+  const e = l.find((x) => x.id === id);
+  if (!e) throw new Error("No existe.");
+  const esp = String(cuerpo.espacio || "");
+  if (!ESPACIOS.includes(esp)) throw new Error("Espacio inválido.");
+  if (quien === "Emi") { e.espacio = esp; e.espacio_propuesto = null; }
+  else if (!e.espacio) e.espacio_propuesto = esp;
+  await guardar(env, clave, l);
+  return e;
+}
+
 async function agregarNota(env, cuerpo, quien) {
   const n = await leer(env, "notas", []);
-  const nota = { id: nuevoId(), fecha: ahoraISO(), quien, red: limpiar(cuerpo.red || "todas", 20), tipo: limpiar(cuerpo.tipo || "idea", 20), texto: limpiar(cuerpo.texto, 2000) };
+  const nota = { id: nuevoId(), fecha: ahoraISO(), quien, red: limpiar(cuerpo.red || "todas", 20), tipo: limpiar(cuerpo.tipo || "idea", 20), texto: limpiar(cuerpo.texto, 2000),
+    espacio: quien === "Emi" && ESPACIOS.includes(cuerpo.espacio) ? cuerpo.espacio : null, espacio_propuesto: quien !== "Emi" && ESPACIOS.includes(cuerpo.espacio) ? cuerpo.espacio : null };
   if (!nota.texto.trim()) throw new Error("Escribe la nota.");
   n.unshift(nota); await guardar(env, "notas", n.slice(0, 1000));
   await bitacora(env, quien, `Nota (${nota.tipo}, ${nota.red}): ${nota.texto.slice(0, 80)}`);
@@ -733,7 +848,7 @@ export async function tic(env, fetcher = fetch) {
   const vencidas = (await piezas(env)).filter((x) => x.estado === "programada" && x.fecha && Date.parse(x.fecha) <= ahora).map((x) => x.id);
   for (const id of vencidas) {
     const p = (await piezas(env)).find((x) => x.id === id);
-    if (!p || p.estado !== "programada") continue;
+    if (!p || p.estado !== "programada" || p.pausada) continue;
     if (ahora - Date.parse(p.fecha) > 6 * 3600e3) {
       // Seis horas tarde ya no se publica sola: queda para que Emi decida.
       await actualizarPieza(env, id, (x) => { x.estado = "aprobada"; x.historial.unshift({ fecha: ahoraISO(), quien: "panel", que: "no salió a su hora; espera a Emi" }); });

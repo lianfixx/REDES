@@ -57,11 +57,29 @@
   },
   "estado": "decidida",
   "pendiente_de_emi": [
-    "Abrir cuentas de TikTok e Instagram (@emilianomilla_, Instagram tipo Creador)",
-    "Conectar LinkedIn en el panel (Ajustes)",
-    "Elegir el post de lanzamiento de X (A o B) en el panel",
-    "Elegir día de grabación",
-    "Perfil de X: acento en «García» y sitio web emilianomilla.site",
-    "Tener créditos en la consola de X antes de aprobar el lanzamiento"
+    {
+      "que": "Tener créditos en la consola de X antes de que salga el lanzamiento",
+      "prioridad": 1,
+      "sesion": "x",
+      "donde": "https://console.x.com"
+    },
+    {
+      "que": "Abrir las cuentas de TikTok e Instagram (@emilianomilla_; Instagram tipo Creador)",
+      "prioridad": 2,
+      "sesion": "TikTok e Instagram",
+      "donde": ""
+    },
+    {
+      "que": "Elegir el día para grabar los 4 videos (Matriz, DOF, Boletines, Vox)",
+      "prioridad": 2,
+      "sesion": "Videos",
+      "donde": "#ideas"
+    },
+    {
+      "que": "Perfil de X: acento en «García» y sitio web emilianomilla.site",
+      "prioridad": 3,
+      "sesion": "x",
+      "donde": "https://x.com/settings/profile"
+    }
   ]
 }
