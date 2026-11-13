@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-13 · Corrige la prueba de X como app pública
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: el commit anterior subió con una prueba mal escrita (buscaba el aviso en la primera línea de la bitácora, que es «regreso correcto»); el control quedó en rojo y el panel no se publicó.
+- Cambios: la prueba busca el aviso «app pública» en toda la bitácora.
+- Archivos: `worker/prueba.mjs`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado (17 pruebas del Worker) antes de subir.
+- Pendiente: ninguno.
+
 ## 2026-11-13 · X: token como app confidencial o pública
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: bitácora del panel, 13/11 17:32: «X no entregó el permiso (401: Missing valid authorization header)» al conectar X.

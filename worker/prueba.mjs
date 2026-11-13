@@ -258,6 +258,6 @@ await t("X como app pública: si Basic da 401, se pide el token sin secreto", as
   const r = await xVolver(new Request(`${O}/api/x/volver?state=${st}&code=c`), env, new URL(`${O}/api/x/volver?state=${st}&code=c`), fx);
   assert.match(r.headers.get("Location"), /x=ok/);
   assert.deepEqual(vistas, [true, false]);
-  assert.match(JSON.parse(env.ALMACEN.m.get("bitacora"))[0].que, /pública/);
+  assert.ok(JSON.parse(env.ALMACEN.m.get("bitacora")).some((b) => /app pública/.test(b.que)));
 });
 console.log(`\n${ok} pruebas aprobadas`);
