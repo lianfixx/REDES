@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-13 · Crecer: correcciones de Instagram con fuente oficial
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: mensaje de la sesión de Instagram (13/11), tras leer el Centro de ayuda oficial.
+- Cambios: Instagram en `crecimiento/redes.json`: señales principales (tiempo de visualización, me gusta, envíos), prueba con no seguidores, límite de 3 min para recomendaciones, 720p/30 fps y portada 420×654, «trial reels» (200 seguidores en cuenta profesional), programación hasta 30 días antes, descripciones largas sin relación no se recomiendan; corrige que las cuentas personales públicas también ven estadísticas.
+- Archivos: `crecimiento/redes.json`, este registro.
+- Verificación: JSON válido; `python3 ia/verificar.py ci` → aprobado. Las fuentes son las que citó la sesión de Instagram; esta sesión no las releyó.
+- Pendiente: ninguno.
+
 ## 2026-11-13 · Contraseña del panel: PBKDF2 a 100 000 vueltas
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: hallazgo de la auditoría independiente (interrumpida por un reinicio del contenedor antes de entregar su informe).
