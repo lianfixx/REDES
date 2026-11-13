@@ -37,3 +37,8 @@ LinkedIn, TikTok, Editor Studio.
 - Cadencia que Emi fijó a LinkedIn: 2 piezas por semana, máximo 1 al día, 08:30. Propone el documento el martes y el video el jueves.
 - En LinkedIn mandan las respuestas que Emi dio a esa skill: autoridad en IA + Derecho y red y oportunidades; pilares IA + Derecho 60 %, carrera 25 %, opinión 15 %.
 - Preguntas pasadas a Emi: paleta; capturas reales o maquetas; nombrar las IA; subtítulos del video del DOF; enlace a GitHub; cierre «abierto a conversar».
+
+## Regla «nunca decir que lo armó una IA»
+- x-viral la aplicó en lianfixx/X (commit 0144480): `xviral.py revisar` da error si un texto atribuye la autoría a una IA y deja pasar «armé una IA que…», «trabajo con IA». Sugiere que el panel aplique la misma regla a todas las redes.
+- Vox: remate cancelado, nada gastado. Antes de escribir la regla en su skill se la confirma a Emi en su sesión, porque le llegó por mensaje.
+- Instagram: el Reel 4 de Vox solo muestra el estilo ilustrado (opción a), así que no necesita etiqueta de IA.

@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-13 · Regla «nunca decir que lo armó una IA» en las respuestas de las skills
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: Emi, 13/11/2026, chat de esta sesión.
+- Cambios: se anota cómo aplicaron X, Vox e Instagram la regla absoluta de Emi.
+- Archivos: `docs/RESPUESTAS-SKILLS-2026-11-13.md`, este registro.
+- Verificación: no aplica (solo documentación).
+- Pendiente: confirmar con Emi el panel de publicación.
+
 ## 2026-11-13 · Arranque de la Matriz de Redes
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: Emi, 13/11/2026, por medio de la sesión de X: construir la Matriz de Redes; luego, en el chat de esta sesión, la campaña de lanzamiento «lo que construí uniendo IA y Derecho».
