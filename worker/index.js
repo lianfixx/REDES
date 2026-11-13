@@ -294,7 +294,7 @@ async function metricasX(env, id, fetcher = fetch) {
 const b64url = (buf) => b64(buf).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 async function xVolver(request, env, url, fetcher = fetch) {
   // Igual que LinkedIn: lo protege el «state» de un solo uso, creado por Emi con sesión.
-  const volver = (msg) => Response.redirect(`${url.origin}/#ajustes?x=${encodeURIComponent(msg)}`, 302);
+  const volver = async (msg) => { await bitacora(env, "panel", msg === "ok" ? "X: regreso correcto" : `X: ${msg}`); return Response.redirect(`${url.origin}/#ajustes?x=${encodeURIComponent(msg)}`, 302); };
   const estado = url.searchParams.get("state") || "";
   const g = /^[0-9a-f]{48}$/.test(estado) ? await leer(env, `x_estado:${estado}`, null) : null;
   if (g) await borrar(env, `x_estado:${estado}`);
@@ -308,7 +308,7 @@ async function xVolver(request, env, url, fetcher = fetch) {
     body: new URLSearchParams({ grant_type: "authorization_code", code: url.searchParams.get("code") || "", redirect_uri: `${url.origin}/api/x/volver`, code_verifier: g.verificador, client_id: app.client_id }).toString(),
   });
   const t = await r.json().catch(() => ({}));
-  if (!t.access_token) return volver(`X no entregó el permiso (${r.status}).`);
+  if (!t.access_token) return volver(`X no entregó el permiso (${r.status}: ${String(t.error_description || t.error || "").slice(0, 120)}).`);
   await guardarSecreto(env, "x2", { access_token: t.access_token, refresh_token: t.refresh_token || "", vence: new Date(Date.now() + (Number(t.expires_in) || 7200) * 1000).toISOString() });
   await bitacora(env, "Emi", "Conectó X (OAuth 2.0)");
   return volver("ok");
@@ -495,7 +495,8 @@ export async function api(request, env, url) {
     if (!(await claudeValido(request, env))) { await intentos(request, env, "fallo", "·claude"); return json({ error: "Llave inválida." }, 401); }
     try {
       if (ruta === "/api/claude/estado" && metodo === "GET")
-        return json({ piezas: await piezas(env), notas: await leer(env, "notas", []), encargos: await leer(env, "encargos", []), enlaces: await leer(env, "enlaces", []), bitacora: (await leer(env, "bitacora", [])).slice(0, 50) });
+        return json({ piezas: await piezas(env), notas: await leer(env, "notas", []), encargos: await leer(env, "encargos", []), enlaces: await leer(env, "enlaces", []), bitacora: (await leer(env, "bitacora", [])).slice(0, 50),
+          conexiones: Object.fromEntries(await Promise.all(["x", "x2", "x_app", "linkedin", "linkedin_app"].map(async (n) => [n, !!(await leer(env, `cred:${n}`, null))]))) });
       if (ruta === "/api/claude/pieza" && metodo === "POST") return json(await editarPieza(env, cuerpo, "claude"));
       if (ruta === "/api/claude/nota" && metodo === "POST") return json(await agregarNota(env, cuerpo, "claude"));
       if (ruta === "/api/claude/enlace" && metodo === "POST") return json(await agregarEnlace(env, cuerpo, "claude"));
@@ -607,7 +608,10 @@ export async function api(request, env, url) {
       const c = {};
       for (const k of ["api_key", "api_secret", "access_token", "access_secret"]) {
         c[k] = String(cuerpo[k] || "").trim();
-        if (c[k].length < 10 || c[k].length > 200 || /\s/.test(c[k])) return json({ error: `Revisa «${k}».` }, 400);
+        if (c[k].length < 10 || c[k].length > 200 || /\s/.test(c[k])) {
+          await bitacora(env, "panel", `No se guardaron las llaves de X 1.0a: revisa «${k}» (${c[k].length} caracteres${/\s/.test(c[k]) ? ", con espacios" : ""})`);
+          return json({ error: `Revisa «${k}»: debe ir completo y sin espacios.` }, 400);
+        }
       }
       await guardarSecreto(env, "x", c);
       await bitacora(env, "Emi", "Guardó las llaves de X");
@@ -627,6 +631,7 @@ export async function api(request, env, url) {
       const verificador = b64url(crypto.getRandomValues(new Uint8Array(48)));
       const reto = b64url(await crypto.subtle.digest("SHA-256", enc.encode(verificador)));
       await guardar(env, `x_estado:${estado}`, { verificador, vence: Date.now() + 600e3 });
+      await bitacora(env, "Emi", "Inició la conexión con X (va a x.com para autorizar)");
       const u = new URL("https://x.com/i/oauth2/authorize");
       u.search = new URLSearchParams({ response_type: "code", client_id: app.client_id, redirect_uri: `${url.origin}/api/x/volver`, scope: "tweet.read tweet.write users.read offline.access", state: estado, code_challenge: reto, code_challenge_method: "S256" });
       return json({ url: u.toString() });
@@ -644,6 +649,7 @@ export async function api(request, env, url) {
       const estado = hex(crypto.getRandomValues(new Uint8Array(24)));
       // El «state» solo lo crea Emi con sesión; es de un solo uso y vence en 10 minutos.
       await guardar(env, `linkedin_estado:${estado}`, { vence: Date.now() + 600e3 });
+      await bitacora(env, "Emi", "Inició la conexión con LinkedIn");
       const u = new URL("https://www.linkedin.com/oauth/v2/authorization");
       u.search = new URLSearchParams({ response_type: "code", client_id: app.client_id, redirect_uri: `${url.origin}/api/linkedin/volver`, state: estado, scope: "openid profile w_member_social" });
       return json({ url: u.toString() });
@@ -693,7 +699,7 @@ async function cambiarEncargo(env, id, cuerpo, quien) {
 async function linkedinVolver(request, env, url) {
   // El regreso viene de linkedin.com: el navegador no manda la cookie (SameSite=Strict). Lo protege el «state»,
   // que solo Emi pudo crear con sesión, es de un solo uso y vence en 10 minutos.
-  const volver = (msg) => Response.redirect(`${url.origin}/#ajustes?linkedin=${encodeURIComponent(msg)}`, 302);
+  const volver = async (msg) => { await bitacora(env, "panel", msg === "ok" ? "LinkedIn: regreso correcto" : `LinkedIn: ${msg}`); return Response.redirect(`${url.origin}/#ajustes?linkedin=${encodeURIComponent(msg)}`, 302); };
   const estado = url.searchParams.get("state") || "";
   const guardado = /^[0-9a-f]{48}$/.test(estado) ? await leer(env, `linkedin_estado:${estado}`, null) : null;
   if (guardado) await borrar(env, `linkedin_estado:${estado}`);

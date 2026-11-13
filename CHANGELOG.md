@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-13 · Bitácora de conexiones con X y LinkedIn
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: Emi (vía x-viral, 13/11): «ya hice ambos y no pasa nada» al conectar X.
+- Cambios: la bitácora del panel anota cada intento de conexión (inicio, regreso y el error exacto que devuelve X o LinkedIn) y el motivo cuando las llaves 1.0a no se aceptan; la API de Claude ve qué credenciales existen (solo sí/no, nunca valores) para diagnosticar sin pedirle nada a Emi.
+- Archivos: `worker/index.js`, este registro.
+- Verificación: `node worker/prueba.mjs` → aprobado.
+- Pendiente: que Emi reintente «Conectar X» para leer el motivo.
+
 ## 2026-11-13 · Conectar X con OAuth 2.0 + PKCE
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: aviso de x-viral (13/11): la consola de X de Emi da credenciales de OAuth 2.0 (Client ID, Client Secret, token de acceso y de actualización), y Ajustes solo aceptaba OAuth 1.0a.
