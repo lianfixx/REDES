@@ -41,3 +41,13 @@ Generado el 2026-11-13 por `redes.py tablero`. No se edita a mano.
 
 - Ninguno.
 
+## Estado de cada skill
+
+| Skill | Leído | Publicados | Lecciones |
+|---|---|---|---|
+| x | no se pudo leer | — | — |
+| linkedin | 2026-11-13 | 0 | 1 |
+| tiktok | no se pudo leer | — | — |
+| instagram | 2026-11-12 | 0 | 3 |
+| instagram-historias | no se pudo leer | — | — |
+

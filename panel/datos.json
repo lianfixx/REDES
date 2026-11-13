@@ -536,7 +536,239 @@
  "lecciones": [],
  "experimentos": [],
  "registro": [],
- "estados_skills": {},
+ "estados_skills": {
+  "x": {
+   "error": "HTTPError: HTTP Error 404: Not Found"
+  },
+  "linkedin": {
+   "contrato": "redes-estado/0.1",
+   "skill": "linkedin-pro",
+   "red": "linkedin",
+   "version_skill": "1.0.0",
+   "actualizado": "2026-11-13",
+   "cuentas": [
+    {
+     "espacio": "personal",
+     "usuario": "https://www.linkedin.com/in/emiliano-milla",
+     "activa": true
+    }
+   ],
+   "cadencia": {
+    "max_por_dia": 1,
+    "separacion_min_h": 24,
+    "max_por_semana": 2,
+    "fuente": "decisión de Emi del 13/11/2026 (2 por semana); separación: criterio de la skill",
+    "certeza": "criterio"
+   },
+   "formatos": [
+    {
+     "id": "texto",
+     "que_premia": "Conocimiento y opinión con punto de vista claro; LinkedIn no publica ventaja por formato",
+     "fuente": "https://www.linkedin.com/help/linkedin/answer/a528176",
+     "certeza": "criterio"
+    },
+    {
+     "id": "imagen",
+     "que_premia": "Imagen propia que explique algo; no hay dato oficial de alcance",
+     "fuente": "https://www.linkedin.com/help/linkedin/answer/a527229",
+     "certeza": "criterio"
+    },
+    {
+     "id": "documento",
+     "que_premia": "Guardados y tiempo de lectura según estudios de terceros; LinkedIn no publica ventaja oficial",
+     "fuente": "https://www.linkedin.com/help/linkedin/answer/a518909",
+     "certeza": "terceros"
+    },
+    {
+     "id": "video",
+     "que_premia": "El feed de video vertical elige videos ya publicados por calidad y relevancia; no se publica directo en él",
+     "fuente": "https://www.linkedin.com/help/linkedin/answer/a548372",
+     "certeza": "oficial"
+    },
+    {
+     "id": "articulo",
+     "que_premia": "Profundidad y búsqueda a largo plazo; no hay dato oficial de alcance en el feed",
+     "fuente": "https://www.linkedin.com/help/linkedin/answer/a522483",
+     "certeza": "criterio"
+    },
+    {
+     "id": "boletin",
+     "que_premia": "Suscriptores propios; no hay dato oficial de alcance en el feed",
+     "fuente": "https://www.linkedin.com/help/linkedin/answer/a591266",
+     "certeza": "criterio"
+    },
+    {
+     "id": "encuesta",
+     "que_premia": "Estudios de terceros discrepan; LinkedIn prohíbe preguntar opiniones políticas en encuestas",
+     "fuente": "https://www.linkedin.com/help/linkedin/answer/a527273",
+     "certeza": "terceros"
+    }
+   ],
+   "minutos_emi_por_pieza": {
+    "texto": 10,
+    "imagen": 15,
+    "documento": 25,
+    "video": 15,
+    "articulo": 40,
+    "boletin": 40,
+    "encuesta": 5
+   },
+   "publicados": [],
+   "lecciones": [
+    {
+     "fecha": "2026-11-13",
+     "texto": "Emi eligió para LinkedIn: perfil personal, autoridad en IA + Derecho y red, sin captar clientes por ahora, pilares 60/25/15, todos los formatos, 2 piezas por semana, tono profesional y cercano con algo de humor, revisión semanal de fuentes.",
+     "evidencia": "cuenta/aprendizajes.md",
+     "alcance": "red"
+    }
+   ],
+   "ideas_para_otras": [],
+   "pendientes_de_emi": [
+    {
+     "que": "Crear el repositorio público lianfixx/LinkedIn y autorizar a la sesión a conectarlo",
+     "desde": "2026-11-13",
+     "bloquea": "subir la skill"
+    },
+    {
+     "que": "Material y postura para las dos primeras piezas",
+     "desde": "2026-11-13",
+     "bloquea": "primera semana"
+    },
+    {
+     "que": "Elegir y reescribir el texto del post del video del DOF y mandar el enlace cuando salga",
+     "desde": "2026-11-13",
+     "bloquea": "anotar la primera pieza"
+    },
+    {
+     "que": "Bajar la copia de sus datos de LinkedIn y pasar solo Profile.csv y Shares.csv (sin contactos ni mensajes)",
+     "desde": "2026-11-13",
+     "bloquea": "propuesta de «Acerca de» y voz real"
+    },
+    {
+     "que": "Dar los nombres de los licenciados que no se nombran, para vetarlos por huella",
+     "desde": "2026-11-13",
+     "bloquea": "filtro de nombres"
+    }
+   ],
+   "fuentes": {
+    "archivo": "skills/linkedin-pro/data/fuentes.json",
+    "verificado": "2026-11-13",
+    "referencias": [
+     "skills/linkedin-pro/references/feed.md",
+     "skills/linkedin-pro/references/mitos.md"
+    ]
+   },
+   "indice": {
+    "perfil": "cuenta/perfil.json",
+    "publicados": "cuenta/publicados.jsonl",
+    "aprendizajes": "cuenta/aprendizajes.md",
+    "puente_vox": "puente/para-vox.md"
+   }
+  },
+  "tiktok": {
+   "error": "HTTPError: HTTP Error 404: Not Found"
+  },
+  "instagram": {
+   "contrato": "redes-estado/0.1.1",
+   "skill": "instagram-studio",
+   "red": "instagram",
+   "version_skill": "1.0.1",
+   "actualizado": "2026-11-12",
+   "cuentas": [
+    {
+     "espacio": "personal",
+     "usuario": "",
+     "activa": false
+    }
+   ],
+   "cadencia": {
+    "max_por_dia": 1,
+    "separacion_min_h": 0,
+    "max_por_semana": 5,
+    "fuente": "Buffer, 2.1 M publicaciones (13/08/2025): 3-5 por semana; Instagram solo pide constancia",
+    "certeza": "terceros"
+   },
+   "formatos": [
+    {
+     "id": "reel",
+     "que_premia": "tiempo de visualización, me gusta y envíos; los envíos pesan algo más con no seguidores; se reparte por etapas a no seguidores",
+     "fuente": "@mosseri 21/01/2025; creators.instagram.com 26/02/2025",
+     "certeza": "oficial"
+    },
+    {
+     "id": "carrusel",
+     "que_premia": "recorrerlo completo, que sea informativo y reciente; más interacción y guardados que el Reel, menos alcance",
+     "fuente": "tarjeta Feed (transparency.meta.com, 29/06/2026); Buffer 2026, Metricool 2026",
+     "certeza": "oficial"
+    },
+    {
+     "id": "foto",
+     "que_premia": "lo mismo que el feed; rinde menos que Reel y carrusel en los estudios",
+     "fuente": "Metricool 2026, Buffer 2026",
+     "certeza": "terceros"
+    }
+   ],
+   "minutos_emi_por_pieza": {
+    "reel": 20,
+    "carrusel": 10,
+    "foto": 5,
+    "nota": "estimación de criterio: reescribir, aprobar y publicar; no incluye grabar"
+   },
+   "publicados": [],
+   "lecciones": [
+    {
+     "fecha": "2026-11-13",
+     "texto": "Emi: «jamás en nada digas que lo armó una IA». Ninguna pieza dice que la hizo, la armó o la editó una IA. La etiqueta «Información de IA» de Instagram es otra cosa: un interruptor obligatorio cuando hay video o voz realistas hechos con IA; para no necesitarla, de Vox se muestra el estilo collage o ilustrado.",
+     "evidencia": "cuenta/aprendizajes.md",
+     "alcance": "red"
+    },
+    {
+     "fecha": "2026-11-13",
+     "texto": "Auditoría: la voz sintética de Vox cuenta como «realistic AI-generated voiceover» y obliga a la etiqueta de IA. El Reel de Vox se narra con la voz de Emi o lleva la etiqueta.",
+     "evidencia": "cuenta/aprendizajes.md",
+     "alcance": "red"
+    },
+    {
+     "fecha": "2026-11-13",
+     "texto": "Emi: ganchos agresivos permitidos, sin avisos de autoelogio ni de ética gremial. Siguen la ley, las reglas de Instagram y sus límites propios (clientes, datos de asuntos, Castorena).",
+     "evidencia": "cuenta/aprendizajes.md",
+     "alcance": "red"
+    }
+   ],
+   "ideas_para_otras": [
+    {
+     "fecha": "2026-11-13",
+     "para": "vox-studio",
+     "tema": "Reel 4 de la campaña (26/11): «Vox, el estudio de video que construí». Mostrar el proceso y el estilo collage, no clips realistas, con la voz de Emi encima. Público: abogados y creadores que quieren explicar temas jurídicos en video. Gancho tentativo: el antes y el después de un tema en 3 segundos.",
+     "por_que": "puente/para-vox.md"
+    }
+   ],
+   "pendientes_de_emi": [
+    {
+     "que": "Crear la cuenta de Instagram (creador) y pasar el usuario",
+     "desde": "2026-11-13",
+     "bloquea": "publicar y medir"
+    },
+    {
+     "que": "Confirmar pilares (40/40/20 propuesto o partes iguales)",
+     "desde": "2026-11-13",
+     "bloquea": "balance"
+    },
+    {
+     "que": "Grabar los cuatro videos de la campaña (Matriz, DOF, Boletines, Vox) con datos de demostración",
+     "desde": "2026-11-13",
+     "bloquea": "Reels del 17/11 al 26/11"
+    }
+   ],
+   "fuentes": {
+    "archivo": "skills/instagram-studio/data/fuentes.json",
+    "verificado": "2026-11-13"
+   }
+  },
+  "instagram-historias": {
+   "error": "HTTPError: HTTP Error 404: Not Found"
+  }
+ },
  "pesos": {
   "encaje": 0.2,
   "objetivo": 0.2,
