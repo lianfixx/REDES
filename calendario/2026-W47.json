@@ -1,10 +1,91 @@
-{"semana": "2026-W47", "tope_minutos_emi": 180, "nota": "Semana de lanzamiento. Lunes 16 es feriado. Horas tentativas: cada skill las ajusta.", "items": [
- {"id": "li-documento", "idea": "2026-11-13-lanzamiento", "fecha": "2026-11-17T08:30:00-06:00", "red": "linkedin", "skill": "linkedin-pro", "titulo": "Documento de 8 láminas: herramientas que construí", "estado": "en produccion", "minutos_emi": 20},
- {"id": "x-lanzamiento", "idea": "2026-11-13-lanzamiento", "fecha": "2026-11-17T09:00:00-06:00", "red": "x", "skill": "x-viral", "titulo": "Post de lanzamiento (A o B)", "estado": "borrador", "minutos_emi": 30, "condicion": "cuenta sin candado"},
- {"id": "ig-reel-matriz", "idea": "2026-11-13-lanzamiento", "fecha": "2026-11-17T19:00:00-06:00", "red": "instagram", "skill": "instagram-studio", "titulo": "Reel 1 · Matriz", "estado": "idea", "minutos_emi": 20, "productora": "editor-studio"},
- {"id": "tt-matriz", "idea": "2026-11-13-lanzamiento", "fecha": "2026-11-17T19:30:00-06:00", "red": "tiktok", "skill": "tiktok", "titulo": "Video 1 · Matriz", "estado": "idea", "minutos_emi": 10, "productora": "editor-studio"},
- {"id": "ig-reel-dof", "idea": "2026-11-13-lanzamiento", "fecha": "2026-11-19T19:00:00-06:00", "red": "instagram", "skill": "instagram-studio", "titulo": "Reel 2 · DOF", "estado": "idea", "minutos_emi": 20, "productora": "editor-studio"},
- {"id": "tt-dof", "idea": "2026-11-13-lanzamiento", "fecha": "2026-11-19T19:30:00-06:00", "red": "tiktok", "skill": "tiktok", "titulo": "Video 2 · DOF", "estado": "idea", "minutos_emi": 10, "productora": "editor-studio"},
- {"id": "x-dof", "idea": "2026-11-13-lanzamiento", "fecha": "2026-11-20T09:00:00-06:00", "red": "x", "skill": "x-viral", "titulo": "Video del DOF nativo", "estado": "borrador", "minutos_emi": 20, "condicion": "cuenta sin candado"},
- {"id": "tt-dof-animado", "idea": "2026-11-13-lanzamiento", "fecha": "2026-11-21T12:00:00-06:00", "red": "tiktok", "skill": "tiktok", "titulo": "Video animado del DOF (tal cual)", "estado": "idea", "minutos_emi": 10}
-]}
+{
+ "semana": "2026-W47",
+ "tope_minutos_emi": 180,
+ "nota": "Semana de lanzamiento. Lunes 16 es feriado. Horas tentativas: cada skill las ajusta.",
+ "items": [
+  {
+   "id": "li-documento",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-17T08:30:00-06:00",
+   "red": "linkedin",
+   "skill": "linkedin-pro",
+   "titulo": "Documento de 8 láminas: herramientas que construí",
+   "estado": "en produccion",
+   "minutos_emi": 20
+  },
+  {
+   "id": "x-lanzamiento",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-17T09:00:00-06:00",
+   "red": "x",
+   "skill": "x-viral",
+   "titulo": "Post de lanzamiento (A o B)",
+   "estado": "borrador",
+   "minutos_emi": 30
+  },
+  {
+   "id": "ig-reel-matriz",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-17T19:00:00-06:00",
+   "red": "instagram",
+   "skill": "instagram-studio",
+   "titulo": "Reel 1 · Matriz",
+   "estado": "idea",
+   "minutos_emi": 20,
+   "productora": "editor-studio"
+  },
+  {
+   "id": "tt-matriz",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-17T19:30:00-06:00",
+   "red": "tiktok",
+   "skill": "tiktok",
+   "titulo": "Video 1 · Matriz",
+   "estado": "idea",
+   "minutos_emi": 10,
+   "productora": "editor-studio"
+  },
+  {
+   "id": "ig-reel-dof",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-19T19:00:00-06:00",
+   "red": "instagram",
+   "skill": "instagram-studio",
+   "titulo": "Reel 2 · DOF",
+   "estado": "idea",
+   "minutos_emi": 20,
+   "productora": "editor-studio"
+  },
+  {
+   "id": "tt-dof",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-19T19:30:00-06:00",
+   "red": "tiktok",
+   "skill": "tiktok",
+   "titulo": "Video 2 · DOF",
+   "estado": "idea",
+   "minutos_emi": 10,
+   "productora": "editor-studio"
+  },
+  {
+   "id": "x-dof",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-20T09:00:00-06:00",
+   "red": "x",
+   "skill": "x-viral",
+   "titulo": "Video del DOF nativo",
+   "estado": "borrador",
+   "minutos_emi": 20
+  },
+  {
+   "id": "tt-dof-animado",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-21T12:00:00-06:00",
+   "red": "tiktok",
+   "skill": "tiktok",
+   "titulo": "Video animado del DOF (tal cual)",
+   "estado": "idea",
+   "minutos_emi": 10
+  }
+ ]
+}

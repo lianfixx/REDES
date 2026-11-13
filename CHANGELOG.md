@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-13 · X sin candado
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: Emi, 13/11/2026: «listo» (quitó la protección de su cuenta de X).
+- Cambios: se quita el pendiente del candado y la condición de las piezas de X del calendario; queda el pendiente del acento en el nombre y del sitio web.
+- Archivos: `ideas/2026-11-13-lanzamiento.json`, `calendario/2026-W47.json`, este registro.
+- Verificación: perfil público de @emilianomilla_ visto desde box sin sesión (13/11, ~16:25 UTC) → ya no dice «These posts are protected»; x-viral lo confirmará.
+- Pendiente: ninguno nuevo.
+
 ## 2026-11-13 · LinkedIn e Instagram ya exponen su estado
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: mensajes de las sesiones de LinkedIn, Instagram y Vox (13/11).
