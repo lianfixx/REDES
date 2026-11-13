@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-13 · Ángulos de los cuatro videos, aprobados por Emi
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: Editor Studio pidió el ángulo de cada video para escribir guiones y ganchos; Emi: «Están perfectos así».
+- Cambios: quedan registrados los ángulos de Matriz, DOF, Boletines y Vox (opinión y pregunta final de cada uno) y se enviaron a Editor Studio como decisión de Emi.
+- Archivos: `docs/DECISIONES-EMI-2026-11-13.md`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado.
+- Pendiente: guiones y ganchos de Editor Studio; Emi fusiona su PR #9 (lianfixx/VIDEOS-IA-SKILL-MILLA) y reconecta X.
+
 ## 2026-11-13 · Panel 0.3: imágenes, videos y PDF por API; análisis automático de inspiración; respuestas a Editor Studio
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: Emi, 13/11/2026: «Construye y haz todo para imágenes y videos por favor. Haz posible lo de análisis de tu inspiración por favor.» y respuestas a las 9 preguntas de Editor Studio.
