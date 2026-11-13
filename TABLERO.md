@@ -1,6 +1,6 @@
 # Tablero de la Matriz de Redes
 
-Generado el 2026-11-13 por `redes.py tablero`. No se edita a mano.
+Generado el 2026-11-12 por `redes.py tablero`. No se edita a mano.
 
 ## Pendiente de Emi
 
@@ -41,4 +41,14 @@ Generado el 2026-11-13 por `redes.py tablero`. No se edita a mano.
 ## Avisos del validador
 
 - Ninguno.
+
+## Estado de cada skill
+
+| Skill | Leído | Publicados | Lecciones |
+|---|---|---|---|
+| x | no se pudo leer | — | — |
+| linkedin | no se pudo leer | — | — |
+| tiktok | no se pudo leer | — | — |
+| instagram | 2026-11-12 | 0 | 3 |
+| instagram-historias | no se pudo leer | — | — |
 
