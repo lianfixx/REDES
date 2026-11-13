@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-13 · Panel 0.3: imágenes, videos y PDF por API; análisis automático de inspiración; respuestas a Editor Studio
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: Emi, 13/11/2026: «Construye y haz todo para imágenes y videos por favor. Haz posible lo de análisis de tu inspiración por favor.» y respuestas a las 9 preguntas de Editor Studio.
+- Cambios: archivos en el panel (subida desde el teléfono en partes de 4 MiB, vista previa, descarga, biblioteca en Recursos, borrado automático a los 45 días). Las piezas aprobadas suben sus archivos a la red antes de su hora y publican con ellos: X por `/2/media/upload` (imágenes, GIF y video; pide `media.write`, hay que reconectar X una vez) y LinkedIn por Images, Videos y Documents API (video, PDF como carrusel, 1 a 20 imágenes). La huella de aprobación cubre los archivos. Reglas de cada red, reintentos sin duplicar y tope de llamadas por vuelta del cron. LinkedIn pasa a la versión de API 202610 (la 202511 se apaga el 16/11/2026). Inspiración: el panel guarda título, autor, texto y miniatura del enlace; la «llave de Claude automático» (Ajustes) deja que las revisiones programadas la analicen y propongan espacio. Claude puede subir archivos (`/api/claude/archivo`). Decisiones de Emi para Editor Studio registradas y enviadas a su sesión.
+- Archivos: `worker/{index.js,prueba.mjs}`, `panel/{app.js,estilo.css}`, `wrangler.jsonc`, `skills/matriz-redes/references/panel.md`, `docs/DECISIONES-EMI-2026-11-13.md`, `.gitignore`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado (27 pruebas del Worker, 7 nuevas: partes y Range, reglas por red, X con imagen y con video en proceso, sin aprobación no se sube nada, 3 fallos esperan a Emi, LinkedIn video/PDF con reintento, llave automática, miniatura de inspiración). Panel probado en local (wrangler dev + Chromium): subida de video, vista previa, descarga con Range, llave y biblioteca; oEmbed real de YouTube y Pinterest con miniatura. Subida real a X y LinkedIn → aún no ejecutada (falta reconectar X y conectar LinkedIn).
+- Pendiente: Emi reconecta X (permiso de archivos), crea la llave de Claude automático y la pega en el formulario seguro; conectar LinkedIn.
+
 ## 2026-11-13 · Recursos: cómo grabar (de Editor Studio)
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: respuesta de Editor Studio (13/11, aprobada por Emi) con la guía de grabación de los cuatro videos.

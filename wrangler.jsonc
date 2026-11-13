@@ -9,6 +9,6 @@
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Intentos"] }, { "tag": "v2", "new_sqlite_classes": ["Panel"] }],
   // Cada 5 minutos: publica lo programado y lee métricas de X a las 48 h y a los 7 días.
   "triggers": { "crons": ["*/5 * * * *"] },
-  "vars": { "TOPE_X_USD": "10", "LINKEDIN_VERSION": "202510" },
+  "vars": { "TOPE_X_USD": "10", "LINKEDIN_VERSION": "202610" },
   "assets": { "directory": "./dist", "binding": "ASSETS", "run_worker_first": true }
 }

@@ -22,6 +22,18 @@ const seguro = (u) => { try { const x = new URL(u); return x.protocol === "https
 const HOSTS_MEDIA = ["drive.google.com", "lh3.googleusercontent.com", "pbs.twimg.com", "media.licdn.com"];
 const mediaPermitida = (u) => { try { return HOSTS_MEDIA.includes(new URL(u).hostname); } catch { return false; } };
 
+const tam = (b) => b >= 1048576 ? `${(b / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(b / 1024))} KB`;
+const archivoDe = (id) => (S.estado?.archivos || []).find((a) => a.id === id);
+const srcArchivo = (a) => `/api/archivo/${a.id}`;
+// Vista de un archivo del panel (imagen, video o PDF), con descarga y, si se puede, «Quitar».
+function miniArchivo(a, quitar = false) {
+  if (!a) return "";
+  const v = a.estado !== "listo" ? `<div class="arch-vacio">subiendo… ${a.recibidas}/${a.partes}</div>`
+    : a.clase === "video" ? `<video src="${srcArchivo(a)}#t=0.1" muted playsinline preload="metadata" controls></video>`
+    : a.clase === "pdf" ? `<div class="arch-vacio">PDF</div>` : `<img src="${srcArchivo(a)}" alt="" loading="lazy">`;
+  return `<div class="arch">${v}<div class="arch-pie"><span class="chico">${esc(a.nombre)} · ${tam(a.bytes)}${a.duracion ? ` · ${Math.round(a.duracion)} s` : ""}</span>
+    <span class="fila">${a.estado === "listo" ? `<a class="mini" href="${srcArchivo(a)}?descargar=1">Descargar</a>` : ""}${quitar ? `<button type="button" class="mini" data-quitar="${a.id}">Quitar</button>` : ""}</span></div></div>`;
+}
 function aviso(t) { const a = $("#aviso"); a.textContent = t; a.classList.add("ver"); clearTimeout(aviso.t); aviso.t = setTimeout(() => a.classList.remove("ver"), 3400); }
 async function api(ruta, cuerpo) {
   const r = await fetch(ruta, cuerpo === undefined ? { credentials: "same-origin" } :
@@ -68,7 +80,9 @@ function revisar(texto, red) {
 
 // ---------------------------------------------------------------- vistas previas
 const enlazar = (t) => esc(t).replace(URL_RE(), (u) => `<span class="lnk">${u}</span>`);
-function media(m) {
+function media(m, archivos = []) {
+  const arch = archivos.map(archivoDe).filter((a) => a && a.estado === "listo");
+  if (arch.length) return `<div class="pv-media ${arch.length > 1 ? "pv-grid" : ""}">${arch.slice(0, 4).map((a) => a.clase === "video" ? `<video src="${srcArchivo(a)}#t=0.1" muted playsinline controls preload="metadata"></video>` : a.clase === "pdf" ? `<div class="arch-vacio">📄 ${esc(a.nombre)}</div>` : `<img src="${srcArchivo(a)}" alt="">`).join("")}${arch.length > 4 ? `<div class="arch-vacio">+${arch.length - 4}</div>` : ""}</div>`;
   if (!m) return "";
   if (!mediaPermitida(m)) return `<div class="pv-media">Archivo: ${esc(m)}</div>`;
   if (/\.(mp4|mov|webm)(\?|$)/i.test(m)) return `<div class="pv-media"><video src="${esc(m)}" muted playsinline controls></video></div>`;
@@ -76,17 +90,18 @@ function media(m) {
 }
 const previaX = (p, oscuro) => `<div class="pv-x ${oscuro ? "oscuro" : ""}"><div class="cab"><div class="av">EG</div><div style="min-width:0;flex:1">
   <div><span class="nom">Emiliano García Milla</span> <span class="usr">@emilianomilla_ · ${p.fecha ? fmt(p.fecha, { day: "numeric", month: "short" }) : "ahora"}</span></div>
-  <div class="txt">${enlazar(p.texto)}</div>${media(p.media)}<div class="acc"><span>💬</span><span>🔁</span><span>♡</span><span>📊</span><span>🔖 ↗</span></div></div></div></div>`;
+  <div class="txt">${enlazar(p.texto)}</div>${media(p.media, p.archivos)}<div class="acc"><span>💬</span><span>🔁</span><span>♡</span><span>📊</span><span>🔖 ↗</span></div></div></div></div>`;
 function previaLi(p) {
   const t = String(p.texto || ""), corto = t.length > 210 ? t.slice(0, 210).replace(/\s+\S*$/, "") : t;
   return `<div class="pv-li"><div class="cab"><div class="av">EG</div><div><div class="nom">Emiliano García Milla</div>
     <div class="tit">Abogado | Maestría en Alta Dirección (en curso) | IA + Derecho</div><div class="tit">Ahora · 🌐</div></div></div>
-    <div class="txt" data-largo="${esc(t)}">${esc(corto)}${t.length > corto.length ? `<span class="mas">… más</span>` : ""}</div>${media(p.media)}
+    <div class="txt" data-largo="${esc(t)}">${esc(corto)}${t.length > corto.length ? `<span class="mas">… más</span>` : ""}</div>${media(p.media, p.archivos)}
     <div class="reac"><span>👍 Recomendar</span><span>💬 Comentar</span><span>🔁 Compartir</span><span>✈️ Enviar</span></div></div>`;
 }
 function previaTel(p, red) {
-  const ok = p.media && mediaPermitida(p.media);
-  const m = ok && /\.(mp4|mov|webm)(\?|$)/i.test(p.media) ? `<video src="${esc(p.media)}" muted playsinline loop autoplay></video>` : ok ? `<img src="${esc(p.media)}" alt="">` : "";
+  const ok = p.media && mediaPermitida(p.media), a = (p.archivos || []).map(archivoDe).find((x) => x && x.estado === "listo");
+  const m = a ? (a.clase === "video" ? `<video src="${srcArchivo(a)}" muted playsinline loop controls preload="metadata"></video>` : a.clase === "pdf" ? "" : `<img src="${srcArchivo(a)}" alt="">`)
+    : ok && /\.(mp4|mov|webm)(\?|$)/i.test(p.media) ? `<video src="${esc(p.media)}" muted playsinline loop autoplay></video>` : ok ? `<img src="${esc(p.media)}" alt="">` : "";
   return `<div class="telefono"><div class="pantalla">${m}<div class="pie"><b>${red === "tiktok" ? "@emilianomilla_" : "emilianomilla_"}</b>${esc(p.texto)}</div></div></div>`;
 }
 const previa = (p) => p.red === "x" ? `${previaX(p)}<div style="height:12px"></div>${previaX(p, true)}` : p.red === "linkedin" ? previaLi(p) : previaTel(p, p.red);
@@ -100,7 +115,7 @@ function siguiente(p) {
     case "borrador": return ["Terminar el texto", p.creada_por === "claude" ? "Matriz" : "Emi"];
     case "lista para aprobar": return ["Tú: aprobar", "Emi"];
     case "programada": return [`Sale sola ${p.fecha ? hora(p.fecha) : ""}`.trim(), "Panel"];
-    case "aprobada": return p.solo_app || !API_PUBLICA.includes(p.red) ? ["Tú: subir desde la app", "Emi"] : ["Tú: publicar o poner hora", "Emi"];
+    case "aprobada": return p.solo_app || !API_PUBLICA.includes(p.red) ? ["Tú: subir desde la app", "Emi"] : p.publicar_al_terminar ? ["Subiendo archivos; sale sola", "Panel"] : ["Tú: publicar o poner hora", "Emi"];
     case "publicando": return ["Saliendo…", "Panel"];
     case "fallo": return ["Tú: revisar el fallo", "Emi"];
     case "publicada": return ["Medir a las 48 h", "Panel"];
@@ -134,12 +149,15 @@ function pendientes() {
     const t = p.titulo || p.texto.slice(0, 50);
     if (p.estado === "lista para aprobar") L.push({ que: `Aprobar «${t}»`, prioridad: 1, sesion: p.red, donde: `#pieza/${p.id}` });
     if (p.estado === "aprobada" && (p.solo_app || !API_PUBLICA.includes(p.red))) L.push({ que: `Subir desde la app «${t}»${p.fecha ? ` · ${fmt(p.fecha)}` : ""} y marcar «Ya la publiqué»`, prioridad: 1, sesion: p.red, donde: `#pieza/${p.id}` });
-    if (p.estado === "aprobada" && !p.solo_app && API_PUBLICA.includes(p.red) && !p.fecha) L.push({ que: `Ponerle hora o publicar «${t}»`, prioridad: 1, sesion: p.red, donde: `#pieza/${p.id}` });
+    if (p.estado === "aprobada" && !p.solo_app && API_PUBLICA.includes(p.red) && !p.fecha && !p.publicar_al_terminar) L.push({ que: `Ponerle hora o publicar «${t}»`, prioridad: 1, sesion: p.red, donde: `#pieza/${p.id}` });
     if (p.estado === "fallo") L.push({ que: `Revisar el fallo de «${t}»`, prioridad: 1, sesion: p.red, donde: `#pieza/${p.id}` });
     if (p.pausada) L.push({ que: `«${t}» está en pausa`, prioridad: 2, sesion: p.red, donde: `#pieza/${p.id}` });
   }
   const c = S.estado?.conexiones;
   if (c && !c.x) L.push({ que: "Conectar X", prioridad: 2, sesion: "x", donde: "#ajustes" });
+  if (c && c.x && !c.x_media) L.push({ que: "Reconectar X (un toque) para que el panel suba imágenes y videos", prioridad: (S.estado?.piezas || []).some((p) => p.red === "x" && (p.archivos || []).length && !["publicada", "cancelada"].includes(p.estado)) ? 1 : 2, sesion: "x", donde: "#ajustes" });
+  const sinAnalizar = (S.estado?.inspiracion || []).filter((x) => !x.analisis).length;
+  if (sinAnalizar && !S.estado?.llave_claude_auto) L.push({ que: `Crear la llave de Claude automático para que analice tu inspiración (${sinAnalizar} esperando)`, prioridad: 2, sesion: "ideas", donde: "#ajustes" });
   if (c && !c.linkedin) L.push({ que: "Conectar LinkedIn para publicar desde el panel", prioridad: 3, sesion: "linkedin", donde: "#ajustes" });
   const sinEsp = [...(S.estado?.notas || []), ...(S.estado?.inspiracion || [])].filter((n) => n.espacio_propuesto && !n.espacio).length;
   if (sinEsp) L.push({ que: `Confirmar el espacio de ${sinEsp} idea${sinEsp > 1 ? "s" : ""}`, prioridad: 3, sesion: "ideas", donde: "#ideas" });
@@ -213,8 +231,15 @@ V.pieza = (id) => {
       <div class="revision" id="rev"></div>
       <label>Fecha y hora (centro de México)</label><input type="datetime-local" name="fecha" value="${fechaLocal}">
       <p class="tenue chico">${p.hora_sugerida ? `Hora sugerida: <b>${fmt(p.hora_sugerida)}</b>${p.hora_motivo ? ` · ${esc(p.hora_motivo)}` : ""}. ` : ""}Si la dejas vacía, al aprobar la Matriz pone la mejor hora libre de esa red.</p>
-      <label>Imagen o video (enlace de Drive, opcional)</label><input name="media" value="${esc(p.media)}" placeholder="https://drive.google.com/…">
-      <label class="check"><input type="checkbox" name="solo_app" value="1" ${p.solo_app ? "checked" : ""}> Lleva video o archivo: se publica desde la app</label>
+      <label>Imágenes, video o PDF</label>
+      <div id="archivos" class="archivos">${(p.archivos || []).map((x) => miniArchivo(archivoDe(x) || { id: x, nombre: "archivo", bytes: 0, estado: "subiendo", recibidas: 0, partes: "?" }, !cerrada)).join("")}</div>
+      <input type="hidden" name="archivos" value="${esc((p.archivos || []).join(","))}">
+      ${cerrada ? "" : `<input type="file" id="elegir-archivo" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/quicktime,application/pdf" multiple hidden>
+      <div class="fila"><button type="button" class="boton suave" id="agregar-archivo">Agregar archivo</button><span class="tenue chico" id="progreso"></span></div>
+      <p class="tenue chico">${p.red === "x" ? "X: hasta 4 imágenes (5 MB c/u) o un video de hasta 2:20." : p.red === "linkedin" ? "LinkedIn: un video MP4, un PDF (carrusel) o de 1 a 20 imágenes." : "Instagram y TikTok se suben desde la app: aquí lo dejas listo para descargarlo en tu teléfono."}</p>`}
+      ${subidaHtml(p)}
+      <details ${p.media ? "open" : ""}><summary class="tenue chico">Enlace de referencia (Drive)</summary><input name="media" value="${esc(p.media)}" placeholder="https://drive.google.com/…"></details>
+      <label class="check"><input type="checkbox" name="solo_app" value="1" ${p.solo_app ? "checked" : ""}> Prefiero subirla yo desde la app</label>
       <label>Nota interna</label><input name="nota" value="${esc(p.nota)}" maxlength="600">
       <div class="fila" style="margin-top:16px">
         ${cerrada ? "" : `<button class="boton" name="guardar">Guardar</button>`}
@@ -227,7 +252,7 @@ V.pieza = (id) => {
         ${p.red === "x" && p.publicada?.id ? `<button class="boton suave" type="button" id="metricas">Leer métricas</button>` : ""}
         ${id !== "nueva" && !cerrada ? `<button class="boton peligro" type="button" id="cancelar">Cancelar</button>` : ""}
       </div>
-      <p class="tenue chico" style="margin-top:12px">${publicable ? "Al aprobar, sale sola a su hora por la API oficial. Si cambias el texto, la red, la hora o el archivo, hay que volver a aprobar." : "Aprueba, copia el texto, súbela desde la app y marca «Ya la publiqué»."}</p>
+      <p class="tenue chico" style="margin-top:12px">${publicable ? "Al aprobar, sale sola a su hora por la API oficial; si lleva archivos, el panel los sube a la red unas horas antes. Si cambias el texto, la red, la hora o los archivos, hay que volver a aprobar." : "Aprueba, descarga los archivos, copia el texto, súbela desde la app y marca «Ya la publiqué»."}</p>
     </form>
     ${id !== "nueva" ? `<div class="tarjeta vidrio seccion"><h3>Notas y confirmaciones antes de publicar</h3>
       <p class="tenue chico">Lo que escribas aquí lo leen las sesiones de Claude antes de tocar o publicar esta pieza. Si algo debe esperar, usa «Pausar».</p>
@@ -239,6 +264,12 @@ V.pieza = (id) => {
       ${(p.historial || []).length ? `<div class="tarjeta vidrio seccion"><h3>Historial</h3><ul class="lista">${p.historial.map((h) => `<li><span class="tenue chico">${fmt(h.fecha)}</span> ${esc(h.quien)}: ${esc(h.que)}</li>`).join("")}</ul></div>` : ""}
     </div></div>`;
 };
+const ESTADO_SUBIDA = { pendiente: "por subir", subiendo: "subiendo", procesando: "la red lo procesa", lista: "listo en la red" };
+function subidaHtml(p) {
+  if (!(p.archivos || []).length || !p.subida) return p.publicar_al_terminar ? `<p class="tenue chico">Sale sola en cuanto la red termine de procesar los archivos.</p>` : "";
+  return `<ul class="lista chico">${p.subida.items.map((i) => `<li><span class="chip ${i.estado === "lista" ? "ok" : "aviso"}">${esc(ESTADO_SUBIDA[i.estado] || i.estado)}</span>${esc(archivoDe(i.archivo)?.nombre || i.archivo)}</li>`).join("")}</ul>
+    ${p.subida.error ? `<p class="revision"><span class="e">${esc(p.subida.error)}</span></p>` : ""}${p.publicar_al_terminar ? `<p class="tenue chico">Sale sola en cuanto la red termine de procesarlos.</p>` : ""}`;
+}
 const tablaValores = (v) => `<table>${Object.entries(v || {}).map(([k, n]) => `<tr><td>${esc(k.replace(/_/g, " "))}</td><td><b>${Number(n).toLocaleString("es-MX")}</b></td></tr>`).join("")}</table>`;
 const capturaForm = (p) => `<form id="captura" class="tarjeta vidrio seccion"><h3>Anotar métricas de la app</h3>
   <p class="tenue chico">Copia los números tal como los da ${esc(REDES[p.red])}, uno por línea (<i>impresiones 1200</i>).</p>
@@ -278,15 +309,18 @@ V.ideas = (q) => {
       <label>Enlace</label><input name="url" placeholder="https://pin.it/… o https://www.tiktok.com/…" required>
       <label>¿Qué te llamó la atención?</label><textarea name="que_me_llamo" style="min-height:70px" placeholder="Los cortes, la tipografía, cómo arranca…"></textarea>
       <div class="fila" style="margin-top:8px"><select name="espacio" style="width:auto"><option value="">Espacio: que lo proponga la Matriz</option>${Object.entries(ESPACIOS).map(([k, v]) => `<option value="${k}">${v}</option>`).join("")}</select><button class="boton">Guardar</button></div>
-      <p class="tenue chico">La Matriz la analiza (estilo, redacción, edición, gancho, ritmo, qué tomar) y propone el espacio.</p></form>
+      <p class="tenue chico">El panel guarda el título, el autor y la miniatura del enlace; Claude la analiza (estilo, redacción, edición, gancho, ritmo, qué tomar) y propone el espacio.</p></form>
     <form id="nota" class="tarjeta vidrio"><h3>Idea, truco o tendencia</h3><textarea name="texto" style="min-height:96px" required></textarea>
       <div class="fila" style="margin-top:8px"><select name="tipo" style="width:auto"><option value="idea">Idea</option><option value="truco">Truco</option><option value="tendencia">Tendencia</option><option value="leccion">Lección</option></select>
       <select name="espacio" style="width:auto"><option value="">Espacio…</option>${Object.entries(ESPACIOS).map(([k, v]) => `<option value="${k}">${v}</option>`).join("")}</select>
       <select name="red" style="width:auto"><option value="todas">Todas las redes</option>${Object.entries(REDES).map(([k, v]) => `<option value="${k}">${v}</option>`).join("")}</select><button class="boton">Guardar</button></div></form></div>` : entrarPrimero("Entra para anotar ideas e inspiración.")}
     ${insp.length ? `<h2 class="seccion">Inspiración</h2><div class="rejilla">${insp.map((x) => `<div class="tarjeta vidrio insp"><div class="fila"><span class="chip">${esc(x.plataforma)}</span>${bloqueEspacio(x, "inspiracion")}</div>
+      ${x.meta?.miniatura ? `<a href="${esc(seguro(x.url))}" target="_blank" rel="noopener"><img class="insp-mini" src="/api/archivo/${esc(x.meta.miniatura)}" alt="" loading="lazy"></a>` : ""}
+      ${x.meta?.titulo ? `<p style="margin-top:8px"><b>${esc(x.meta.titulo.slice(0, 160))}</b>${x.meta.autor ? ` <span class="tenue chico">· ${esc(x.meta.autor)}</span>` : ""}</p>` : ""}
       <p style="margin-top:8px"><a href="${esc(seguro(x.url))}" target="_blank" rel="noopener">${esc(x.url.replace(/^https:\/\/(www\.)?/, "").slice(0, 60))} ↗</a></p>
       ${x.que_me_llamo ? `<p><span class="tenue chico">Te llamó la atención:</span><br>${esc(x.que_me_llamo)}</p>` : ""}
-      ${x.analisis ? `<dl class="analisis">${Object.entries(A).filter(([k]) => x.analisis[k]).map(([k, v]) => `<dt>${v}</dt><dd>${esc(x.analisis[k])}</dd>`).join("")}</dl>` : `<p class="tenue chico">Por analizar.</p>`}</div>`).join("")}</div>` : ""}
+      ${x.analisis ? `<dl class="analisis">${Object.entries(A).filter(([k]) => x.analisis[k]).map(([k, v]) => `<dt>${v}</dt><dd>${esc(x.analisis[k])}</dd>`).join("")}</dl><p class="tenue chico">Análisis de Claude · ${fmt(x.analisis.fecha)}</p>`
+        : `<p class="tenue chico">${S.estado?.llave_claude_auto ? "Claude la analiza en su siguiente revisión (13:00 o 21:00)." : "Por analizar: crea la llave de Claude automático en Ajustes para que se analice sola."}</p>`}</div>`).join("")}</div>` : ""}
     ${notas.length ? `<h2 class="seccion">Notas</h2><div class="tarjeta vidrio"><ul class="lista">${notas.map((n) => `<li style="flex-wrap:wrap"><span class="chip ${n.quien === "claude" ? "" : "aviso"}">${n.quien === "claude" ? "Matriz" : "Tú"}</span>${chipRed(n.red)}<span style="flex:1;min-width:200px"><b>${esc(n.tipo)}</b> · ${esc(n.texto)} <span class="tenue chico">${fmt(n.fecha)}</span></span>${bloqueEspacio(n, "nota")}</li>`).join("")}</ul></div>` : ""}
     ${ideasRepo.length ? `<h2 class="seccion">Ideas en marcha</h2>${ideasRepo.map((i) => `<div class="tarjeta vidrio" style="margin-bottom:12px"><div class="fila"><span class="chip">${esc(ESPACIOS[i.espacio] || i.espacio)}</span><span class="chip">${esc(i.pilar)}</span>${chipEstado(i.estado)}</div>
       <p style="margin-top:8px"><b>${esc(i.tesis)}</b></p>${i.postura_emi ? `<p class="tenue">Tu postura: «${esc(i.postura_emi.texto)}»</p>` : ""}</div>`).join("")}` : ""}
@@ -330,7 +364,7 @@ V.recursos = () => {
       <div class="fila" style="margin-top:8px"><select name="para" style="width:auto"><option value="matriz-redes">Matriz de Redes</option>${(r.skills || []).map((s) => `<option value="${esc(s.nombre)}">${esc(s.nombre)}</option>`).join("")}</select><button class="boton">Dejar encargo</button></div></form>` : entrarPrimero("Entra para dejar encargos.")}
       <ul class="lista seccion">${enc.map((e) => `<li style="display:block"><div class="fila"><span class="chip ${e.estado === "hecho" ? "ok" : "aviso"}">${esc(e.estado)}</span><span class="chip">${esc(e.para)}</span><span class="tenue chico">${fmt(e.fecha)}</span></div>
         <p style="margin:6px 0">${esc(e.texto)}</p>${e.respuestas.map((x) => `<p class="tenue chico">↳ ${esc(x.quien)}: ${esc(x.texto)}</p>`).join("")}</li>`).join("")}</ul></div></div>
-    <div><div class="tarjeta vidrio"><h2>Skills</h2><ul class="lista">${(r.skills || []).map((s) => `<li><a href="${esc(seguro(s.repo))}" target="_blank" rel="noopener"><b>${esc(s.nombre)}</b></a><span class="tenue">${esc(s.que)}</span></li>`).join("")}</ul></div>
+    <div>${S.editor ? tarjetaArchivos() : ""}<div class="tarjeta vidrio ${S.editor ? "seccion" : ""}"><h2>Skills</h2><ul class="lista">${(r.skills || []).map((s) => `<li><a href="${esc(seguro(s.repo))}" target="_blank" rel="noopener"><b>${esc(s.nombre)}</b></a><span class="tenue">${esc(s.que)}</span></li>`).join("")}</ul></div>
     <div class="tarjeta vidrio seccion"><h2>Drive y enlaces privados</h2>${S.editor ? `<ul class="lista">${(S.estado.enlaces || []).map((d) => `<li><span class="chip">${esc(d.grupo)}</span><a href="${esc(seguro(d.url))}" target="_blank" rel="noopener">${esc(d.nombre)} ↗</a></li>`).join("") || `<li class="tenue">Sin enlaces.</li>`}</ul>
       <form id="enlace" class="fila" style="margin-top:10px"><input name="nombre" placeholder="Nombre" style="flex:1;min-width:120px"><input name="url" placeholder="https://drive.google.com/…" style="flex:2;min-width:160px"><button class="boton">Agregar</button></form>` :
       `<p class="tenue chico">Carpetas: ${(r.drive || []).map((d) => esc(d.nombre)).join(" · ")}. Se ven al entrar.</p>`}</div>
@@ -346,7 +380,8 @@ V.ajustes = (q) => {
     <div class="dos seccion"><div class="tarjeta vidrio"><div class="fila" style="justify-content:space-between"><h2>X</h2><span class="chip ${c.x ? "ok" : ""}">${c.x ? "conectado" : "sin conectar"}</span></div>
       <p class="tenue chico">console.x.com → tu app → User authentication settings: «Read and write», «Web App» y Callback URL <code>${esc(location.origin)}/api/x/volver</code>. Pega el Client ID y el Client Secret (OAuth 2.0) y toca «Conectar X».</p>
       <form id="llaves-x2"><label>Client ID</label><input name="client_id" autocomplete="off"><label>Client Secret</label><input name="client_secret" type="password" autocomplete="off">
-      <div class="fila" style="margin-top:14px"><button class="boton">Guardar app de X</button><button class="boton acento" type="button" id="conectar-x" ${c.x_app ? "" : "disabled"}>Conectar X</button>${c.x ? `<button class="boton peligro" type="button" data-borrar="x2">Desconectar</button>` : ""}</div></form>
+      <div class="fila" style="margin-top:14px"><button class="boton">Guardar app de X</button><button class="boton acento" type="button" id="conectar-x" ${c.x_app ? "" : "disabled"}>${c.x && !c.x_media ? "Reconectar X" : "Conectar X"}</button>${c.x ? `<button class="boton peligro" type="button" data-borrar="x2">Desconectar</button>` : ""}</div></form>
+      ${c.x ? `<p class="revision" style="margin-top:10px">${c.x_media ? `<span class="tenue chico">✓ Puede subir imágenes y videos.</span>` : `<span class="w">Para subir imágenes y videos, toca «Reconectar X» y autoriza: X pide un permiso nuevo («media.write»). No hace falta volver a pegar nada.</span>`}</p>` : ""}
       <details style="margin-top:14px"><summary class="tenue chico">Llaves de OAuth 1.0a (opcional)</summary><form id="llaves-x">
       <label>API Key</label><input name="api_key" autocomplete="off"><label>API Key Secret</label><input name="api_secret" type="password" autocomplete="off">
       <label>Access Token</label><input name="access_token" autocomplete="off"><label>Access Token Secret</label><input name="access_secret" type="password" autocomplete="off">
@@ -356,10 +391,25 @@ V.ajustes = (q) => {
       <form id="llaves-li"><label>Client ID</label><input name="client_id" autocomplete="off"><label>Client Secret</label><input name="client_secret" type="password" autocomplete="off">
       <div class="fila" style="margin-top:14px"><button class="boton">Guardar app</button><button class="boton acento" type="button" id="conectar-li" ${c.linkedin_app ? "" : "disabled"}>Conectar LinkedIn</button>
       ${c.linkedin ? `<button class="boton peligro" type="button" data-borrar="linkedin">Desconectar</button>` : ""}</div></form></div></div>
-    <div class="dos seccion"><div class="tarjeta vidrio"><h2>Seguridad</h2><p class="tenue chico">Cierra la sesión en todos tus equipos.</p><button class="boton peligro" type="button" id="salir-todo">Salir de todos lados</button></div>
-    <div class="tarjeta vidrio"><h2>Apariencia</h2><div class="fila"><button class="boton suave" data-tema="light">Blanco</button><button class="boton suave" data-tema="dark">Negro</button><button class="boton suave" data-tema="">Automático</button></div></div></div>`;
+    <div class="dos seccion"><div class="tarjeta vidrio"><div class="fila" style="justify-content:space-between"><h2>Claude automático</h2><span class="chip ${S.estado.llave_claude_auto ? "ok" : ""}">${S.estado.llave_claude_auto ? "activa" : "sin llave"}</span></div>
+      <p class="tenue chico">Llave para las revisiones programadas de Claude (13:00 y 21:00): analizan tu inspiración, proponen espacios y dejan borradores y archivos. Nunca aprueban ni publican. ${S.estado.llave_claude_auto ? `Creada el ${fmt(S.estado.llave_claude_auto)}` : ""}</p>
+      ${S.llaveMostrada ? `<p class="chico"><b>Cópiala ahora: no se vuelve a mostrar.</b></p><div class="fila"><input class="llave" id="llave-texto" readonly value="${esc(S.llaveMostrada)}" style="flex:1"><button class="boton acento" type="button" id="copiar-llave">Copiar</button></div>
+        <p class="tenue chico">Pégala en el formulario seguro que te abre Claude en el chat. No la mandes por mensaje.</p>` : ""}
+      <div class="fila" style="margin-top:12px"><button class="boton ${S.estado.llave_claude_auto ? "suave" : "acento"}" type="button" id="crear-llave">${S.estado.llave_claude_auto ? "Cambiar llave" : "Crear llave"}</button>${S.estado.llave_claude_auto ? `<button class="boton peligro" type="button" id="revocar-llave">Revocar</button>` : ""}</div></div>
+    <div><div class="tarjeta vidrio"><h2>Seguridad</h2><p class="tenue chico">Cierra la sesión en todos tus equipos.</p><button class="boton peligro" type="button" id="salir-todo">Salir de todos lados</button></div>
+    <div class="tarjeta vidrio seccion"><h2>Apariencia</h2><div class="fila"><button class="boton suave" data-tema="light">Blanco</button><button class="boton suave" data-tema="dark">Negro</button><button class="boton suave" data-tema="">Automático</button></div></div></div></div>`;
 };
 
+function tarjetaArchivos() {
+  const lista = (S.estado?.archivos || []).filter((a) => a.origen !== "inspiracion");
+  const usos = (id) => (S.estado?.piezas || []).filter((p) => (p.archivos || []).includes(id));
+  return `<div class="tarjeta vidrio"><h2>Archivos</h2><p class="tenue chico">Videos, imágenes y PDF listos para publicar. Las sesiones de Claude (Editor Studio, Vox…) también los suben aquí. Se borran solos 45 días después de que sale la pieza.</p>
+    <input type="file" id="archivo-suelto" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/quicktime,application/pdf" multiple hidden>
+    <div class="fila"><button class="boton suave" type="button" id="agregar-suelto">Subir archivo</button><span class="tenue chico" id="progreso-suelto"></span></div>
+    <ul class="lista seccion">${lista.map((a) => `<li style="flex-wrap:wrap"><span class="chip">${esc(a.clase)}</span><span style="flex:1;min-width:160px">${esc(a.nombre)} <span class="tenue chico">${tam(a.bytes)} · ${a.quien === "claude" ? "Claude" : a.quien === "Emi" ? "tú" : esc(a.quien)} · ${fmt(a.fecha)}${a.estado !== "listo" ? " · subiendo" : ""}</span>
+      ${usos(a.id).map((p) => `<a class="chip" href="#pieza/${p.id}">${esc(REDES[p.red])}: ${esc((p.titulo || p.texto).slice(0, 30))}</a>`).join(" ")}</span>
+      ${a.estado === "listo" ? `<a class="mini" href="/api/archivo/${a.id}?descargar=1">Descargar</a>` : ""}<button class="mini" type="button" data-borrar-archivo="${a.id}">Borrar</button></li>`).join("") || `<li class="tenue">Sin archivos.</li>`}</ul></div>`;
+}
 function entrarPrimero(msg) { return `<div class="vacio"><p>${esc(msg)}</p><button class="boton" data-entrar>Entrar</button></div>`; }
 
 // ---------------------------------------------------------------- navegación, eventos y tiempo real
@@ -367,6 +417,7 @@ let vistaActual = "hoy";
 function pintar() {
   const [ruta, q] = (location.hash.slice(1) || "hoy").split("?");
   const [vista, arg] = ruta.split("/");
+  if (vista !== "ajustes") S.llaveMostrada = null;
   vistaActual = vista;
   document.querySelectorAll("nav a").forEach((a) => (a.getAttribute("href") === `#${vista === "pieza" ? "piezas" : vista}` ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current")));
   $("#vista").innerHTML = (V[vista] || V.hoy)(arg || q, q);
@@ -378,7 +429,7 @@ function conectar(vista, arg) {
   const ed = $("#editor");
   if (ed) {
     const actualizar = () => {
-      const p = { red: ed.red.value, texto: ed.texto.value, media: ed.media.value, fecha: ed.fecha.value ? mxAISO(ed.fecha.value) : null };
+      const p = { red: ed.red.value, texto: ed.texto.value, media: ed.media.value, archivos: ed.archivos.value ? ed.archivos.value.split(",") : [], fecha: ed.fecha.value ? mxAISO(ed.fecha.value) : null };
       const r = revisar(p.texto, p.red);
       $("#cont").textContent = `${r.largo}${LIMITES[p.red] ? " / " + LIMITES[p.red] : ""}${p.red === "x" ? " (enlace = 23, emoji = 2)" : ""}`;
       $("#cont").classList.toggle("malo", r.e.some((x) => x.includes("caracteres")));
@@ -408,7 +459,37 @@ function conectar(vista, arg) {
       const p = await api(`/api/pieza/${arg}/aprobar`, cuerpo);
       aviso(p.fecha ? `Aprobada · ${p.estado === "programada" ? "sale sola" : "súbela"} el ${fmt(p.fecha)}` : "Aprobada.");
     }));
-    btn("#publicar", "publicar", "Enviado a la red.", "¿Publicar ahora en la red?");
+    $("#publicar")?.addEventListener("click", (ev) => accion(ev, async () => {
+      if (!confirm("¿Publicar ahora en la red?")) return;
+      const r = await api(`/api/pieza/${arg}/publicar`, {});
+      aviso(r.aviso || (r.estado === "publicada" ? "Publicada." : r.error ? `No salió: ${r.error}` : "Enviado a la red."));
+    }));
+    // Archivos: se suben al panel en partes de 4 MiB (3 a la vez, con reintentos) y se agregan a la pieza.
+    $("#agregar-archivo")?.addEventListener("click", () => $("#elegir-archivo").click());
+    $("#elegir-archivo")?.addEventListener("change", async (ev) => {
+      const files = [...ev.target.files];
+      if (!files.length) return;
+      ed.dataset.sucio = "1";
+      const b = $("#agregar-archivo"); b.disabled = true;
+      try {
+        for (const [i, f] of files.entries()) {
+          const id = await subirArchivo(f, (x) => { $("#progreso").textContent = `${files.length > 1 ? `${i + 1}/${files.length} · ` : ""}${f.name}: ${Math.round(x * 100)}%`; });
+          ed.archivos.value = [...(ed.archivos.value ? ed.archivos.value.split(",") : []), id].join(",");
+        }
+        if (API_PUBLICA.includes(ed.red.value)) ed.solo_app.checked = false;
+        await cargar(true);
+        pintarArchivos(ed);
+        actualizar();
+        if (arg !== "nueva") ed.requestSubmit(); else $("#progreso").textContent = "Listo. Ahora guarda la pieza.";
+      } catch (e) { aviso(e.message); $("#progreso").textContent = ""; } finally { b.disabled = false; ev.target.value = ""; }
+    });
+    const quitar = (e) => {
+      const q = e.target.closest("[data-quitar]");
+      if (!q) return;
+      ed.archivos.value = ed.archivos.value.split(",").filter((x) => x && x !== q.dataset.quitar).join(",");
+      ed.dataset.sucio = "1"; pintarArchivos(ed); actualizar(); aviso("Quitado. Guarda para aplicar.");
+    };
+    $("#archivos")?.addEventListener("click", quitar);
     btn("#cancelar", "cancelar", "Cancelada.", "¿Cancelar esta pieza?");
     btn("#metricas", "metricas", "Métricas leídas.");
     $("#pausa")?.addEventListener("click", (ev) => accion(ev, async () => { await api(`/api/pieza/${arg}/pausa`, { pausada: !actual?.pausada }); aviso(actual?.pausada ? "Reanudada." : "En pausa: no saldrá hasta que la reanudes."); }));
@@ -436,10 +517,69 @@ function conectar(vista, arg) {
   $("#llaves-li")?.addEventListener("submit", (ev) => accion(ev, async () => { await api("/api/llaves/linkedin-app", Object.fromEntries(new FormData(ev.target))); aviso("App de LinkedIn guardada."); }));
   $("#conectar-li")?.addEventListener("click", (ev) => accion(ev, async () => { const r = await api("/api/linkedin/conectar", {}); location.href = r.url; }, false));
   $("#salir-todo")?.addEventListener("click", (ev) => accion(ev, async () => { if (!confirm("¿Cerrar la sesión en todos tus equipos?")) return; await api("/api/salir-todo", {}); aviso("Listo."); }));
+  $("#agregar-suelto")?.addEventListener("click", () => $("#archivo-suelto").click());
+  $("#archivo-suelto")?.addEventListener("change", async (ev) => {
+    const files = [...ev.target.files];
+    S.subiendo = true;
+    try {
+      for (const [i, f] of files.entries()) await subirArchivo(f, (x) => { $("#progreso-suelto").textContent = `${files.length > 1 ? `${i + 1}/${files.length} · ` : ""}${f.name}: ${Math.round(x * 100)}%`; });
+      aviso("Subido."); await cargar(true); pintar();
+    } catch (e) { aviso(e.message); } finally { S.subiendo = false; }
+  });
+  document.querySelectorAll("[data-borrar-archivo]").forEach((b) => b.addEventListener("click", (ev) => accion(ev, async () => {
+    if (!confirm("¿Borrar este archivo del panel?")) return; await api(`/api/archivo/${b.dataset.borrarArchivo}/borrar`, {}); aviso("Borrado.");
+  })));
+  $("#crear-llave")?.addEventListener("click", (ev) => accion(ev, async () => {
+    if (S.estado.llave_claude_auto && !confirm("La llave actual deja de servir. ¿Crear una nueva?")) return;
+    S.llaveMostrada = (await api("/api/llave-claude", {})).llave;
+  }));
+  $("#copiar-llave")?.addEventListener("click", async () => { await navigator.clipboard.writeText(S.llaveMostrada); aviso("Llave copiada."); });
+  $("#revocar-llave")?.addEventListener("click", (ev) => accion(ev, async () => {
+    if (!confirm("¿Revocar la llave? Las revisiones automáticas dejan de entrar al panel.")) return;
+    await api("/api/llave-claude", { accion: "revocar" }); S.llaveMostrada = null; aviso("Revocada.");
+  }));
   document.querySelectorAll("[data-borrar]").forEach((b) => b.addEventListener("click", (ev) => accion(ev, async () => {
     if (!confirm("¿Borrar estas credenciales del panel?")) return; await api("/api/llaves/borrar", { nombre: b.dataset.borrar }); aviso("Borradas.");
   })));
   masLi();
+}
+function pintarArchivos(ed) {
+  const ids = ed.archivos.value ? ed.archivos.value.split(",") : [];
+  $("#archivos").innerHTML = ids.map((x) => miniArchivo(archivoDe(x), true)).join("");
+}
+const TIPO_EXT = { jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp", gif: "image/gif", mp4: "video/mp4", mov: "video/quicktime", pdf: "application/pdf" };
+async function medidas(f) {
+  const tope = (pr) => Promise.race([pr, new Promise((r) => setTimeout(() => r({}), 4000))]);
+  try {
+    if (f.type.startsWith("image/")) return await tope(createImageBitmap(f).then((b) => ({ ancho: b.width, alto: b.height })));
+    if (f.type.startsWith("video/")) return await tope(new Promise((r) => {
+      const v = document.createElement("video"); v.preload = "metadata"; v.muted = true;
+      v.onloadedmetadata = () => { r({ ancho: v.videoWidth, alto: v.videoHeight, duracion: v.duration }); URL.revokeObjectURL(v.src); };
+      v.onerror = () => r({}); v.src = URL.createObjectURL(f);
+    }));
+  } catch {}
+  return {};
+}
+async function subirArchivo(f, progreso) {
+  const tipo = f.type || TIPO_EXT[(f.name.split(".").pop() || "").toLowerCase()] || "";
+  const a = await api("/api/archivo", { nombre: f.name, tipo, bytes: f.size, ...(await medidas(f)) });
+  const cola = [...Array(a.partes).keys()];
+  let hechas = 0;
+  const trabajador = async () => {
+    while (cola.length) {
+      const n = cola.shift();
+      for (let intento = 0; ; intento++) {
+        try {
+          const r = await fetch(`/api/archivo/${a.id}/${n}`, { method: "PUT", credentials: "same-origin", headers: { "Content-Type": "application/octet-stream" }, body: f.slice(n * a.parte, Math.min(f.size, (n + 1) * a.parte)) });
+          if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || `Error ${r.status}`);
+          break;
+        } catch (e) { if (intento >= 3) throw e; await new Promise((r) => setTimeout(r, 1500 * (intento + 1))); }
+      }
+      progreso(++hechas / a.partes);
+    }
+  };
+  await Promise.all([trabajador(), trabajador(), trabajador()]);
+  return a.id;
 }
 function masLi() { document.querySelectorAll(".pv-li .mas").forEach((m) => m.addEventListener("click", () => { const t = m.closest(".txt"); t.textContent = t.dataset.largo; })); }
 // «2026-11-17T09:00» en hora del centro de México (sin horario de verano desde 2022: UTC−6).
@@ -454,7 +594,7 @@ setInterval(async () => {
   if (document.visibilityState !== "visible" || !S.editor) return;
   const activo = document.activeElement;
   if (activo && /INPUT|TEXTAREA|SELECT/.test(activo.tagName)) return;
-  if ($("#editor")?.dataset.sucio || $("#dialogo")?.open) return;
+  if ($("#editor")?.dataset.sucio || $("#dialogo")?.open || S.subiendo) return;
   const antes = JSON.stringify(S.estado);
   await cargar(true);
   if (JSON.stringify(S.estado) !== antes) { const y = scrollY; pintar(); scrollTo(0, y); }

@@ -46,3 +46,17 @@ Encargo nuevo: campaña de lanzamiento «lo que construí con IA + Derecho» (2 
 - Ya hizo: creó la contraseña del panel, quitó el candado de X y trabajó la conexión de LinkedIn en box. Falta abrir TikTok e Instagram.
 - Texto de LinkedIn para el video del DOF: eligió la versión B con sus propias palabras («me gusta algo más así, con un poco de mi toque y criterio»). La Matriz solo corrigió ortografía y concordancia.
 - X: comprará créditos y conectará la API; elegirá el post de lanzamiento en el panel.
+
+## Quinta ronda (13/11/2026, chat): preguntas de Editor Studio y panel
+Respuestas de Emi a las 9 preguntas de Editor Studio (textuales donde importa):
+1. Sí: se nombran Claude, ChatGPT y GitHub en pantalla, como herramientas que él usa (sigue la regla absoluta: nada dice que una IA hizo la pieza).
+2. Sí: los boletines se rotulan «datos de ejemplo».
+3. Sí: el objetivo es que comenten; el cierre es una pregunta que divida opiniones.
+4. Sí: edición de nivel 2, con gancho de nivel 3.
+5. «Razónalo bien». La Matriz decide: música original hecha con código, muy baja (≈ −17 LU bajo la voz), sin canciones comerciales ni sonidos de moda en el máster; un solo máster para TikTok, Reels, X y LinkedIn. Motivo: lo que se sube por API o se reutiliza entre redes no puede llevar audio con derechos, y lo que se escucha es la voz de Emi. Si quiere un sonido de moda, lo agrega él en TikTok o Instagram a volumen mínimo, pieza por pieza.
+6. Sí: ironía sobre el trabajo jurídico manual, sin efectos de sonido de chiste.
+7. No: nadie más sale a cuadro.
+8. «Güey, quítalo, suena horrible»: fuera «güey» y ese tipo de modismos en guiones, textos y subtítulos.
+9. Sí: antes de grabar, un guion corto y 3 ganchos por video.
+
+Panel: «Construye y haz todo para imágenes y videos» y «Haz posible lo de análisis de tu inspiración».

@@ -1,12 +1,12 @@
 // Pruebas del Worker sin red ni Cloudflare: node worker/prueba.mjs
 import assert from "node:assert/strict";
-import W, { xVolver, guardarSecreto, leerSecreto, firmaOAuth1, revisarTexto, largoX, huella, publicar, tic, autoriaIA, escaparLinkedIn, parecido } from "./index.js";
+import W, { xVolver, guardarSecreto, leerSecreto, firmaOAuth1, revisarTexto, largoX, huella, publicar, tic, autoriaIA, escaparLinkedIn, parecido, revisarArchivos, metaInspiracion } from "./index.js";
 
 let ok = 0;
 const t = async (n, f) => { await f(); ok++; console.log("✓", n); };
 const almacen = () => { const m = new Map(); return { m, get: async (k) => m.get(k), put: async (k, v) => { m.set(k, v); }, delete: async (k) => { m.delete(k); } }; };
 const nuevoEnv = (extra = {}) => ({ PANEL_CLAVE: "clave-de-prueba", CIFRADO: "x".repeat(40), CLAUDE_LLAVE: "c".repeat(32), TOPE_X_USD: "1",
-  ALMACEN: almacen(), ASSETS: { fetch: async () => new Response("panel") }, ...extra });
+  ALMACEN: almacen(), ASSETS: { fetch: async () => new Response("panel") }, FETCHER: async () => new Response("no", { status: 404 }), ...extra });
 const O = "https://redes.test";
 const req = (ruta, cuerpo, h = {}) => new Request(O + ruta, cuerpo === undefined ? { headers: h } :
   { method: "POST", headers: { "Content-Type": "application/json", Origin: O, ...h }, body: JSON.stringify(cuerpo) });
@@ -305,5 +305,196 @@ await t("inspiración: Emi pega el enlace; la Matriz analiza y propone espacio; 
   assert.equal(f.espacio, "milla"); assert.equal(f.espacio_propuesto, null);
   const n = (await c(req("/api/claude/nota", { texto: "Idea de la Matriz", espacio: "pan" }, H))).j;
   assert.equal(n.espacio, null); assert.equal(n.espacio_propuesto, "pan");
+});
+
+// ---------------------------------------------------------------- archivos
+const MiB = 1024 * 1024;
+const bytesDe = (n, semilla = 7) => { const u = new Uint8Array(n); for (let i = 0; i < n; i++) u[i] = (i * 31 + semilla) & 255; return u; };
+async function subirArchivoPrueba(env, S, nombre, tipo, u8, extra = {}) {
+  const a = (await S("/api/archivo", { nombre, tipo, bytes: u8.byteLength, ...extra })).j;
+  assert.ok(a.id, JSON.stringify(a));
+  for (let n = 0; n < a.partes; n++) {
+    const g = (await llamar(env)(req("/api/entrar", { clave: "clave-de-prueba" }))).h.get("Set-Cookie").split(";")[0];
+    const r = await W.fetch(new Request(`${O}/api/archivo/${a.id}/${n}`, { method: "PUT", headers: { Cookie: g, Origin: O, "Content-Type": "application/octet-stream" }, body: u8.slice(n * a.parte, Math.min(u8.byteLength, (n + 1) * a.parte)) }), env);
+    assert.equal(r.status, 200, await r.clone().text());
+  }
+  return a.id;
+}
+await t("archivos: suben en partes, se leen con Range, se validan por red y cambian la aprobación", async () => {
+  const env = nuevoEnv(), S = await sesion(env), c = llamar(env);
+  const u8 = bytesDe(9 * MiB + 123);
+  const id = await subirArchivoPrueba(env, S, "video final.mp4", "video/mp4", u8, { duracion: 58 });
+  const est = (await S("/api/estado")).j.archivos.find((a) => a.id === id);
+  assert.equal(est.estado, "listo"); assert.equal(est.partes, 3);
+  const g = (await c(req("/api/entrar", { clave: "clave-de-prueba" }))).h.get("Set-Cookie").split(";")[0];
+  const r = await W.fetch(new Request(`${O}/api/archivo/${id}`, { headers: { Cookie: g, Range: `bytes=${4 * MiB - 2}-${4 * MiB + 1}` } }), env);
+  assert.equal(r.status, 206); assert.equal(r.headers.get("Content-Range"), `bytes ${4 * MiB - 2}-${4 * MiB + 1}/${u8.byteLength}`);
+  assert.deepEqual([...new Uint8Array(await r.arrayBuffer())], [...u8.slice(4 * MiB - 2, 4 * MiB + 2)]);
+  const todo = new Uint8Array(await (await W.fetch(new Request(`${O}/api/archivo/${id}`, { headers: { Cookie: g } }), env)).arrayBuffer());
+  assert.equal(todo.byteLength, u8.byteLength); assert.equal(todo[9 * MiB], u8[9 * MiB]);
+  assert.equal((await W.fetch(new Request(`${O}/api/archivo/${id}`), env)).status, 401, "sin sesión no se ve");
+  // Parte de tamaño equivocado y PUT de otro origen.
+  const b = (await S("/api/archivo", { nombre: "x.png", tipo: "image/png", bytes: 1000 })).j;
+  assert.equal((await W.fetch(new Request(`${O}/api/archivo/${b.id}/0`, { method: "PUT", headers: { Cookie: g, Origin: O, "Content-Type": "application/octet-stream" }, body: new Uint8Array(999) }), env)).status, 400);
+  assert.equal((await W.fetch(new Request(`${O}/api/archivo/${b.id}/0`, { method: "PUT", headers: { Cookie: g, Origin: "https://malo.test", "Content-Type": "application/octet-stream" }, body: new Uint8Array(1000) }), env)).status, 403);
+  assert.equal((await S("/api/archivo", { nombre: "a.exe", tipo: "application/x-msdownload", bytes: 10 })).s, 400);
+  // Reglas por red.
+  const A = (clase, extra = {}) => ({ nombre: "a", clase, tipo: { imagen: "image/png", video: "video/mp4", pdf: "application/pdf", gif: "image/gif" }[clase], bytes: MiB, ...extra });
+  assert.match(revisarArchivos("x", [A("pdf")]), /PDF/);
+  assert.match(revisarArchivos("x", [A("video"), A("imagen")]), /solo/);
+  assert.equal(revisarArchivos("x", [A("imagen"), A("imagen"), A("imagen"), A("imagen")]), null);
+  assert.match(revisarArchivos("x", [A("imagen", { bytes: 6 * MiB })]), /5 MB/);
+  assert.equal(revisarArchivos("linkedin", [A("pdf")]), null);
+  assert.match(revisarArchivos("linkedin", [A("video", { tipo: "video/quicktime" })]), /MP4/);
+  assert.equal(revisarArchivos("instagram", [A("video"), A("imagen")]), null);
+  // Pieza con el video: aprobar, y quitar el archivo invalida la aprobación.
+  const p = (await S("/api/pieza", { red: "linkedin", texto: "Con video del panel.", archivos: [id] })).j;
+  assert.deepEqual(p.archivos, [id]);
+  const pdfx = (await S("/api/archivo", { nombre: "c.pdf", tipo: "application/pdf", bytes: 1000 })).j;
+  assert.match((await S("/api/pieza", { red: "x", texto: "PDF en X", archivos: [pdfx.id] })).j.error, /PDF/);
+  const sinTerminar = (await S("/api/pieza", { red: "x", texto: "Foto a medias", archivos: [b.id] })).j;
+  assert.match((await S(`/api/pieza/${sinTerminar.id}/aprobar`, {})).j.error, /terminado de subir/);
+  const ap = (await S(`/api/pieza/${p.id}/aprobar`, {})).j;
+  assert.ok(ap.aprobado_huella);
+  const sin = (await S("/api/pieza", { id: p.id, red: "linkedin", texto: "Con video del panel.", archivos: [] })).j;
+  assert.equal(sin.aprobado_huella, undefined);
+  assert.equal((await S(`/api/archivo/${id}/borrar`, {})).s, 200, "ya no lo usa ninguna pieza");
+  assert.ok(![...env.ALMACEN.m.keys()].some((k) => k.startsWith(`bin:${id}:`)), "se borraron los trozos");
+});
+
+// X falso que entiende la subida por partes de /2/media/upload.
+function falsoXMedia(reg, procesa = 0) {
+  return async (url, o) => {
+    reg.push(`${o.method || "GET"} ${url.replace("https://api.x.com", "")}`);
+    if (url.endsWith("/2/media/upload/initialize")) { const b = JSON.parse(o.body); reg.tipo = b; return Response.json({ data: { id: "m1", expires_after_secs: 86400 } }); }
+    if (/\/append$/.test(url)) { assert.ok(o.body instanceof FormData); reg.bytes = (reg.bytes || 0) + o.body.get("media").size; return new Response(null, { status: 204 }); }
+    if (/\/finalize$/.test(url)) return Response.json({ data: { id: "m1", processing_info: procesa ? { state: "pending", check_after_secs: 1 } : undefined } });
+    if (url.includes("command=STATUS")) return Response.json({ data: { processing_info: { state: --procesa > 0 ? "in_progress" : "succeeded" } } });
+    if (url.endsWith("/2/tweets")) { reg.tweet = JSON.parse(o.body); return Response.json({ data: { id: "900" } }, { status: 201 }); }
+    return new Response("?", { status: 404 });
+  };
+}
+await t("X con imagen: sube en partes, publica con media_ids y cuenta el gasto", async () => {
+  const env = nuevoEnv(), S = await sesion(env);
+  await S("/api/llaves/x", llavesX);
+  const img = bytesDe(5 * MiB - 10, 3);
+  const id = await subirArchivoPrueba(env, S, "foto.png", "image/png", img);
+  const p = (await S("/api/pieza", { red: "x", texto: "Con foto.", archivos: [id] })).j;
+  await S(`/api/pieza/${p.id}/aprobar`, {});
+  const reg = [];
+  const r = await publicar(env, p.id, falsoXMedia(reg));
+  assert.equal(r.estado, "publicada", JSON.stringify(r.error || r.subida));
+  assert.deepEqual(reg.tweet, { text: "Con foto.", media: { media_ids: ["m1"] } });
+  assert.equal(reg.tipo.media_category, "tweet_image"); assert.equal(reg.bytes, img.byteLength);
+  assert.equal(reg.filter((x) => x.includes("/append")).length, 2, "dos partes de 4 MiB");
+  const g = JSON.parse(env.ALMACEN.m.get(`gasto:x:${new Date().toISOString().slice(0, 7)}`));
+  assert.ok(g.llamadas.some((l) => /parte 2\/2/.test(l.que)));
+});
+await t("X con video que tarda en procesarse: «Publicar ahora» espera y el cron lo saca una sola vez", async () => {
+  const env = nuevoEnv(), S = await sesion(env);
+  await S("/api/llaves/x", llavesX);
+  const id = await subirArchivoPrueba(env, S, "corte.mp4", "video/mp4", bytesDe(MiB), { duracion: 45 });
+  const p = (await S("/api/pieza", { red: "x", texto: "Con video.", archivos: [id], fecha: new Date(Date.now() + 864e5).toISOString() })).j;
+  await S(`/api/pieza/${p.id}/aprobar`, {});
+  cambiar(env, p.id, (x) => { x.estado = "aprobada"; });
+  const reg = [], fx = falsoXMedia(reg, 2);
+  const r = await publicar(env, p.id, fx);
+  assert.match(r.aviso, /procesarlos/); assert.equal(r.publicar_al_terminar, true);
+  assert.equal(r.subida.items[0].estado, "procesando");
+  cambiar(env, p.id, (x) => { x.subida.items[0].revisar = new Date(Date.now() - 1000).toISOString(); });
+  await tic(env, fx); // in_progress
+  cambiar(env, p.id, (x) => { x.subida.items[0].revisar = new Date(Date.now() - 1000).toISOString(); });
+  await tic(env, fx); // succeeded → publica
+  await tic(env, fx);
+  const fin = piezasDe(env).find((x) => x.id === p.id);
+  assert.equal(fin.estado, "publicada", JSON.stringify({ e: fin.error, s: fin.subida, h: fin.historial, reg }));
+  assert.equal(reg.filter((x) => x.endsWith("/2/tweets")).length, 1);
+  assert.equal(reg.tipo.media_category, "tweet_video");
+});
+await t("sin aprobación no se sube nada a la red; con fallos de subida, a los 3 espera a Emi", async () => {
+  const env = nuevoEnv(), S = await sesion(env);
+  await S("/api/llaves/x", llavesX);
+  const id = await subirArchivoPrueba(env, S, "f.jpg", "image/jpeg", bytesDe(1000));
+  const p = (await S("/api/pieza", { red: "x", texto: "Sin aprobar.", archivos: [id] })).j;
+  await assert.rejects(publicar(env, p.id, async () => assert.fail("no debe llamar a X")), /aprobado/);
+  const fut = new Date(Date.now() + 3600e3).toISOString();
+  await S("/api/pieza", { id: p.id, red: "x", texto: "Sin aprobar.", archivos: [id], fecha: fut });
+  assert.equal((await S(`/api/pieza/${p.id}/aprobar`, {})).j.estado, "programada");
+  const malo = async () => Response.json({ title: "Forbidden" }, { status: 403 });
+  for (let i = 0; i < 3; i++) { cambiar(env, p.id, (x) => { if (x.subida) delete x.subida.ocupada_hasta; }); await tic(env, malo); }
+  const x = piezasDe(env).find((y) => y.id === p.id);
+  assert.equal(x.estado, "aprobada"); assert.match(x.error, /reconecta X/);
+});
+await t("LinkedIn: video en partes con ETag, espera a que procese y publica con content.media; PDF con título", async () => {
+  const env = nuevoEnv(), S = await sesion(env);
+  await guardarSecreto(env, "linkedin", { access_token: "li-tok", persona: "urn:li:person:abc", vence: new Date(Date.now() + 864e5).toISOString() });
+  const vid = bytesDe(6 * MiB, 9);
+  const id = await subirArchivoPrueba(env, S, "dof-video.mp4", "video/mp4", vid, { duracion: 70 });
+  const reg = { put: [], posts: [] };
+  const fl = async (url, o) => {
+    if (url.includes("/rest/videos?action=initializeUpload")) {
+      assert.equal(o.headers["LinkedIn-Version"], "202610");
+      return Response.json({ value: { video: "urn:li:video:V1", uploadToken: "tok", uploadInstructions: [{ firstByte: 0, lastByte: 4 * MiB - 1, uploadUrl: "https://www.linkedin.com/dms-uploads/a" }, { firstByte: 4 * MiB, lastByte: 6 * MiB - 1, uploadUrl: "https://www.linkedin.com/dms-uploads/b" }] } });
+    }
+    if (url.startsWith("https://www.linkedin.com/dms-uploads/")) { reg.put.push(o.body.byteLength); return new Response(null, { status: 200, headers: { etag: `"e${reg.put.length}"` } }); }
+    if (url.includes("finalizeUpload")) { reg.fin = JSON.parse(o.body); return new Response(null, { status: 200 }); }
+    if (url.includes("/rest/documents?action=initializeUpload")) return Response.json({ value: { document: "urn:li:document:D1", uploadUrl: "https://www.linkedin.com/dms-uploads/doc" } });
+    if (url.endsWith("/rest/posts")) { const b = JSON.parse(o.body); reg.posts.push(b); return reg.posts.length === 1 ? new Response("{\"message\":\"processing\"}", { status: 422 }) : new Response(null, { status: 201, headers: { "x-restli-id": "urn:li:share:1" } }); }
+    return new Response("?", { status: 404 });
+  };
+  const p = (await S("/api/pieza", { red: "linkedin", texto: "Video del DOF.", archivos: [id] })).j;
+  await S(`/api/pieza/${p.id}/aprobar`, {});
+  cambiar(env, p.id, (x) => { x.estado = "aprobada"; });
+  const r = await publicar(env, p.id, fl);
+  assert.match(r.aviso || "", /procesarlos/);
+  assert.deepEqual(reg.put, [4 * MiB, 2 * MiB]);
+  assert.deepEqual(reg.fin.finalizeUploadRequest, { video: "urn:li:video:V1", uploadToken: "tok", uploadedPartIds: ["e1", "e2"] });
+  cambiar(env, p.id, (x) => { x.subida.items[0].revisar = new Date(Date.now() - 1000).toISOString(); });
+  await tic(env, fl); // primer post: 422 (procesando) → reintento
+  let x = piezasDe(env).find((y) => y.id === p.id);
+  assert.equal(x.estado, "aprobada"); assert.equal(x.intentos_publicar, 1);
+  await tic(env, fl);
+  x = piezasDe(env).find((y) => y.id === p.id);
+  assert.equal(x.estado, "publicada");
+  assert.deepEqual(reg.posts[1].content, { media: { id: "urn:li:video:V1", title: "dof video" } });
+  // PDF (carrusel): un solo archivo, con título.
+  const pdf = await subirArchivoPrueba(env, S, "Carrusel_IA-y-Derecho.pdf", "application/pdf", bytesDe(300000));
+  const q = (await S("/api/pieza", { red: "linkedin", texto: "Carrusel.", archivos: [pdf] })).j;
+  await S(`/api/pieza/${q.id}/aprobar`, {});
+  cambiar(env, q.id, (y) => { y.estado = "aprobada"; });
+  reg.posts.push({}); // que el siguiente post responda 201
+  assert.equal((await publicar(env, q.id, fl)).estado, "publicada");
+  assert.deepEqual(reg.posts.at(-1).content, { media: { id: "urn:li:document:D1", title: "Carrusel IA y Derecho" } });
+});
+await t("llave de Claude automático: Emi la crea, sirve como la de Claude y se revoca", async () => {
+  const env = nuevoEnv(), S = await sesion(env), c = llamar(env);
+  const { llave } = (await S("/api/llave-claude", {})).j;
+  assert.match(llave, /^rca_[0-9a-f]{64}$/);
+  assert.ok(!env.ALMACEN.m.get("llave_claude_auto").includes(llave.slice(4)), "solo se guarda el hash");
+  const H = { Authorization: "Bearer " + llave };
+  assert.equal((await c(req("/api/claude/estado", undefined, H))).s, 200);
+  assert.equal((await c(req(`/api/pieza/x/aprobar`, {}, H))).s, 401, "no aprueba");
+  await S("/api/llave-claude", { accion: "revocar" });
+  assert.equal((await c(req("/api/claude/estado", undefined, H))).s, 401);
+});
+await t("inspiración: el panel guarda título, autor y miniatura del enlace para que Claude la analice", async () => {
+  const env = nuevoEnv(), S = await sesion(env), c = llamar(env);
+  const png = bytesDe(2048);
+  env.FETCHER = async (url) => {
+    if (url === "https://vm.tiktok.com/ZM123/") return Object.defineProperty(new Response("<html><meta property=\"og:description\" content=\"Abogado explica &amp; corta\"></html>", { headers: { "content-type": "text/html" } }), "url", { value: "https://www.tiktok.com/@alguien/video/123" });
+    if (url.startsWith("https://www.tiktok.com/oembed")) return Response.json({ title: "Cómo leo el DOF en 30 s", author_name: "alguien", thumbnail_url: "https://p16.tiktokcdn.com/m.jpeg" });
+    if (url === "https://p16.tiktokcdn.com/m.jpeg") return new Response(png, { headers: { "content-type": "image/jpeg" } });
+    return new Response("no", { status: 404 });
+  };
+  const e = (await S("/api/inspiracion", { url: "https://vm.tiktok.com/ZM123/", que_me_llamo: "El gancho" })).j;
+  assert.equal(e.meta.titulo, "Cómo leo el DOF en 30 s"); assert.equal(e.meta.autor, "alguien");
+  assert.equal(e.meta.descripcion, "Abogado explica & corta"); assert.equal(e.meta.fuente, "oEmbed");
+  const H = { Authorization: "Bearer " + "c".repeat(32) };
+  const r = await W.fetch(new Request(`${O}/api/claude/archivo/${e.meta.miniatura}`, { headers: H }), env);
+  assert.equal(r.status, 200); assert.equal((await r.arrayBuffer()).byteLength, 2048);
+  // Si falla la red, el cron lo completa después.
+  env.FETCHER = async () => { throw new Error("sin red"); };
+  const f = (await S("/api/inspiracion", { url: "https://www.pinterest.com/pin/1/" })).j;
+  assert.ok(f.meta.error);
 });
 console.log(`\n${ok} pruebas aprobadas`);
