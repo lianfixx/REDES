@@ -613,7 +613,23 @@
     "boletin": 40,
     "encuesta": 5
    },
-   "publicados": [],
+   "publicados": [
+    {
+     "id": "2026-W46-pagos-a",
+     "fecha": "2026-11-13T12:52:00-06:00",
+     "espacio": "personal",
+     "pilar": "ia-derecho",
+     "formato": "video",
+     "url": "https://www.linkedin.com/feed/update/urn:li:activity:7527081695200595968/",
+     "idea_matriz": "",
+     "huella_texto": "6a76d07ef0fbd3c0e47668c91249efd9c6bc80bd9399a24a68b975f157313245",
+     "metricas": {
+      "capturado": "",
+      "fuente": "",
+      "valores": {}
+     }
+    }
+   ],
    "lecciones": [
     {
      "fecha": "2026-11-13",
