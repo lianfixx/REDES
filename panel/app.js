@@ -235,7 +235,7 @@ V.pieza = (id) => {
       <div id="archivos" class="archivos">${(p.archivos || []).map((x) => miniArchivo(archivoDe(x) || { id: x, nombre: "archivo", bytes: 0, estado: "subiendo", recibidas: 0, partes: "?" }, !cerrada)).join("")}</div>
       <input type="hidden" name="archivos" value="${esc((p.archivos || []).join(","))}">
       ${cerrada ? "" : `<input type="file" id="elegir-archivo" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/quicktime,application/pdf" multiple hidden>
-      <div class="fila"><button type="button" class="boton suave" id="agregar-archivo">Agregar archivo</button><span class="tenue chico" id="progreso"></span></div>
+      <div class="fila"><button type="button" class="boton suave" id="agregar-archivo">Agregar archivo</button>${(S.estado?.archivos || []).some((a) => a.estado === "listo" && a.origen !== "inspiracion") ? `<select class="mini-sel" id="de-biblioteca"><option value="">O elige uno ya subido…</option>${(S.estado.archivos || []).filter((a) => a.estado === "listo" && a.origen !== "inspiracion").map((a) => `<option value="${a.id}">${esc(a.nombre)} · ${tam(a.bytes)}</option>`).join("")}</select>` : ""}<span class="tenue chico" id="progreso"></span></div>
       <p class="tenue chico">${p.red === "x" ? "X: hasta 4 imágenes (5 MB c/u) o un video de hasta 2:20." : p.red === "linkedin" ? "LinkedIn: un video MP4, un PDF (carrusel) o de 1 a 20 imágenes." : "Instagram y TikTok se suben desde la app: aquí lo dejas listo para descargarlo en tu teléfono."}</p>`}
       ${subidaHtml(p)}
       <details ${p.media ? "open" : ""}><summary class="tenue chico">Enlace de referencia (Drive)</summary><input name="media" value="${esc(p.media)}" placeholder="https://drive.google.com/…"></details>
@@ -482,6 +482,15 @@ function conectar(vista, arg) {
         actualizar();
         if (arg !== "nueva") ed.requestSubmit(); else $("#progreso").textContent = "Listo. Ahora guarda la pieza.";
       } catch (e) { aviso(e.message); $("#progreso").textContent = ""; } finally { b.disabled = false; ev.target.value = ""; }
+    });
+    $("#de-biblioteca")?.addEventListener("change", (ev) => {
+      const id = ev.target.value;
+      if (!id) return;
+      const ids = ed.archivos.value ? ed.archivos.value.split(",") : [];
+      if (!ids.includes(id)) ed.archivos.value = [...ids, id].join(",");
+      if (API_PUBLICA.includes(ed.red.value)) ed.solo_app.checked = false;
+      ed.dataset.sucio = "1"; pintarArchivos(ed); actualizar();
+      if (arg !== "nueva") ed.requestSubmit(); else aviso("Agregado. Guarda la pieza.");
     });
     const quitar = (e) => {
       const q = e.target.closest("[data-quitar]");
