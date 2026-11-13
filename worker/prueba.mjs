@@ -249,4 +249,15 @@ await t("X con OAuth 2.0 + PKCE: conectar, publicar con Bearer y renovar el toke
   assert.match((await publicar(env, z.id, falla)).error, /reconecta X/);
   assert.equal(await leerSecreto(env, "x2"), null);
 });
+await t("X como app pública: si Basic da 401, se pide el token sin secreto", async () => {
+  const env = nuevoEnv(), S = await sesion(env);
+  await S("/api/llaves/x-app", { client_id: "cliente-publico", client_secret: "secreto-que-no-sirve" });
+  const st = new URL((await S("/api/x/conectar", {})).j.url).searchParams.get("state");
+  const vistas = [];
+  const fx = async (url, o) => { vistas.push(!!o.headers.Authorization); return o.headers.Authorization ? Response.json({ error: "unauthorized_client", error_description: "Missing valid authorization header" }, { status: 401 }) : Response.json({ access_token: "a", refresh_token: "r", expires_in: 7200 }); };
+  const r = await xVolver(new Request(`${O}/api/x/volver?state=${st}&code=c`), env, new URL(`${O}/api/x/volver?state=${st}&code=c`), fx);
+  assert.match(r.headers.get("Location"), /x=ok/);
+  assert.deepEqual(vistas, [true, false]);
+  assert.match(JSON.parse(env.ALMACEN.m.get("bitacora"))[0].que, /pública/);
+});
 console.log(`\n${ok} pruebas aprobadas`);

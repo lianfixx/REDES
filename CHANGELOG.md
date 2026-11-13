@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-13 · X: token como app confidencial o pública
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: bitácora del panel, 13/11 17:32: «X no entregó el permiso (401: Missing valid authorization header)» al conectar X.
+- Cambios: al pedir o renovar el token, si X rechaza la autenticación Basic (Client ID + Secret, app «Web App»), se reintenta una vez como app pública («Native App»: sin secreto, con PKCE). La bitácora anota el modo y, si ambos fallan, los dos motivos.
+- Archivos: `worker/{index.js,prueba.mjs}`, este registro.
+- Verificación: `node worker/prueba.mjs` → aprobado (17); conexión real → la reintenta Emi.
+- Pendiente: si vuelve a fallar con 401 en ambos modos, el Client Secret pegado no es el de OAuth 2.0 o la app no tiene activada la autenticación de usuario.
+
 ## 2026-11-13 · Bitácora de conexiones con X y LinkedIn
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: Emi (vía x-viral, 13/11): «ya hice ambos y no pasa nada» al conectar X.

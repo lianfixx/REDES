@@ -247,18 +247,28 @@ async function gastoX(env, usd, que) {
 }
 // OAuth 2.0 con PKCE (lo que da la consola nueva de X): token de acceso de ~2 h y de actualización que rota.
 const X_TOKEN_URL = "https://api.x.com/2/oauth2/token";
+// Pide un token a X. Primero como app confidencial («Web App»: Basic con Client ID y Secret); si X responde 401,
+// lo intenta como app pública («Native App»: sin secreto, solo client_id y PKCE). Devuelve {r, t, modo}.
+async function pedirTokenX(app, params, fetcher) {
+  const cuerpo = new URLSearchParams({ ...params, client_id: app.client_id }).toString();
+  const basica = btoa(`${app.client_id}:${app.client_secret}`);
+  let r = await fetcher(X_TOKEN_URL, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded", Authorization: "Basic " + basica }, body: cuerpo });
+  let t = await r.json().catch(() => ({}));
+  if (r.status === 401) {
+    const r2 = await fetcher(X_TOKEN_URL, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: cuerpo });
+    const t2 = await r2.json().catch(() => ({}));
+    if (r2.ok && t2.access_token) return { r: r2, t: t2, modo: "pública" };
+    t = { ...t, error_description: `${t.error_description || t.error || ""} · como app pública: ${t2.error_description || t2.error || r2.status}` };
+  }
+  return { r, t, modo: "confidencial" };
+}
 async function tokenX2(env, fetcher) {
   const t = await leerSecreto(env, "x2");
   if (!t) return null;
   if (t.vence && Date.parse(t.vence) > Date.now() + 120e3) return t.access_token;
   const app = await leerSecreto(env, "x_app");
   if (!app || !t.refresh_token) throw new Error("X necesita reconectarse: Ajustes → Conectar X.");
-  const r = await fetcher(X_TOKEN_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded", Authorization: "Basic " + btoa(`${app.client_id}:${app.client_secret}`) },
-    body: new URLSearchParams({ grant_type: "refresh_token", refresh_token: t.refresh_token, client_id: app.client_id }).toString(),
-  });
-  const n = await r.json().catch(() => ({}));
+  const { r, t: n } = await pedirTokenX(app, { grant_type: "refresh_token", refresh_token: t.refresh_token }, fetcher);
   if (!r.ok || !n.access_token) {
     await borrar(env, "cred:x2"); // falla cerrado: hay que reconectar
     throw new Error(`X no renovó el permiso (${r.status}): reconecta X en Ajustes.`);
@@ -302,15 +312,10 @@ async function xVolver(request, env, url, fetcher = fetch) {
   if (url.searchParams.get("error")) return volver(`X no autorizó: ${url.searchParams.get("error")}`);
   const app = await leerSecreto(env, "x_app");
   if (!app) return volver("Falta la app de X.");
-  const r = await fetcher(X_TOKEN_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded", Authorization: "Basic " + btoa(`${app.client_id}:${app.client_secret}`) },
-    body: new URLSearchParams({ grant_type: "authorization_code", code: url.searchParams.get("code") || "", redirect_uri: `${url.origin}/api/x/volver`, code_verifier: g.verificador, client_id: app.client_id }).toString(),
-  });
-  const t = await r.json().catch(() => ({}));
+  const { r, t, modo } = await pedirTokenX(app, { grant_type: "authorization_code", code: url.searchParams.get("code") || "", redirect_uri: `${url.origin}/api/x/volver`, code_verifier: g.verificador }, fetcher);
   if (!t.access_token) return volver(`X no entregó el permiso (${r.status}: ${String(t.error_description || t.error || "").slice(0, 120)}).`);
   await guardarSecreto(env, "x2", { access_token: t.access_token, refresh_token: t.refresh_token || "", vence: new Date(Date.now() + (Number(t.expires_in) || 7200) * 1000).toISOString() });
-  await bitacora(env, "Emi", "Conectó X (OAuth 2.0)");
+  await bitacora(env, "Emi", `Conectó X (OAuth 2.0, app ${modo})`);
   return volver("ok");
 }
 export { xVolver, guardarSecreto, leerSecreto };
