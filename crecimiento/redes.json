@@ -206,6 +206,10 @@
     {
       "regla": "Responder comentarios el mismo día es lo que más depende de ti.",
       "certeza": "criterio"
+    },
+    {
+      "regla": "Los demos técnicos privados de Vox del 10 y 11/11 (demo-2 y demo-vox) dicen que los editó una IA: no se publican.",
+      "certeza": "criterio"
     }
   ]
 }

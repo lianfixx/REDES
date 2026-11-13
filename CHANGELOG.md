@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-13 · LinkedIn e Instagram ya exponen su estado
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: mensajes de las sesiones de LinkedIn, Instagram y Vox (13/11).
+- Cambios: `red/estado.json` de `lianfixx/linkedin` y `lianfixx/Instagram` validados con el contrato (válidos); TikTok aún no lo publica. Nombre exacto del repositorio de LinkedIn en la configuración y en Recursos. `redes.py` ya no muestra un error de Python ante un JSON inválido: dice el motivo. Crecer anota que los demos técnicos de Vox del 10 y 11/11 no se publican (dicen que los editó una IA).
+- Archivos: `skills/matriz-redes/{scripts/redes.py,data/config.json}`, `crecimiento/{redes.json,recursos.json}`, `peticiones/2026-11-13-{linkedin,instagram}.md`, este registro.
+- Verificación: `redes.py contrato` sobre ambos archivos remotos → válido; `python3 ia/verificar.py ci` → aprobado.
+- Pendiente: estado de TikTok.
+
 ## 2026-11-13 · Piezas que se publican desde la app y texto de LinkedIn de Emi
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: Emi, 13/11/2026: eligió su versión B para LinkedIn (video del DOF) y no encontraba en el panel dónde escoger el post de X.

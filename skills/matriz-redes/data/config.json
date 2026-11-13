@@ -1,39 +1,94 @@
 {
   "_doc": "Parámetros de la Matriz de Redes. Los pesos son PROPUESTA de la Matriz (13/11/2026) pendiente de aprobación de Emi; cambiar cualquier valor requiere su visto bueno y una entrada en CHANGELOG.md.",
   "pesos": {
-    "encaje": 0.20,
-    "objetivo": 0.20,
-    "balance": 0.10,
-    "capacidad": 0.10,
-    "costo": 0.10,
-    "riesgo": 0.10,
-    "novedad": 0.10,
-    "urgencia": 0.10
+    "encaje": 0.2,
+    "objetivo": 0.2,
+    "balance": 0.1,
+    "capacidad": 0.1,
+    "costo": 0.1,
+    "riesgo": 0.1,
+    "novedad": 0.1,
+    "urgencia": 0.1
   },
   "pesos_estado": "propuesta",
-  "objetivos": {"marca personal": 1.0, "influencia politica": 0.7, "comunidad": 0.5, "prestigio": 1.0, "empleo": 0.6},
+  "objetivos": {
+    "marca personal": 1.0,
+    "influencia politica": 0.7,
+    "comunidad": 0.5,
+    "prestigio": 1.0,
+    "empleo": 0.6
+  },
   "minutos_emi_semana": 120,
   "minutos_emi_semana_lanzamiento": 180,
   "riesgo_consulta_emi": 2,
-  "espacios_activos": ["personal"],
-  "espacios_previstos": ["milla"],
+  "espacios_activos": [
+    "personal"
+  ],
+  "espacios_previstos": [
+    "milla"
+  ],
   "zona": "America/Mexico_City",
   "redes": {
-    "x": {"skill": "x-viral", "repo": "lianfixx/X", "cuenta": "@emilianomilla_", "activa": true,
-          "cadencia": {"max_por_dia": 2, "separacion_min_h": 4, "max_por_semana": 14},
-          "fuente_cadencia": "lianfixx/X cuenta/perfil.json (max_originales_dia, separacion_min_h)"},
-    "linkedin": {"skill": "linkedin-pro", "repo": "lianfixx/LinkedIn", "cuenta": "linkedin.com/in/emiliano-milla", "activa": true,
-          "cadencia": {"max_por_dia": 1, "separacion_min_h": 24, "max_por_semana": 2},
-          "fuente_cadencia": "sesión de LinkedIn, 13/11/2026: cadencia fijada por Emi"},
-    "tiktok": {"skill": "tiktok", "repo": "lianfixx/TikTok", "cuenta": "", "activa": false,
-          "cadencia": {"max_por_dia": 1, "separacion_min_h": 0, "max_por_semana": 5},
-          "fuente_cadencia": "provisional de la Matriz hasta que la skill de TikTok la declare"},
-    "instagram": {"skill": "instagram-studio", "repo": "lianfixx/Instagram", "cuenta": "", "activa": false,
-          "cadencia": {"max_por_dia": 1, "separacion_min_h": 0, "max_por_semana": 5},
-          "fuente_cadencia": "sesión de Instagram, 13/11/2026: 3 a 5 por semana (terceros: Buffer)"},
-    "instagram-historias": {"skill": "historias-studio", "repo": "lianfixx/HISTORIAS-", "cuenta": "", "activa": false,
-          "cadencia": {"max_por_dia": 10, "separacion_min_h": 0, "max_por_semana": 70},
-          "fuente_cadencia": "provisional"}
+    "x": {
+      "skill": "x-viral",
+      "repo": "lianfixx/X",
+      "cuenta": "@emilianomilla_",
+      "activa": true,
+      "cadencia": {
+        "max_por_dia": 2,
+        "separacion_min_h": 4,
+        "max_por_semana": 14
+      },
+      "fuente_cadencia": "lianfixx/X cuenta/perfil.json (max_originales_dia, separacion_min_h)"
+    },
+    "linkedin": {
+      "skill": "linkedin-pro",
+      "repo": "lianfixx/linkedin",
+      "cuenta": "linkedin.com/in/emiliano-milla",
+      "activa": true,
+      "cadencia": {
+        "max_por_dia": 1,
+        "separacion_min_h": 24,
+        "max_por_semana": 2
+      },
+      "fuente_cadencia": "sesión de LinkedIn, 13/11/2026: cadencia fijada por Emi"
+    },
+    "tiktok": {
+      "skill": "tiktok",
+      "repo": "lianfixx/TikTok",
+      "cuenta": "",
+      "activa": false,
+      "cadencia": {
+        "max_por_dia": 1,
+        "separacion_min_h": 0,
+        "max_por_semana": 5
+      },
+      "fuente_cadencia": "provisional de la Matriz hasta que la skill de TikTok la declare"
+    },
+    "instagram": {
+      "skill": "instagram-studio",
+      "repo": "lianfixx/Instagram",
+      "cuenta": "",
+      "activa": false,
+      "cadencia": {
+        "max_por_dia": 1,
+        "separacion_min_h": 0,
+        "max_por_semana": 5
+      },
+      "fuente_cadencia": "sesión de Instagram, 13/11/2026: 3 a 5 por semana (terceros: Buffer)"
+    },
+    "instagram-historias": {
+      "skill": "historias-studio",
+      "repo": "lianfixx/HISTORIAS-",
+      "cuenta": "",
+      "activa": false,
+      "cadencia": {
+        "max_por_dia": 10,
+        "separacion_min_h": 0,
+        "max_por_semana": 70
+      },
+      "fuente_cadencia": "provisional"
+    }
   },
   "productoras": {
     "vox-studio": "lianfixx/VIDEOS-IA-SKILL-MILLA skills/vox-studio",
@@ -42,6 +97,23 @@
     "milla-video-studio": "lianfixx/VIDEOS-IA-SKILL-MILLA skills/milla-video-studio",
     "historias-studio": "lianfixx/HISTORIAS- skills/historias-studio"
   },
-  "frases_prohibidas": ["lo hizo una ia", "lo armó una ia", "lo armo una ia", "lo editó una ia", "lo edito una ia", "lo escribió una ia", "lo escribio una ia", "generado por ia", "generado con ia", "hecho por ia", "hecho por una ia", "creado por ia", "creado por una ia", "texto de ia", "nadie lo editó", "nadie lo edito"],
+  "frases_prohibidas": [
+    "lo hizo una ia",
+    "lo armó una ia",
+    "lo armo una ia",
+    "lo editó una ia",
+    "lo edito una ia",
+    "lo escribió una ia",
+    "lo escribio una ia",
+    "generado por ia",
+    "generado con ia",
+    "hecho por ia",
+    "hecho por una ia",
+    "creado por ia",
+    "creado por una ia",
+    "texto de ia",
+    "nadie lo editó",
+    "nadie lo edito"
+  ],
   "parecido_max": 0.85
 }
