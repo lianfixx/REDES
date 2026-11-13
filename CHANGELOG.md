@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-13 · Recursos: cómo grabar (de Editor Studio)
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: respuesta de Editor Studio (13/11, aprobada por Emi) con la guía de grabación de los cuatro videos.
+- Cambios: Recursos del panel muestra «Cómo grabar» (encuadre, luz, audio, tomas por video, pantallas y dónde subir).
+- Archivos: `crecimiento/recursos.json`, `panel/app.js`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado.
+- Pendiente: respuestas de Emi a las preguntas de Editor Studio.
+
 ## 2026-11-13 · Panel 0.2: Hoy tipo CRM, piezas en vivo con notas y pausa, hora sugerida, ideas por espacio e inspiración
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: Emi, 13/11/2026: fecha más bonita y sin la leyenda «que se ve muy IA»; «Lo que necesito de ti» por prioridad, por sesión y ubicable; «Próximas» más clara, «tipo CRM perfecto»; piezas en tiempo real y un apartado para notas o confirmaciones antes de publicar; ideas divididas por espacios (la Matriz propone y él confirma) con enlaces de inspiración (Pinterest, videos) analizados (estilo, redacción, edición) y un campo de «qué me llamó la atención»; fondo blanco o negro minimalista; «cuando apruebe algo, tú escojas hora… todo listo en el panel con horas sugeridas».

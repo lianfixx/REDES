@@ -323,7 +323,8 @@ V.metricas = () => {
 V.recursos = () => {
   const r = S.recursos || {}, enc = S.estado?.encargos || [], estados = S.datos?.estados_skills || {};
   return `<h1>Recursos</h1><div class="dos"><div>
-    <div class="tarjeta vidrio"><h2>Cómo sale un video</h2><ul class="lista pasos">${(r.pasos_video || []).map((p) => `<li>${esc(p)}</li>`).join("")}</ul></div>
+    <div class="tarjeta vidrio"><h2>Cómo grabar</h2><ul class="lista pasos">${(r.grabar || []).map((p) => `<li>${esc(p)}</li>`).join("")}</ul></div>
+    <div class="tarjeta vidrio seccion"><h2>Cómo sale un video</h2><ul class="lista pasos">${(r.pasos_video || []).map((p) => `<li>${esc(p)}</li>`).join("")}</ul></div>
     <div class="tarjeta vidrio seccion"><h2>Encargos para Claude</h2><p class="tenue chico">Lo que escribas aquí lo leen las sesiones de Claude y lo continúan.</p>
       ${S.editor ? `<form id="encargo"><textarea name="texto" style="min-height:80px"></textarea>
       <div class="fila" style="margin-top:8px"><select name="para" style="width:auto"><option value="matriz-redes">Matriz de Redes</option>${(r.skills || []).map((s) => `<option value="${esc(s.nombre)}">${esc(s.nombre)}</option>`).join("")}</select><button class="boton">Dejar encargo</button></div></form>` : entrarPrimero("Entra para dejar encargos.")}
