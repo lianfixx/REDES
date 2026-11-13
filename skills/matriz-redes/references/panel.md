@@ -9,6 +9,7 @@ Cloudflare Worker (`worker/index.js`) con el panel (`panel/`). Se publica solo c
 ## Seguridad
 
 - Contraseña de Emi: la crea él una sola vez con un enlace de alta (`ALTA`); se guarda como PBKDF2. Sesión de 30 días en cookie `HttpOnly`, `Secure`, `SameSite=Strict`; 5 fallos por minuto o 20 por hora bloquean la IP (Durable Object).
+- X se conecta con OAuth 2.0 + PKCE (Client ID y Secret de la consola nueva; el panel obtiene y renueva solo el token de acceso, que dura ~2 h, y guarda el de actualización, que rota; si la renovación falla, se borra y pide reconectar) o con las 4 llaves de OAuth 1.0a si la consola las da. URL de retorno: `/api/x/volver`.
 - Llaves de X y LinkedIn: se pegan una vez en Ajustes, se guardan cifradas (AES-GCM, llave `CIFRADO`) y nunca vuelven al navegador.
 - Solo se publica lo aprobado con la misma huella, que cubre **texto, red, fecha y archivo**: si cualquiera cambia, hay que volver a aprobar. El servidor revisa otra vez el texto (autoría de IA con variantes, despacho, anzuelos, largo) y rechaza aprobar un texto casi igual al de otra red.
 - No se reaprueba lo publicado. Una pieza en «fallo» solo se reaprueba si Emi confirma que no salió. Si el servidor se corta a la mitad, la pieza queda «publicando» y, pasados 10 minutos, Emi marca «Sí salió» o «No salió».

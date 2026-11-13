@@ -243,13 +243,16 @@ V.recursos = () => {
 
 V.ajustes = (q) => {
   if (!S.editor) return entrarPrimero("Entra para conectar tus redes.");
-  const c = S.estado.conexiones, msg = new URLSearchParams(q || "").get("linkedin");
-  return `<h1>Ajustes</h1>${msg ? `<div class="tarjeta vidrio"><p>${msg === "ok" ? "✅ LinkedIn quedó conectado." : "LinkedIn: " + esc(msg)}</p></div>` : ""}
-    <div class="dos seccion"><form id="llaves-x" class="tarjeta vidrio"><div class="fila" style="justify-content:space-between"><h2>X</h2><span class="chip ${c.x ? "ok" : ""}">${c.x ? "conectado" : "sin conectar"}</span></div>
-      <p class="tenue chico">En console.x.com → tu app (lectura y escritura) → Keys and tokens. Se guardan cifradas y no se vuelven a mostrar.</p>
+  const c = S.estado.conexiones, qs = new URLSearchParams(q || ""), msg = qs.get("linkedin"), msgx = qs.get("x");
+  return `<h1>Ajustes</h1>${msg ? `<div class="tarjeta vidrio"><p>${msg === "ok" ? "✅ LinkedIn quedó conectado." : "LinkedIn: " + esc(msg)}</p></div>` : ""}${msgx ? `<div class="tarjeta vidrio"><p>${msgx === "ok" ? "✅ X quedó conectado." : "X: " + esc(msgx)}</p></div>` : ""}
+    <div class="dos seccion"><div class="tarjeta vidrio"><div class="fila" style="justify-content:space-between"><h2>X</h2><span class="chip ${c.x ? "ok" : ""}">${c.x ? "conectado" : "sin conectar"}</span></div>
+      <p class="tenue chico"><b>Opción 1 (la de la consola nueva, OAuth 2.0):</b> 1) En console.x.com → tu app → User authentication settings: permisos «Read and write», tipo «Web App», y como Callback URL pega <code>${esc(location.origin)}/api/x/volver</code>. 2) Copia el Client ID y el Client Secret (OAuth 2.0) aquí y toca «Conectar X». 3) Autoriza en X. No pegues tokens de acceso en ningún lado: el panel los obtiene solo.</p>
+      <form id="llaves-x2"><label>Client ID</label><input name="client_id" autocomplete="off"><label>Client Secret</label><input name="client_secret" type="password" autocomplete="off">
+      <div class="fila" style="margin-top:14px"><button class="boton">Guardar app de X</button><button class="boton acento" type="button" id="conectar-x" ${c.x_app ? "" : "disabled"}>Conectar X</button>${c.x ? `<button class="boton peligro" type="button" data-borrar="x2">Desconectar</button>` : ""}</div></form>
+      <details style="margin-top:14px"><summary class="tenue chico">Opción 2: llaves de OAuth 1.0a (si tu consola las da)</summary><form id="llaves-x">
       <label>API Key</label><input name="api_key" autocomplete="off"><label>API Key Secret</label><input name="api_secret" type="password" autocomplete="off">
       <label>Access Token</label><input name="access_token" autocomplete="off"><label>Access Token Secret</label><input name="access_secret" type="password" autocomplete="off">
-      <div class="fila" style="margin-top:14px"><button class="boton">Guardar llaves de X</button>${c.x ? `<button class="boton peligro" type="button" data-borrar="x">Borrar</button>` : ""}</div></form>
+      <div class="fila" style="margin-top:14px"><button class="boton">Guardar llaves de X</button><button class="boton peligro" type="button" data-borrar="x">Borrar</button></div></form></details></div>
     <div class="tarjeta vidrio"><div class="fila" style="justify-content:space-between"><h2>LinkedIn</h2><span class="chip ${c.linkedin ? "ok" : ""}">${c.linkedin ? "conectado" : "sin conectar"}</span></div>
       <p class="tenue chico">1) En linkedin.com/developers crea una app con los productos «Share on LinkedIn» y «Sign In with LinkedIn using OpenID Connect». 2) En Auth, agrega esta dirección de regreso: <code>${esc(location.origin)}/api/linkedin/volver</code>. 3) Pega aquí el Client ID y el Secret, y conecta.</p>
       <form id="llaves-li"><label>Client ID</label><input name="client_id" autocomplete="off"><label>Client Secret</label><input name="client_secret" type="password" autocomplete="off">
@@ -324,6 +327,8 @@ function conectar(vista, arg) {
   $("#encargo")?.addEventListener("submit", (ev) => accion(ev, async () => { await api("/api/encargo", Object.fromEntries(new FormData(ev.target))); aviso("Encargo guardado."); }));
   $("#llaves-x")?.addEventListener("submit", (ev) => accion(ev, async () => { await api("/api/llaves/x", Object.fromEntries(new FormData(ev.target))); aviso("Llaves de X guardadas."); }));
   $("#llaves-li")?.addEventListener("submit", (ev) => accion(ev, async () => { await api("/api/llaves/linkedin-app", Object.fromEntries(new FormData(ev.target))); aviso("App de LinkedIn guardada."); }));
+  $("#llaves-x2")?.addEventListener("submit", (ev) => accion(ev, async () => { await api("/api/llaves/x-app", Object.fromEntries(new FormData(ev.target))); aviso("App de X guardada."); }));
+  $("#conectar-x")?.addEventListener("click", (ev) => accion(ev, async () => { const r = await api("/api/x/conectar", {}); location.href = r.url; }, false));
   $("#conectar-li")?.addEventListener("click", (ev) => accion(ev, async () => { const r = await api("/api/linkedin/conectar", {}); location.href = r.url; }, false));
   $("#salir-todo")?.addEventListener("click", (ev) => accion(ev, async () => { if (!confirm("¿Cerrar la sesión en todos tus equipos?")) return; await api("/api/salir-todo", {}); aviso("Listo."); }));
   document.querySelectorAll("[data-borrar]").forEach((b) => b.addEventListener("click", (ev) => accion(ev, async () => {

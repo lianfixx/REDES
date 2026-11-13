@@ -1,6 +1,6 @@
 // Pruebas del Worker sin red ni Cloudflare: node worker/prueba.mjs
 import assert from "node:assert/strict";
-import W, { firmaOAuth1, revisarTexto, largoX, huella, publicar, tic, autoriaIA, escaparLinkedIn, parecido } from "./index.js";
+import W, { xVolver, guardarSecreto, leerSecreto, firmaOAuth1, revisarTexto, largoX, huella, publicar, tic, autoriaIA, escaparLinkedIn, parecido } from "./index.js";
 
 let ok = 0;
 const t = async (n, f) => { await f(); ok++; console.log("✓", n); };
@@ -206,5 +206,47 @@ await t("pieza con video: no sale por API; Emi la marca publicada desde la app",
   assert.equal((await S(`/api/pieza/${p.id}/aprobar`, {})).j.estado, "aprobada", "no se programa");
   await assert.rejects(publicar(env, p.id), /desde la app/);
   assert.equal((await S(`/api/pieza/${p.id}/resolver`, { salio: true, url: "https://www.linkedin.com/feed/update/x" })).j.estado, "publicada");
+});
+await t("X con OAuth 2.0 + PKCE: conectar, publicar con Bearer y renovar el token", async () => {
+  const env = nuevoEnv(), S = await sesion(env);
+  assert.equal((await S("/api/llaves/x-app", { client_id: "cliente-x-123", client_secret: "secreto-x-456" })).s, 200);
+  const u = new URL((await S("/api/x/conectar", {})).j.url);
+  assert.equal(u.searchParams.get("code_challenge_method"), "S256");
+  assert.match(u.searchParams.get("scope"), /tweet.write/); assert.match(u.searchParams.get("scope"), /offline.access/);
+  const st = u.searchParams.get("state");
+  const verif = JSON.parse(env.ALMACEN.m.get(`x_estado:${st}`)).verificador;
+  const reto = Buffer.from(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(verif))).toString("base64url");
+  assert.equal(u.searchParams.get("code_challenge"), reto);
+  let cuerpoToken;
+  const fx = async (url, o) => {
+    if (url.includes("oauth2/token")) {
+      cuerpoToken = new URLSearchParams(o.body);
+      assert.match(o.headers.Authorization, /^Basic /);
+      return Response.json({ access_token: cuerpoToken.get("grant_type") === "refresh_token" ? "acceso-2" : "acceso-1", refresh_token: "renov-" + Date.now(), expires_in: 7200 });
+    }
+    assert.match(o.headers.Authorization, /^Bearer acceso-/);
+    return Response.json({ data: { id: "77" } }, { status: 201 });
+  };
+  const r = await xVolver(new Request(`${O}/api/x/volver?state=${st}&code=abc`), env, new URL(`${O}/api/x/volver?state=${st}&code=abc`), fx);
+  assert.match(r.headers.get("Location"), /x=ok/);
+  assert.equal(cuerpoToken.get("code_verifier"), verif);
+  assert.equal((await S("/api/estado")).j.conexiones.x, true);
+  const p = (await S("/api/pieza", { red: "x", texto: "Con OAuth 2." })).j;
+  await S(`/api/pieza/${p.id}/aprobar`, {});
+  assert.equal((await publicar(env, p.id, fx)).estado, "publicada");
+  // Token vencido: se renueva antes de publicar y se guarda el par nuevo.
+  await guardarSecreto(env, "x2", { access_token: "viejo", refresh_token: "renov-viejo", vence: new Date(Date.now() - 1000).toISOString() });
+  const q = (await S("/api/pieza", { red: "x", texto: "Segundo, con token vencido." })).j;
+  await S(`/api/pieza/${q.id}/aprobar`, {});
+  assert.equal((await publicar(env, q.id, fx)).estado, "publicada");
+  assert.equal(cuerpoToken.get("grant_type"), "refresh_token"); assert.equal(cuerpoToken.get("refresh_token"), "renov-viejo");
+  assert.equal((await leerSecreto(env, "x2")).access_token, "acceso-2");
+  // Si X no renueva, falla cerrado y pide reconectar.
+  await guardarSecreto(env, "x2", { access_token: "viejo", refresh_token: "malo", vence: new Date(Date.now() - 1000).toISOString() });
+  const z = (await S("/api/pieza", { red: "x", texto: "Tercero, sin renovación." })).j;
+  await S(`/api/pieza/${z.id}/aprobar`, {});
+  const falla = async (url) => url.includes("oauth2/token") ? Response.json({ error: "invalid_request" }, { status: 400 }) : assert.fail("no debe publicar");
+  assert.match((await publicar(env, z.id, falla)).error, /reconecta X/);
+  assert.equal(await leerSecreto(env, "x2"), null);
 });
 console.log(`\n${ok} pruebas aprobadas`);

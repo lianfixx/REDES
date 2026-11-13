@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-13 · Conectar X con OAuth 2.0 + PKCE
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: aviso de x-viral (13/11): la consola de X de Emi da credenciales de OAuth 2.0 (Client ID, Client Secret, token de acceso y de actualización), y Ajustes solo aceptaba OAuth 1.0a.
+- Cambios: Ajustes → X: «Guardar app de X» (Client ID y Secret, cifrados) y «Conectar X» (OAuth 2.0 con PKCE S256, permisos tweet.read, tweet.write, users.read, offline.access; regreso en `/api/x/volver` protegido por `state` de un solo uso). El token de acceso se renueva solo antes de publicar o leer métricas; si X no lo renueva, se borra y pide reconectar (sin gastar). OAuth 1.0a sigue como opción 2.
+- Archivos: `worker/{index.js,prueba.mjs}`, `panel/app.js`, `skills/matriz-redes/references/panel.md`, este registro.
+- Verificación: `node worker/prueba.mjs` → 16 aprobadas (incluye PKCE, intercambio del código, publicación con Bearer, renovación y falla cerrada, con llamadas simuladas); conexión real → no ejecutada (la hace Emi).
+- Pendiente: que Emi conecte X desde Ajustes.
+
 ## 2026-11-13 · X sin candado
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: Emi, 13/11/2026: «listo» (quitó la protección de su cuenta de X).

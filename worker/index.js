@@ -245,30 +245,75 @@ async function gastoX(env, usd, que) {
   g.llamadas = g.llamadas.slice(0, 200);
   await guardar(env, `gasto:x:${mes}`, g);
 }
-async function publicarX(env, pieza, fetcher = fetch) {
-  const cred = await leerSecreto(env, "x");
-  if (!cred) throw new Error("Faltan las llaves de X: pégalas en Ajustes.");
-  await gastoX(env, URL_RE().test(pieza.texto) ? COSTO_X.post_con_enlace : COSTO_X.post, `post ${pieza.id}`);
-  const url = "https://api.x.com/2/tweets";
-  const r = await fetcher(url, {
+// OAuth 2.0 con PKCE (lo que da la consola nueva de X): token de acceso de ~2 h y de actualización que rota.
+const X_TOKEN_URL = "https://api.x.com/2/oauth2/token";
+async function tokenX2(env, fetcher) {
+  const t = await leerSecreto(env, "x2");
+  if (!t) return null;
+  if (t.vence && Date.parse(t.vence) > Date.now() + 120e3) return t.access_token;
+  const app = await leerSecreto(env, "x_app");
+  if (!app || !t.refresh_token) throw new Error("X necesita reconectarse: Ajustes → Conectar X.");
+  const r = await fetcher(X_TOKEN_URL, {
     method: "POST",
-    headers: { Authorization: await firmaOAuth1("POST", url, cred), "Content-Type": "application/json" },
-    body: JSON.stringify({ text: pieza.texto }),
+    headers: { "Content-Type": "application/x-www-form-urlencoded", Authorization: "Basic " + btoa(`${app.client_id}:${app.client_secret}`) },
+    body: new URLSearchParams({ grant_type: "refresh_token", refresh_token: t.refresh_token, client_id: app.client_id }).toString(),
   });
+  const n = await r.json().catch(() => ({}));
+  if (!r.ok || !n.access_token) {
+    await borrar(env, "cred:x2"); // falla cerrado: hay que reconectar
+    throw new Error(`X no renovó el permiso (${r.status}): reconecta X en Ajustes.`);
+  }
+  await guardarSecreto(env, "x2", { access_token: n.access_token, refresh_token: n.refresh_token || t.refresh_token, vence: new Date(Date.now() + (Number(n.expires_in) || 7200) * 1000).toISOString() });
+  return n.access_token;
+}
+async function autorizacionX(env, metodo, url, fetcher) {
+  const cred = await leerSecreto(env, "x");
+  if (cred) return firmaOAuth1(metodo, url, cred);
+  const tok = await tokenX2(env, fetcher);
+  if (tok) return `Bearer ${tok}`;
+  throw new Error("X no está conectado: Ajustes → Conectar X (o pega las llaves de OAuth 1.0a).");
+}
+async function publicarX(env, pieza, fetcher = fetch) {
+  const url = "https://api.x.com/2/tweets";
+  const auth = await autorizacionX(env, "POST", url, fetcher);
+  await gastoX(env, URL_RE().test(pieza.texto) ? COSTO_X.post_con_enlace : COSTO_X.post, `post ${pieza.id}`);
+  const r = await fetcher(url, { method: "POST", headers: { Authorization: auth, "Content-Type": "application/json" }, body: JSON.stringify({ text: pieza.texto }) });
   const cuerpo = await r.json().catch(() => ({}));
   if (!r.ok || !cuerpo?.data?.id) throw new Error(`X respondió ${r.status}: ${JSON.stringify(cuerpo).slice(0, 300)}`);
   return { id: cuerpo.data.id, url: `https://x.com/i/web/status/${cuerpo.data.id}` };
 }
 async function metricasX(env, id, fetcher = fetch) {
-  const cred = await leerSecreto(env, "x");
-  if (!cred) throw new Error("Faltan las llaves de X.");
-  await gastoX(env, COSTO_X.lectura, `métricas ${id}`);
   const url = `https://api.x.com/2/tweets/${encodeURIComponent(id)}?tweet.fields=public_metrics,non_public_metrics,created_at`;
-  const r = await fetcher(url, { headers: { Authorization: await firmaOAuth1("GET", url, cred) } });
+  const auth = await autorizacionX(env, "GET", url, fetcher);
+  await gastoX(env, COSTO_X.lectura, `métricas ${id}`);
+  const r = await fetcher(url, { headers: { Authorization: auth } });
   const c = await r.json().catch(() => ({}));
   if (!r.ok) throw new Error(`X respondió ${r.status}: ${JSON.stringify(c).slice(0, 300)}`);
   return { ...(c.data?.public_metrics || {}), ...(c.data?.non_public_metrics || {}) };
 }
+const b64url = (buf) => b64(buf).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+async function xVolver(request, env, url, fetcher = fetch) {
+  // Igual que LinkedIn: lo protege el «state» de un solo uso, creado por Emi con sesión.
+  const volver = (msg) => Response.redirect(`${url.origin}/#ajustes?x=${encodeURIComponent(msg)}`, 302);
+  const estado = url.searchParams.get("state") || "";
+  const g = /^[0-9a-f]{48}$/.test(estado) ? await leer(env, `x_estado:${estado}`, null) : null;
+  if (g) await borrar(env, `x_estado:${estado}`);
+  if (!g || g.vence < Date.now()) return volver("La conexión venció; inténtalo otra vez desde Ajustes.");
+  if (url.searchParams.get("error")) return volver(`X no autorizó: ${url.searchParams.get("error")}`);
+  const app = await leerSecreto(env, "x_app");
+  if (!app) return volver("Falta la app de X.");
+  const r = await fetcher(X_TOKEN_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded", Authorization: "Basic " + btoa(`${app.client_id}:${app.client_secret}`) },
+    body: new URLSearchParams({ grant_type: "authorization_code", code: url.searchParams.get("code") || "", redirect_uri: `${url.origin}/api/x/volver`, code_verifier: g.verificador, client_id: app.client_id }).toString(),
+  });
+  const t = await r.json().catch(() => ({}));
+  if (!t.access_token) return volver(`X no entregó el permiso (${r.status}).`);
+  await guardarSecreto(env, "x2", { access_token: t.access_token, refresh_token: t.refresh_token || "", vence: new Date(Date.now() + (Number(t.expires_in) || 7200) * 1000).toISOString() });
+  await bitacora(env, "Emi", "Conectó X (OAuth 2.0)");
+  return volver("ok");
+}
+export { xVolver, guardarSecreto, leerSecreto };
 
 // ---------------------------------------------------------------- LinkedIn (OAuth 2.0, «Share on LinkedIn»)
 
@@ -433,6 +478,7 @@ export async function api(request, env, url) {
   const configurado = !!((await claveGuardada(env)) && env.CIFRADO);
 
   if (ruta === "/api/linkedin/volver" && metodo === "GET") return linkedinVolver(request, env, url);
+  if (ruta === "/api/x/volver" && metodo === "GET") return xVolver(request, env, url);
 
   let cuerpo = {};
   if (metodo === "POST") {
@@ -501,7 +547,7 @@ export async function api(request, env, url) {
         piezas: await piezas(env), notas: await leer(env, "notas", []), encargos: await leer(env, "encargos", []),
         enlaces: await leer(env, "enlaces", []), bitacora: (await leer(env, "bitacora", [])).slice(0, 80),
         gasto_x: await leer(env, `gasto:x:${mes}`, { usd: 0, llamadas: [] }), tope_x: topeX(env),
-        conexiones: { x: !!(await leer(env, "cred:x", null)), linkedin: !!(await leer(env, "cred:linkedin", null)), linkedin_app: !!(await leer(env, "cred:linkedin_app", null)) },
+        conexiones: { x: !!((await leer(env, "cred:x", null)) || (await leer(env, "cred:x2", null))), x_app: !!(await leer(env, "cred:x_app", null)), linkedin: !!(await leer(env, "cred:linkedin", null)), linkedin_app: !!(await leer(env, "cred:linkedin_app", null)) },
       });
     }
     if (ruta === "/api/pieza" && metodo === "POST") return json(await editarPieza(env, cuerpo, "Emi"));
@@ -567,6 +613,24 @@ export async function api(request, env, url) {
       await bitacora(env, "Emi", "Guardó las llaves de X");
       return json({ ok: true });
     }
+    if (ruta === "/api/llaves/x-app" && metodo === "POST") {
+      const c = { client_id: String(cuerpo.client_id || "").trim(), client_secret: String(cuerpo.client_secret || "").trim() };
+      if (c.client_id.length < 6 || c.client_secret.length < 6 || /\s/.test(c.client_id + c.client_secret)) return json({ error: "Revisa el Client ID y el Client Secret de X." }, 400);
+      await guardarSecreto(env, "x_app", c);
+      await bitacora(env, "Emi", "Guardó la app de X (OAuth 2.0)");
+      return json({ ok: true });
+    }
+    if (ruta === "/api/x/conectar" && metodo === "POST") {
+      const app = await leerSecreto(env, "x_app");
+      if (!app) return json({ error: "Primero guarda el Client ID y el Client Secret de tu app de X." }, 400);
+      const estado = hex(crypto.getRandomValues(new Uint8Array(24)));
+      const verificador = b64url(crypto.getRandomValues(new Uint8Array(48)));
+      const reto = b64url(await crypto.subtle.digest("SHA-256", enc.encode(verificador)));
+      await guardar(env, `x_estado:${estado}`, { verificador, vence: Date.now() + 600e3 });
+      const u = new URL("https://x.com/i/oauth2/authorize");
+      u.search = new URLSearchParams({ response_type: "code", client_id: app.client_id, redirect_uri: `${url.origin}/api/x/volver`, scope: "tweet.read tweet.write users.read offline.access", state: estado, code_challenge: reto, code_challenge_method: "S256" });
+      return json({ url: u.toString() });
+    }
     if (ruta === "/api/llaves/linkedin-app" && metodo === "POST") {
       const c = { client_id: String(cuerpo.client_id || "").trim(), client_secret: String(cuerpo.client_secret || "").trim() };
       if (c.client_id.length < 6 || c.client_secret.length < 6) return json({ error: "Revisa el Client ID y el Client Secret." }, 400);
@@ -586,7 +650,7 @@ export async function api(request, env, url) {
     }
     if (ruta === "/api/llaves/borrar" && metodo === "POST") {
       const n = String(cuerpo.nombre || "");
-      if (!["x", "linkedin", "linkedin_app"].includes(n)) return json({ error: "Nombre inválido." }, 400);
+      if (!["x", "x2", "x_app", "linkedin", "linkedin_app"].includes(n)) return json({ error: "Nombre inválido." }, 400);
       await borrar(env, `cred:${n}`);
       await bitacora(env, "Emi", `Borró las credenciales de ${n}`);
       return json({ ok: true });
