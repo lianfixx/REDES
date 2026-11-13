@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-13 · X conectado al panel
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: Emi, 13/11/2026: «creo ya».
+- Cambios: pendiente de conectar X resuelto; queda tener créditos en la consola antes de aprobar el lanzamiento.
+- Archivos: `ideas/2026-11-13-lanzamiento.json`, este registro.
+- Verificación: bitácora del panel → «Conectó X (OAuth 2.0, app confidencial)» a las 17:36:48 UTC; credencial `x2` presente (sin leer su valor). Publicación real → aún no ejecutada.
+- Pendiente: primera publicación real cuando Emi apruebe.
+
 ## 2026-11-13 · Corrige la prueba de X como app pública
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: el commit anterior subió con una prueba mal escrita (buscaba el aviso en la primera línea de la bitácora, que es «regreso correcto»); el control quedó en rojo y el panel no se publicó.
