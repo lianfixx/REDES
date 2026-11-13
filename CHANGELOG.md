@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-13 · Panel conectado a Cloudflare
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: Emi, 13/11/2026: construir y publicar el panel.
+- Cambios: KV «redes» creado en la cuenta de Cloudflare de Emi con la llave «Proyectos de Emi (cf y wrangler)» de su computadora virtual; secretos de Actions del repositorio (CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID, CIFRADO, ALTA, CLAUDE_LLAVE) puestos por API desde la computadora virtual, sin imprimir ningún valor; copia de CIFRADO, ALTA y CLAUDE_LLAVE en `~/.config/matriz/redes-*` (solo lectura de su usuario). `wrangler.jsonc` con el id del KV.
+- Archivos: `wrangler.jsonc`, este registro.
+- Verificación: API de Cloudflare → KV creado; API de GitHub → 5 secretos creados; despliegue → lo hace el workflow «Publicar panel» con este push.
+- Pendiente: comprobar el despliegue; enlace de alta para Emi.
+
 ## 2026-11-13 · Matriz de Redes 0.1.0: panel con aprobación y publicación, skill y control
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: Emi, 13/11/2026, en el chat de esta sesión: construir el panel (sí), publicar desde ahí en X y, si se puede, LinkedIn (sí), llaves pegadas una vez (sí); que el panel tenga recursos, pasos, seguimiento, métricas, ideas, cosas por red, Drive, skills, encargos para continuar, y todo lo de crecimiento (cuándo publicar, horas, post de emergencia, hashtags) alimentándose de lo que sirve.
