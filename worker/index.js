@@ -81,10 +81,10 @@ async function iguales(a, b) {
 const SESION = "redes_sesion";
 const DIAS = 30;
 // La contraseña la crea Emi una sola vez con un enlace de alta (secreto ALTA, de un solo uso); se guarda como
-// PBKDF2 (210 000 vueltas, SHA-256) en KV. Si existe el secreto PANEL_CLAVE, manda ese.
+// PBKDF2 (100 000 vueltas, SHA-256: el máximo que admite Cloudflare Workers) en KV. Si existe el secreto PANEL_CLAVE, manda ese.
 async function pbkdf2(clave, sal) {
   const k = await crypto.subtle.importKey("raw", enc.encode(clave), "PBKDF2", false, ["deriveBits"]);
-  return hex(await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt: enc.encode(sal), iterations: 210000 }, k, 256));
+  return hex(await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt: enc.encode(sal), iterations: 100000 }, k, 256));
 }
 async function claveGuardada(env) { return env.PANEL_CLAVE ? { secreto: true } : leer(env, "clave", null); }
 async function claveCorrecta(env, intento) {

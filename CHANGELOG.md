@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-13 · Contraseña del panel: PBKDF2 a 100 000 vueltas
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: hallazgo de la auditoría independiente (interrumpida por un reinicio del contenedor antes de entregar su informe).
+- Cambios: PBKDF2 baja de 210 000 a 100 000 vueltas, el máximo que Cloudflare Workers admite en producción; con más, el alta de la contraseña podía fallar.
+- Archivos: `worker/index.js`, este registro.
+- Verificación: `node worker/prueba.mjs` → aprobado; prueba en workerd local (Miniflare 3) → acepta 100 000 y también 210 000, así que el límite de producción no se pudo reproducir aquí: se baja por seguridad.
+- Pendiente: repetir la auditoría completa.
+
 ## 2026-11-13 · Tablero más limpio y petición a la Matriz General
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: encargo de la Matriz de Redes, sección 9; revisión visual del panel publicado.
