@@ -1,0 +1,73 @@
+{
+  "_doc": "Lo que sirve para crecer en cada red, con fuente y certeza (oficial | terceros | criterio). Lo llenan las skills de cada red; la Matriz lo junta. Una regla de una red pasa a otra solo como hipótesis. Lo marcado «hipótesis» se ajusta con las métricas de Emi.",
+  "actualizado": "2026-11-13",
+  "redes": {
+    "x": {
+      "skill": "x-viral", "fuente": "lianfixx/X skills/x-viral/references/algoritmo.md (código de X, commit 660cd74, 10/11/2026)",
+      "cuando": [
+        {"regla": "1 o 2 posts originales al día, separados al menos 4 horas: el segundo del mismo autor en un feed vale ×0.625.", "certeza": "oficial"},
+        {"regla": "No hay hora dorada en el código; la hora buena es la que te deja responder las 2 primeras horas (ventana del empujón de arranque).", "certeza": "oficial"},
+        {"regla": "Ventanas: 2 h para el empujón de arranque, 24 h para los índices de descubrimiento, 48 h como máximo en Para ti; el video nativo de más de 10 s puede durar hasta 720 h.", "certeza": "oficial"}
+      ],
+      "que_premia": [
+        {"regla": "Lo que más pesa: que copien el enlace (20), respondan, lo manden por mensaje o lo citen (5), te sigan (4). El like pesa menos de 1.", "certeza": "oficial"},
+        {"regla": "Lo negativo pesa mucho más: reportar (−234), silenciar (−58.8), «no me interesa» (−53), bloquear (−31).", "certeza": "oficial"},
+        {"regla": "Post original siempre; un hilo pierde: solo sobrevive un post por conversación en cada feed.", "certeza": "oficial"},
+        {"regla": "Seguirse con quien conversas sube de 5 a 20 el peso de que esa persona responda.", "certeza": "oficial"}
+      ],
+      "hashtags": {"regla": "No dan alcance ni castigan; se leen como plantilla. Sin hashtags.", "certeza": "oficial"},
+      "enlaces": {"regla": "Sin castigo por enlace (abrirlo suma +0.2). En la API cuesta más publicar con enlace.", "certeza": "oficial"},
+      "evitar": ["anzuelos («RT y te paso»): etiqueta de spam", "respuestas en ráfaga", "texto que parezca de IA", "cuenta protegida: nadie te recomienda"],
+      "emergencia": "Ante noticia urgente: un post original, autosuficiente, con tu postura en la primera línea y la fuente oficial; respeta 4 h desde tu último post o cancela el que estaba programado."
+    },
+    "linkedin": {
+      "skill": "linkedin-pro", "fuente": "sesión de LinkedIn, 13/11/2026 (Centro de ayuda de LinkedIn y estudios de terceros)",
+      "cuando": [
+        {"regla": "2 piezas por semana, máximo 1 al día, con 24 h de separación (cadencia fijada por Emi).", "certeza": "criterio"},
+        {"regla": "No hay hora óptima oficial; elegir días en que puedas contestar comentarios ese mismo día. Propuesta: 08:30.", "certeza": "criterio"}
+      ],
+      "que_premia": [
+        {"regla": "Contenido con experiencia propia y verificable; LinkedIn distribuye menos lo genérico.", "certeza": "oficial"},
+        {"regla": "Documento (PDF): más interacción en páginas de empresa; en perfiles de menos de 1,000 seguidores rinde 0.86× la mediana. Se usa por guardados y por explicar paso a paso.", "certeza": "terceros"},
+        {"regla": "Primera línea de menos de 140 caracteres: es lo que se ve antes de «ver más».", "certeza": "criterio"}
+      ],
+      "hashtags": {"regla": "Sin hashtags ni enlaces en el texto del post.", "certeza": "criterio"},
+      "enlaces": {"regla": "Terceros asocian enlaces con −27 % de impresiones en perfiles; sin regla oficial.", "certeza": "terceros"},
+      "evitar": ["«comenta X y te lo mando» (LinkedIn lo degrada, 12/03/2026)", "nombrar al despacho o clientes"],
+      "emergencia": "Ante noticia jurídica urgente: texto corto con lo que cambia en la práctica y la liga oficial; respeta 24 h desde tu última pieza."
+    },
+    "instagram": {
+      "skill": "instagram-studio", "fuente": "sesión de Instagram, 13/11/2026 (Mosseri, tarjetas de sistema de Meta, estudios de terceros)",
+      "cuando": [
+        {"regla": "3 a 5 piezas por semana.", "certeza": "terceros"},
+        {"regla": "Horas de prueba: Reels a las 19:00 y carrusel a las 13:00 entre semana; se ajustan con tus estadísticas.", "certeza": "criterio"}
+      ],
+      "que_premia": [
+        {"regla": "Reels 9:16 con sonido, sin bordes ni marca de agua, que enganchen en los primeros 3 s.", "certeza": "oficial"},
+        {"regla": "Se predice: ver menos de 3 s, verlo más que otros de su duración, compartir, seguir y usar el audio.", "certeza": "oficial"},
+        {"regla": "45-60 s es el mejor tramo; más de 3 min cae a la mitad.", "certeza": "terceros"},
+        {"regla": "El Reel trae gente; el carrusel la retiene y junta guardados.", "certeza": "terceros"}
+      ],
+      "hashtags": {"regla": "Máximo 5; clasifican, no dan alcance.", "certeza": "oficial"},
+      "enlaces": {"regla": "Enlace en la biografía (emilianomilla.site).", "certeza": "criterio"},
+      "evitar": ["video con marca de agua de TikTok", "anzuelos de interacción", "hablar de reformas como tema central (Meta lo trata como contenido político y limita recomendaciones a quien no te sigue)"],
+      "emergencia": "Historia (Historias Studio) el mismo día; Reel solo si hay material propio y postura."
+    },
+    "tiktok": {
+      "skill": "tiktok", "fuente": "pendiente: la skill de TikTok aún no responde",
+      "cuando": [{"regla": "Provisional: 1 al día como máximo, 3 a 5 por semana, hasta que la skill lo declare.", "certeza": "criterio"}],
+      "que_premia": [{"regla": "Pendiente de la skill de TikTok.", "certeza": "criterio"}],
+      "hashtags": {"regla": "Pendiente de la skill de TikTok.", "certeza": "criterio"},
+      "enlaces": {"regla": "Pendiente.", "certeza": "criterio"},
+      "evitar": ["subir el archivo con marca de agua de otra red"],
+      "emergencia": "Pendiente de la skill de TikTok."
+    }
+  },
+  "comunes": [
+    {"regla": "Cada red lleva su propio texto: nunca el mismo pegado en dos redes.", "certeza": "criterio"},
+    {"regla": "Ninguna pieza dice que la hizo una IA (regla absoluta de Emi).", "certeza": "criterio"},
+    {"regla": "Nada de despacho, clientes ni asuntos en la cuenta personal.", "certeza": "criterio"},
+    {"regla": "Ganchos fuertes sí; que el gancho prometa lo que la pieza entrega.", "certeza": "criterio"},
+    {"regla": "Responder comentarios el mismo día es lo que más depende de ti.", "certeza": "criterio"}
+  ]
+}

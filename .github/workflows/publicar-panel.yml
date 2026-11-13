@@ -1,0 +1,76 @@
+name: Publicar panel
+
+# Publica el panel y el Worker en Cloudflare cuando cambia lo que se ve y después de la actualización diaria.
+# Secretos del repositorio:
+#   CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID  publicar (sin ellos termina en verde sin publicar)
+#   CIFRADO       llave para cifrar las credenciales de X y LinkedIn en KV
+#   ALTA          enlace de un solo uso para que Emi cree su contraseña
+#   CLAUDE_LLAVE  llave con la que las sesiones de Claude dejan borradores
+# Se copian como secretos del Worker en cada publicación.
+on:
+  push:
+    branches: [main]
+    paths: ["panel/**", "worker/**", "crecimiento/**", "tools/armar.py", "tools/despliegue/**", "wrangler.jsonc", "TABLERO.md"]
+  workflow_run:
+    workflows: ["Actualización diaria"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publicar-panel
+  cancel-in-progress: true
+
+jobs:
+  publicar:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "24"
+      - name: Probar el Worker
+        run: node worker/prueba.mjs
+      - name: Armar el panel
+        run: python3 tools/armar.py
+      - name: Instalar wrangler (versión fija, sin scripts de instalación)
+        run: npm ci --prefix tools/despliegue --ignore-scripts --no-audit --no-fund
+      - name: Publicar en Cloudflare
+        shell: bash
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          if [ -z "${CLOUDFLARE_API_TOKEN}" ] || [ -z "${CLOUDFLARE_ACCOUNT_ID}" ]; then
+            echo "::notice::Faltan CLOUDFLARE_API_TOKEN o CLOUDFLARE_ACCOUNT_ID: el panel se armó pero no se publicó."
+            exit 0
+          fi
+          tools/despliegue/node_modules/.bin/wrangler deploy 2>&1 | tee salida.txt
+          grep -Eo 'https://[a-zA-Z0-9.-]+\.workers\.dev' salida.txt | head -1 | sed 's/^/Panel: /' >> "$GITHUB_STEP_SUMMARY" || true
+          rm -f salida.txt
+      - name: Secretos del Worker
+        shell: bash
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CIFRADO: ${{ secrets.CIFRADO }}
+          ALTA: ${{ secrets.ALTA }}
+          CLAUDE_LLAVE: ${{ secrets.CLAUDE_LLAVE }}
+        run: |
+          set -euo pipefail
+          if [ -z "${CLOUDFLARE_API_TOKEN}" ] || [ -z "${CLOUDFLARE_ACCOUNT_ID}" ]; then exit 0; fi
+          secretos="$(mktemp)"; trap 'rm -f "$secretos"' EXIT
+          python3 - "$secretos" <<'PY'
+          import json, os, sys
+          d = {k: os.environ[k] for k in ("CIFRADO", "ALTA", "CLAUDE_LLAVE") if os.environ.get(k)}
+          open(sys.argv[1], "w").write(json.dumps(d))
+          PY
+          if [ "$(cat "$secretos")" != "{}" ]; then tools/despliegue/node_modules/.bin/wrangler secret bulk "$secretos" > /dev/null; echo "Secretos del Worker actualizados."; fi

@@ -1,0 +1,34 @@
+{
+  "_doc": "Mapa de recursos del panel: skills, repositorios, sesiones de trabajo y carpetas de Drive. Se edita a mano y se registra en CHANGELOG.md.",
+  "skills": [
+    {"nombre": "x-viral", "que": "Posts de X: algoritmo, redacción, entrega y medición", "repo": "https://github.com/lianfixx/X"},
+    {"nombre": "linkedin-pro", "que": "LinkedIn: documentos, posts y video", "repo": "https://github.com/lianfixx/LinkedIn"},
+    {"nombre": "instagram-studio", "que": "Instagram: Reels, feed y carruseles", "repo": "https://github.com/lianfixx/Instagram"},
+    {"nombre": "tiktok", "que": "TikTok", "repo": "https://github.com/lianfixx/TikTok"},
+    {"nombre": "historias-studio", "que": "Historias de Instagram", "repo": "https://github.com/lianfixx/HISTORIAS-"},
+    {"nombre": "vox-studio", "que": "Shorts estilo documental por espacio", "repo": "https://github.com/lianfixx/VIDEOS-IA-SKILL-MILLA/tree/main/skills/vox-studio"},
+    {"nombre": "editor-studio", "que": "Edita lo que Emi graba", "repo": "https://github.com/lianfixx/VIDEOS-IA-SKILL-MILLA/tree/main/skills/editor-studio"},
+    {"nombre": "pizarra-studio", "que": "Videos estilo pizarra", "repo": "https://github.com/lianfixx/VIDEOS-IA-SKILL-MILLA/tree/main/skills/pizarra-studio"},
+    {"nombre": "matriz-redes", "que": "Esta Matriz: decide, coordina y aprende", "repo": "https://github.com/lianfixx/redes"}
+  ],
+  "drive": [
+    {"nombre": "Editor Studio (crudos y entregas de video)", "url": "https://drive.google.com/drive/folders/1p_2401d4ThGe6s_fX9eV2Gv5b_jtlEjU"},
+    {"nombre": "Historias (entregas)", "url": "https://drive.google.com/drive/folders/1ltJlzCOw7LpQzFKXpzGkdEhbc9qTINHr"},
+    {"nombre": "Vox Studio · música", "url": "https://drive.google.com/drive/folders/1BWoeqMQpOyMBU7xBcz2fCngoIrC3wVz4"}
+  ],
+  "enlaces": [
+    {"nombre": "Matriz General (panel)", "url": "https://matriz.milla-abogados.workers.dev"},
+    {"nombre": "Sitio personal", "url": "https://emilianomilla.site"},
+    {"nombre": "Tablero en GitHub", "url": "https://github.com/lianfixx/redes/blob/main/TABLERO.md"}
+  ],
+  "pasos_video": [
+    "1. Idea en el panel (Ideas) o en el chat con la Matriz.",
+    "2. La Matriz decide red, formato y fecha, y pide el guion o la escaleta a la skill que produce.",
+    "3. Emi graba (si es su video) y sube los crudos a Drive → Editor Studio.",
+    "4. Editor Studio o Vox entrega el MP4 limpio y la portada.",
+    "5. Cada skill de red escribe su texto; aparece aquí en Piezas para aprobar.",
+    "6. Emi aprueba; el panel publica X y LinkedIn por API, y las demás se copian a la app.",
+    "7. A las 48 h y a los 7 días: métricas (X automático; las demás, captura o número aquí).",
+    "8. La Matriz saca la lección y se la manda a cada skill."
+  ]
+}

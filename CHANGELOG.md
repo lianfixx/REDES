@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-13 · Matriz de Redes 0.1.0: panel con aprobación y publicación, skill y control
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: Emi, 13/11/2026, en el chat de esta sesión: construir el panel (sí), publicar desde ahí en X y, si se puede, LinkedIn (sí), llaves pegadas una vez (sí); que el panel tenga recursos, pasos, seguimiento, métricas, ideas, cosas por red, Drive, skills, encargos para continuar, y todo lo de crecimiento (cuándo publicar, horas, post de emergencia, hashtags) alimentándose de lo que sirve.
+- Cambios: Worker de Cloudflare (`worker/index.js`): sesión con contraseña creada por Emi con enlace de un solo uso (PBKDF2), límite de intentos, piezas con vista previa, aprobación por huella, publicación por API de X (OAuth 1.0a) y LinkedIn (OAuth 2.0, «Share on LinkedIn»), cron cada 5 min para lo programado y métricas de X a 48 h y 7 días, tope de gasto de X, credenciales cifradas (AES-GCM), notas, encargos y API para Claude que nunca aprueba ni publica. Panel (`panel/`): Hoy, Piezas, Calendario, Ideas, Crecer, Métricas, Recursos, Ajustes; vidrio esmerilado, claro y oscuro. `crecimiento/` con reglas por red y su certeza. Skill `matriz-redes` con referencias (decidir, ciclos, datos, panel, protocolos, mapa) y puentes. Control: `ia/verificar.py`, workflows «Control», «Publicar panel» y «Actualización diaria».
+- Archivos: `worker/{index.js,prueba.mjs,package.json}`, `panel/*`, `crecimiento/*`, `tools/{armar.py,despliegue/*}`, `wrangler.jsonc`, `skills/matriz-redes/**`, `.claude/skills/matriz-redes/SKILL.md`, `.agents/skills/matriz-redes/SKILL.md`, `ia/{verificar.py,check_skill.py,REGLAS.md}`, `.github/workflows/*`, `README.md`, `.gitignore`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado (39 pruebas de Python, 11 del Worker con llamadas simuladas, incluida la firma OAuth 1.0a contra el ejemplo de la documentación de X recalculado en Python); publicación real en X y LinkedIn → no ejecutado (faltan llaves de Emi); despliegue en Cloudflare → pendiente en esta misma sesión.
+- Pendiente: crear el KV y los secretos, publicar el panel, enlace de alta para Emi, llave de Claude para las sesiones, auditoría independiente, registrar en la Matriz General, aprobación de pesos por Emi.
+
 ## 2026-11-13 · Núcleo de la Matriz: validador, puntuación, calendario y tablero
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: encargo de la Matriz de Redes (secciones 4 y 5) y Emi, 13/11/2026: «que todo quede en el panel, claro, y que no se pierda en conversaciones».

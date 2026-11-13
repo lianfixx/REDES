@@ -1,0 +1,13 @@
+// Panel de la Matriz de Redes en Cloudflare Workers. Lo publica .github/workflows/publicar-panel.yml.
+{
+  "name": "redes",
+  "main": "worker/index.js",
+  "compatibility_date": "2026-11-01",
+  "kv_namespaces": [{ "binding": "REDES", "id": "PENDIENTE_ID_KV" }],
+  "durable_objects": { "bindings": [{ "name": "INTENTOS", "class_name": "Intentos" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Intentos"] }],
+  // Cada 5 minutos: publica lo programado y lee métricas de X a las 48 h y a los 7 días.
+  "triggers": { "crons": ["*/5 * * * *"] },
+  "vars": { "TOPE_X_USD": "10", "LINKEDIN_VERSION": "202510" },
+  "assets": { "directory": "./dist", "binding": "ASSETS", "run_worker_first": true }
+}

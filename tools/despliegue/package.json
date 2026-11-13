@@ -1,0 +1,8 @@
+{
+  "name": "redes-despliegue",
+  "private": true,
+  "description": "Versión fija de wrangler para publicar el panel (npm ci --ignore-scripts en .github/workflows/publicar-panel.yml)",
+  "devDependencies": {
+    "wrangler": "4.154.0"
+  }
+}
