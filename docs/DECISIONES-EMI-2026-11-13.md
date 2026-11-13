@@ -41,3 +41,8 @@ Encargo nuevo: campaña de lanzamiento «lo que construí con IA + Derecho» (2 
 3. Sí nombra las IA que usa. 4. Sin enlace a GitHub. 5. Cierre en LinkedIn: «abierto a conversar con equipos legales que quieran trabajar así». 6. El video del DOF ya trae subtítulos.
 7. REGLA ABSOLUTA: «jamás en nada digas que lo armó una IA». Ninguna pieza dice que la hizo, armó o editó una IA. Las herramientas las construyó Emi.
 8. El video del DOF se sube YA y tal como está; no se vuelve a discutir.
+
+## Cuarta ronda (13/11/2026, chat)
+- Ya hizo: creó la contraseña del panel, quitó el candado de X y trabajó la conexión de LinkedIn en box. Falta abrir TikTok e Instagram.
+- Texto de LinkedIn para el video del DOF: eligió la versión B con sus propias palabras («me gusta algo más así, con un poco de mi toque y criterio»). La Matriz solo corrigió ortografía y concordancia.
+- X: comprará créditos y conectará la API; elegirá el post de lanzamiento en el panel.

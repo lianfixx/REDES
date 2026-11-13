@@ -1,25 +1,25 @@
 # Tablero de la Matriz de Redes
 
-Generado el 2026-11-12 por `redes.py tablero`. No se edita a mano.
+Generado el 2026-11-13 por `redes.py tablero`. No se edita a mano.
 
 ## Pendiente de Emi
 
-- [ ] Aprobar: Video del DOF (tal cual) con texto A o B (linkedin, 2026-11-13 08:30)
-- [ ] Quitar el candado de X
-- [ ] Crear cuentas de TikTok e Instagram (@emilianomilla_, Instagram tipo Creador)
+- [ ] Aprobar: Video del DOF (tal cual) con el texto B de Emi (linkedin, 2026-11-13 12:00)
+- [ ] Abrir cuentas de TikTok e Instagram (@emilianomilla_, Instagram tipo Creador)
+- [ ] Conectar LinkedIn en el panel (Ajustes)
+- [ ] Conectar la API de X con créditos y pegar las llaves en el panel
+- [ ] Elegir el post de lanzamiento de X (A o B) en el panel
 - [ ] Elegir día de grabación
-- [ ] Elegir texto de LinkedIn para el video del DOF (A o B)
-- [ ] Elegir post de lanzamiento de X (A o B)
 
 ## Esta semana
 
 | Día y hora | Red | Pieza | Skill | Estado |
 |---|---|---|---|---|
-| 2026-11-13 08:30 | linkedin | Video del DOF (tal cual) con texto A o B | linkedin-pro | lista para aprobar |
+| 2026-11-13 12:00 | linkedin | Video del DOF (tal cual) con el texto B de Emi | linkedin-pro | lista para aprobar |
 
 ## Próximas
 
-- 2026-11-13 08:30 · linkedin · Video del DOF (tal cual) con texto A o B (lista para aprobar)
+- 2026-11-13 12:00 · linkedin · Video del DOF (tal cual) con el texto B de Emi (lista para aprobar)
 - 2026-11-17 08:30 · linkedin · Documento de 8 láminas: herramientas que construí (en produccion)
 - 2026-11-17 09:00 · x · Post de lanzamiento (A o B) (borrador)
 - 2026-11-17 19:00 · instagram · Reel 1 · Matriz (idea)
@@ -41,14 +41,4 @@ Generado el 2026-11-12 por `redes.py tablero`. No se edita a mano.
 ## Avisos del validador
 
 - Ninguno.
-
-## Estado de cada skill
-
-| Skill | Leído | Publicados | Lecciones |
-|---|---|---|---|
-| x | no se pudo leer | — | — |
-| linkedin | no se pudo leer | — | — |
-| tiktok | no se pudo leer | — | — |
-| instagram | 2026-11-12 | 0 | 3 |
-| instagram-historias | no se pudo leer | — | — |
 

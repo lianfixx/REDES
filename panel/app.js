@@ -127,7 +127,7 @@ V.pieza = (id) => {
   const p = id === "nueva" ? { red: "x", texto: "", titulo: "", estado: "borrador", historial: [] } : S.estado.piezas.find((x) => x.id === id);
   if (!p) return `<div class="vacio vidrio">No existe esa pieza.</div>`;
   const fechaLocal = p.fecha ? new Intl.DateTimeFormat("sv-SE", { timeZone: ZONA, dateStyle: "short", timeStyle: "short" }).format(new Date(p.fecha)).replace(" ", "T") : "";
-  const publicable = API_PUBLICA.includes(p.red);
+  const publicable = API_PUBLICA.includes(p.red) && !p.solo_app;
   return `<a href="#piezas" class="tenue chico">← Piezas</a><div class="dos" style="margin-top:10px">
     <form id="editor" class="tarjeta vidrio"><h2>${id === "nueva" ? "Nueva pieza" : esc(p.titulo || "Pieza")}</h2>
       <div class="fila">${chipEstado(p.estado)} ${p.aprobado ? `<span class="chip ok">aprobada ${fmt(p.aprobado.fecha)} · ${esc(p.aprobado_huella)}</span>` : ""}
@@ -140,16 +140,18 @@ V.pieza = (id) => {
       <label>Fecha y hora (centro de México)</label><input type="datetime-local" name="fecha" value="${fechaLocal}">
       <label>Imagen o video (enlace https de Drive, opcional; X y LinkedIn por ahora publican solo texto)</label><input name="media" value="${esc(p.media)}" placeholder="https://…">
       <label>Nota</label><input name="nota" value="${esc(p.nota)}" maxlength="600">
+      <label style="display:flex;gap:8px;align-items:center;font-weight:500"><input type="checkbox" name="solo_app" value="1" ${p.solo_app ? "checked" : ""} style="width:auto"> Lleva video o archivo: se publica desde la app</label>
       <div class="fila" style="margin-top:16px">
         <button class="boton" name="guardar">Guardar</button>
         ${id !== "nueva" ? `<button class="boton acento" type="button" id="aprobar" ${["publicada", "publicando"].includes(p.estado) ? "disabled" : ""}>Aprobar este texto</button>
         ${publicable ? `<button class="boton" type="button" id="publicar" ${["aprobada", "programada"].includes(p.estado) ? "" : "disabled"}>Publicar ahora</button>` : ""}
         ${p.estado === "publicando" ? `<button class="boton suave" type="button" id="salio">Sí salió</button><button class="boton suave" type="button" id="nosalio">No salió</button>` : ""}
+        ${p.estado === "aprobada" && !publicable ? `<button class="boton acento" type="button" id="salio">Ya la publiqué</button>` : ""}
         <button class="boton suave" type="button" id="copiar">Copiar texto</button>
         ${p.red === "x" && p.publicada?.id ? `<button class="boton suave" type="button" id="metricas">Leer métricas</button>` : ""}
         <button class="boton peligro" type="button" id="cancelar">Cancelar</button>` : ""}
       </div>
-      <p class="tenue chico" style="margin-top:12px">${publicable ? "Al aprobar, se publica a su hora por la API oficial. Si cambias el texto, la red, la hora o el archivo, hay que volver a aprobar." : "Esta red aún no publica por API: aprueba, copia el texto y publícalo desde la app."}</p>
+      <p class="tenue chico" style="margin-top:12px">${publicable ? "Al aprobar, se publica a su hora por la API oficial. Si cambias el texto, la red, la hora o el archivo, hay que volver a aprobar." : (p.solo_app ? "Esta pieza lleva video: aprueba, copia el texto, súbela desde la app con su video y marca «Ya la publiqué»." : "Esta red aún no publica por API: aprueba, copia el texto, publícalo desde la app y marca «Ya la publiqué».")}</p>
     </form>
     <div><div class="previa" id="previa">${previa(p)}</div>
       ${p.metricas ? `<div class="tarjeta vidrio seccion"><h3>Métricas · ${esc(p.metricas.fuente)} · ${fmt(p.metricas.fecha)}</h3>${tablaValores(p.metricas.valores)}</div>` : ""}
@@ -285,6 +287,7 @@ function conectar(vista, arg) {
     ed.addEventListener("input", actualizar); actualizar();
     ed.addEventListener("submit", (ev) => accion(ev, async () => {
       const fd = Object.fromEntries(new FormData(ed));
+      fd.solo_app = !!fd.solo_app;
       if (fd.fecha) fd.fecha = mxAISO(fd.fecha);
       const p = await api("/api/pieza", { ...fd, id: arg !== "nueva" ? arg : undefined });
       aviso("Guardado."); location.hash = `#pieza/${p.id}`;

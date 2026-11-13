@@ -5,19 +5,62 @@
   "espacio": "personal",
   "pilar": "ia-derecho",
   "tesis": "Soy abogado, no programador, y desde el 7 de noviembre construí con IA herramientas que me quitan tareas: la IA reemplaza tareas, no criterio.",
-  "postura_emi": {"texto": "la IA reemplaza tareas, no criterio", "fuente": "chat de la Matriz de Redes, 13/11/2026 (eligió la opción a)"},
+  "postura_emi": {
+    "texto": "la IA reemplaza tareas, no criterio",
+    "fuente": "chat de la Matriz de Redes, 13/11/2026 (eligió la opción a)"
+  },
   "tipo": "perenne",
   "evidencia": [
-    {"fuente": "lianfixx/dof-juridico-monitor README: revisión del DOF martes y jueves, cobertura íntegra", "nivel": "oficial", "tipo": "hecho propio"},
-    {"fuente": "lianfixx/MATRIZ: actualización diaria a las 06:17", "nivel": "oficial", "tipo": "hecho propio"},
-    {"fuente": "Emi: empezó «full IA» el 07/11/2026", "nivel": "criterio", "tipo": "dicho de Emi"}
+    {
+      "fuente": "lianfixx/dof-juridico-monitor README: revisión del DOF martes y jueves, cobertura íntegra",
+      "nivel": "oficial",
+      "tipo": "hecho propio"
+    },
+    {
+      "fuente": "lianfixx/MATRIZ: actualización diaria a las 06:17",
+      "nivel": "oficial",
+      "tipo": "hecho propio"
+    },
+    {
+      "fuente": "Emi: empezó «full IA» el 07/11/2026",
+      "nivel": "criterio",
+      "tipo": "dicho de Emi"
+    }
   ],
-  "riesgo_juridico": {"nivel": 1, "motivo": "describe herramientas usadas en un despacho; nada de clientes ni asuntos; boletines solo con datos inventados"},
-  "riesgo_politico": {"nivel": 0, "motivo": "no toca política"},
-  "riesgo_reputacional": {"nivel": 2, "motivo": "el panel y GitHub muestran Castorena e INDEP: toda captura se recorta o se tapa; tono agresivo pedido por Emi"},
-  "activos_disponibles": ["video del DOF (pagos digitales), con subtítulos", "foto profesional", "panel público de la Matriz (recortado)"],
-  "activos_necesarios": ["4 videos grabados por Emi (Matriz, DOF, Boletines, Vox)", "grabaciones de pantalla sin nombres", "datos de ejemplo para boletines"],
-  "costo": {"minutos_emi": 180, "creditos_kie": 0, "caracteres_elevenlabs": 0, "usd": 0},
+  "riesgo_juridico": {
+    "nivel": 1,
+    "motivo": "describe herramientas usadas en un despacho; nada de clientes ni asuntos; boletines solo con datos inventados"
+  },
+  "riesgo_politico": {
+    "nivel": 0,
+    "motivo": "no toca política"
+  },
+  "riesgo_reputacional": {
+    "nivel": 2,
+    "motivo": "el panel y GitHub muestran Castorena e INDEP: toda captura se recorta o se tapa; tono agresivo pedido por Emi"
+  },
+  "activos_disponibles": [
+    "video del DOF (pagos digitales), con subtítulos",
+    "foto profesional",
+    "panel público de la Matriz (recortado)"
+  ],
+  "activos_necesarios": [
+    "4 videos grabados por Emi (Matriz, DOF, Boletines, Vox)",
+    "grabaciones de pantalla sin nombres",
+    "datos de ejemplo para boletines"
+  ],
+  "costo": {
+    "minutos_emi": 180,
+    "creditos_kie": 0,
+    "caracteres_elevenlabs": 0,
+    "usd": 0
+  },
   "estado": "decidida",
-  "pendiente_de_emi": ["Quitar el candado de X", "Crear cuentas de TikTok e Instagram (@emilianomilla_, Instagram tipo Creador)", "Elegir día de grabación", "Elegir texto de LinkedIn para el video del DOF (A o B)", "Elegir post de lanzamiento de X (A o B)"]
+  "pendiente_de_emi": [
+    "Abrir cuentas de TikTok e Instagram (@emilianomilla_, Instagram tipo Creador)",
+    "Conectar LinkedIn en el panel (Ajustes)",
+    "Conectar la API de X con créditos y pegar las llaves en el panel",
+    "Elegir el post de lanzamiento de X (A o B) en el panel",
+    "Elegir día de grabación"
+  ]
 }

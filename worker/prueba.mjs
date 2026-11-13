@@ -199,4 +199,12 @@ await t("enlaces privados: solo con sesión o llave de Claude", async () => {
   assert.equal((await c(req("/api/claude/enlace", { nombre: "Drive", url: "https://drive.google.com/drive/folders/abc" }, H))).s, 200);
   assert.equal((await S("/api/estado")).j.enlaces.length, 1);
 });
+await t("pieza con video: no sale por API; Emi la marca publicada desde la app", async () => {
+  const env = nuevoEnv(), S = await sesion(env);
+  await S("/api/llaves/x", llavesX);
+  const p = (await S("/api/pieza", { red: "linkedin", texto: "Con video.", solo_app: true, fecha: new Date(Date.now() + 3600e3).toISOString() })).j;
+  assert.equal((await S(`/api/pieza/${p.id}/aprobar`, {})).j.estado, "aprobada", "no se programa");
+  await assert.rejects(publicar(env, p.id), /desde la app/);
+  assert.equal((await S(`/api/pieza/${p.id}/resolver`, { salio: true, url: "https://www.linkedin.com/feed/update/x" })).j.estado, "publicada");
+});
 console.log(`\n${ok} pruebas aprobadas`);

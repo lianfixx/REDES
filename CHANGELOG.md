@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-13 · Piezas que se publican desde la app y texto de LinkedIn de Emi
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: Emi, 13/11/2026: eligió su versión B para LinkedIn (video del DOF) y no encontraba en el panel dónde escoger el post de X.
+- Cambios: las piezas pueden marcarse «lleva video o archivo» (`solo_app`): nunca salen por API ni se programan; Emi las copia, las sube desde la app y marca «Ya la publiqué» (también para Instagram y TikTok). Decisiones de Emi de la cuarta ronda; calendario e idea al día.
+- Archivos: `worker/{index.js,prueba.mjs}`, `panel/app.js`, `calendario/2026-W46.json`, `ideas/2026-11-13-lanzamiento.json`, `docs/DECISIONES-EMI-2026-11-13.md`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado (15 pruebas del Worker).
+- Pendiente: cargar en el panel las piezas de LinkedIn (DOF) y de X (lanzamiento A y B, DOF).
+
 ## 2026-11-13 · Instagram: etiqueta de IA y Reel de Vox con la voz de Emi
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: mensajes de la sesión de Instagram (13/11), con su auditoría independiente.

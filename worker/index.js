@@ -331,6 +331,8 @@ async function editarPieza(env, datos, quien) {
   Object.assign(p, {
     red, texto, titulo: limpiar(datos.titulo ?? p.titulo ?? "", 120), idea: limpiar(datos.idea ?? p.idea ?? "", 80),
     media: datos.media !== undefined ? limpiarUrl(datos.media) : p.media || "", nota: limpiar(datos.nota ?? p.nota ?? "", 600),
+    // Lleva video u otro archivo que la API del panel aún no sube: se publica desde la app.
+    solo_app: datos.solo_app !== undefined ? !!datos.solo_app : !!p.solo_app,
     fecha: fecha ? fecha.toISOString() : datos.fecha === "" || datos.fecha === null ? null : p.fecha || null, actualizada: ahoraISO(),
   });
   const cambio = nueva || antes.red !== p.red || antes.texto !== p.texto || antes.fecha !== p.fecha || antes.media !== p.media;
@@ -366,7 +368,7 @@ async function aprobar(env, id, cuerpo = {}) {
     x.aprobado = { fecha: ahoraISO(), medio: "panel", por: "Emi" };
     x.aprobado_huella = h;
     const futura = x.fecha && Date.parse(x.fecha) > Date.now() + 60e3;
-    x.estado = futura && PUBLICADORES[x.red] ? "programada" : "aprobada";
+    x.estado = futura && PUBLICADORES[x.red] && !x.solo_app ? "programada" : "aprobada";
     delete x.error;
     x.historial.unshift({ fecha: ahoraISO(), quien: "Emi", que: `aprobada (${h})` });
   });
@@ -387,6 +389,7 @@ export async function publicar(env, id, fetcher = fetch) {
   let p = (await piezas(env)).find((x) => x.id === id);
   if (!p) throw new Error("No existe esa pieza.");
   if (!PUBLICADORES[p.red]) throw new Error(`${p.red} todavía no publica por API: copia el texto y publícalo desde la app.`);
+  if (p.solo_app) throw new Error("Esta pieza lleva video o archivo: cópiala y publícala desde la app.");
   if (!["aprobada", "programada"].includes(p.estado)) throw new Error("Solo se publica lo aprobado.");
   const esperada = await huellaAprobacion(p);
   if (p.aprobado_huella !== esperada) throw new Error("La pieza cambió después de aprobarse: vuelve a aprobarla.");
@@ -517,8 +520,10 @@ export async function api(request, env, url) {
       if (accion === "resolver") {
         // Una pieza atorada en «publicando» (el servidor se cortó a la mitad): Emi revisa en la red y dice qué pasó.
         const p = await actualizarPieza(env, id, (x) => {
-          if (x.estado !== "publicando") throw new Error("Esa pieza no está atorada.");
-          if (Date.now() - Date.parse(x.publicando_desde || 0) < 10 * 60e3) throw new Error("Espera 10 minutos antes de resolverla.");
+          const manual = x.estado === "aprobada" && (x.solo_app || !PUBLICADORES[x.red]);
+          if (x.estado !== "publicando" && !manual) throw new Error("Esa pieza no está atorada ni se publica desde la app.");
+          if (!manual && Date.now() - Date.parse(x.publicando_desde || 0) < 10 * 60e3) throw new Error("Espera 10 minutos antes de resolverla.");
+          if (manual && !cuerpo.salio) throw new Error("Usa «Ya la publiqué» cuando la subas desde la app.");
           if (cuerpo.salio) { x.estado = "publicada"; x.publicada = { fecha: ahoraISO(), url: limpiarUrl(cuerpo.url), id: "" }; }
           else { x.estado = "fallo"; x.error = "Se cortó a la mitad; Emi confirmó que no salió."; }
           delete x.publicando_desde;
