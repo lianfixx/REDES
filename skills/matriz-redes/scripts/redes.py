@@ -492,7 +492,7 @@ def generar_tablero(raiz: Path, cfg: dict, hoy: dt.date | None = None, estados: 
             pendientes.append(f"Aprobar: {it['titulo']} ({it['red']}, {it['fecha'][:16].replace('T', ' ')})")
     for d in ideas:
         for q in d.get("pendiente_de_emi", []) or []:
-            pendientes.append(f"{q} · idea {d['id']}")
+            pendientes.append(str(q))
         if d.get("caduca") and d.get("estado") not in ("publicada", "medida", "cerrada", "descartada"):
             dias = (dia(d["caduca"]) - hoy).days
             if dias <= 3:

@@ -5,11 +5,11 @@ Generado el 2026-11-13 por `redes.py tablero`. No se edita a mano.
 ## Pendiente de Emi
 
 - [ ] Aprobar: Video del DOF (tal cual) con texto A o B (linkedin, 2026-11-13 08:30)
-- [ ] Quitar el candado de X · idea 2026-11-13-lanzamiento
-- [ ] Crear cuentas de TikTok e Instagram (@emilianomilla_, Instagram tipo Creador) · idea 2026-11-13-lanzamiento
-- [ ] Elegir día de grabación · idea 2026-11-13-lanzamiento
-- [ ] Elegir texto de LinkedIn para el video del DOF (A o B) · idea 2026-11-13-lanzamiento
-- [ ] Elegir post de lanzamiento de X (A o B) · idea 2026-11-13-lanzamiento
+- [ ] Quitar el candado de X
+- [ ] Crear cuentas de TikTok e Instagram (@emilianomilla_, Instagram tipo Creador)
+- [ ] Elegir día de grabación
+- [ ] Elegir texto de LinkedIn para el video del DOF (A o B)
+- [ ] Elegir post de lanzamiento de X (A o B)
 
 ## Esta semana
 

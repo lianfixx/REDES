@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-13 · Tablero más limpio y petición a la Matriz General
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: encargo de la Matriz de Redes, sección 9; revisión visual del panel publicado.
+- Cambios: los pendientes de Emi ya no repiten el id de la idea; petición para que la revisión semanal de la Matriz General registre `redes`, `LinkedIn`, `TikTok` e `Instagram` en «Contenido y video».
+- Archivos: `skills/matriz-redes/scripts/redes.py`, `TABLERO.md`, `panel/datos.json`, `peticiones/2026-11-13-matriz-general.md`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado; panel publicado en https://redes.milla-abogados.workers.dev revisado en Chromium a 1280 y 390 px, claro y oscuro: sin errores de consola ni desbordes.
+- Pendiente: auditoría independiente en curso.
+
 ## 2026-11-13 · Panel conectado a Cloudflare
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: Emi, 13/11/2026: construir y publicar el panel.
