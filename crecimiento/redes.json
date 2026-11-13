@@ -133,7 +133,11 @@
           "certeza": "oficial"
         },
         {
-          "regla": "El Reel trae gente; el carrusel la retiene y junta guardados.",
+          "regla": "Etiqueta «Información de IA»: obligatoria si un Reel lleva voz realista generada con IA (ejemplo oficial: «a reel narrated with a realistic AI-generated voiceover»); las imágenes fijas hechas con IA no la requieren. Por eso el Reel de Vox va narrado con la voz de Emi.",
+          "certeza": "oficial"
+        },
+        {
+          "regla": "Qué formato alcanza más está en disputa entre estudios (Buffer: Reel; Socialinsider: carrusel); se decide con tus métricas.",
           "certeza": "terceros"
         }
       ],

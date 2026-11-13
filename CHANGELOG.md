@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-13 · Instagram: etiqueta de IA y Reel de Vox con la voz de Emi
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: mensajes de la sesión de Instagram (13/11), con su auditoría independiente.
+- Cambios: Crecer anota que Instagram exige la etiqueta de IA para voz realista generada con IA (no para imágenes fijas) y que el formato con más alcance está en disputa; el Reel 4 (Vox) queda narrado con la voz de Emi; la petición a Instagram registra su 1.0.1 y su `red/estado.json`.
+- Archivos: `crecimiento/redes.json`, `calendario/2026-W48.json`, `peticiones/2026-11-13-campana-instagram.md`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado.
+- Pendiente: que Emi confirme la voz del Reel 4.
+
 ## 2026-11-13 · Auditoría independiente: 16 hallazgos y 8 menores corregidos
 - Agente: Claude Code (sesión en la nube); revisor: agente independiente sin el contexto de quien construyó.
 - Solicitud: encargo de la Matriz de Redes (auditoría adversarial); Emi, 13/11/2026: «que sea perfecta».

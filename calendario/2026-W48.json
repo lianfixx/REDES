@@ -1,7 +1,60 @@
-{"semana": "2026-W48", "tope_minutos_emi": 120, "items": [
- {"id": "ig-reel-boletines", "idea": "2026-11-13-lanzamiento", "fecha": "2026-11-24T19:00:00-06:00", "red": "instagram", "skill": "instagram-studio", "titulo": "Reel 3 · Boletines (datos de ejemplo)", "estado": "idea", "minutos_emi": 20, "productora": "editor-studio"},
- {"id": "tt-boletines", "idea": "2026-11-13-lanzamiento", "fecha": "2026-11-24T19:30:00-06:00", "red": "tiktok", "skill": "tiktok", "titulo": "Video 3 · Boletines", "estado": "idea", "minutos_emi": 10, "productora": "editor-studio"},
- {"id": "ig-carrusel", "idea": "2026-11-13-lanzamiento", "fecha": "2026-11-25T13:00:00-06:00", "red": "instagram", "skill": "instagram-studio", "titulo": "Carrusel · 4 herramientas", "estado": "idea", "minutos_emi": 15},
- {"id": "ig-reel-vox", "idea": "2026-11-13-lanzamiento", "fecha": "2026-11-26T19:00:00-06:00", "red": "instagram", "skill": "instagram-studio", "titulo": "Reel 4 · Vox, el estudio de video que construí", "estado": "idea", "minutos_emi": 20, "productora": "editor-studio"},
- {"id": "tt-vox", "idea": "2026-11-13-lanzamiento", "fecha": "2026-11-26T19:30:00-06:00", "red": "tiktok", "skill": "tiktok", "titulo": "Video 4 · Vox", "estado": "idea", "minutos_emi": 10, "productora": "editor-studio"}
-]}
+{
+ "semana": "2026-W48",
+ "tope_minutos_emi": 120,
+ "items": [
+  {
+   "id": "ig-reel-boletines",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-24T19:00:00-06:00",
+   "red": "instagram",
+   "skill": "instagram-studio",
+   "titulo": "Reel 3 · Boletines (datos de ejemplo)",
+   "estado": "idea",
+   "minutos_emi": 20,
+   "productora": "editor-studio"
+  },
+  {
+   "id": "tt-boletines",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-24T19:30:00-06:00",
+   "red": "tiktok",
+   "skill": "tiktok",
+   "titulo": "Video 3 · Boletines",
+   "estado": "idea",
+   "minutos_emi": 10,
+   "productora": "editor-studio"
+  },
+  {
+   "id": "ig-carrusel",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-25T13:00:00-06:00",
+   "red": "instagram",
+   "skill": "instagram-studio",
+   "titulo": "Carrusel · 4 herramientas",
+   "estado": "idea",
+   "minutos_emi": 15
+  },
+  {
+   "id": "ig-reel-vox",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-26T19:00:00-06:00",
+   "red": "instagram",
+   "skill": "instagram-studio",
+   "titulo": "Reel 4 · Vox, el estudio de video que construí (narrado con la voz de Emi)",
+   "estado": "idea",
+   "minutos_emi": 20,
+   "productora": "editor-studio"
+  },
+  {
+   "id": "tt-vox",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-26T19:30:00-06:00",
+   "red": "tiktok",
+   "skill": "tiktok",
+   "titulo": "Video 4 · Vox",
+   "estado": "idea",
+   "minutos_emi": 10,
+   "productora": "editor-studio"
+  }
+ ]
+}
