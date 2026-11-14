@@ -497,4 +497,23 @@ await t("inspiración: el panel guarda título, autor y miniatura del enlace par
   const f = (await S("/api/inspiracion", { url: "https://www.pinterest.com/pin/1/" })).j;
   assert.ok(f.meta.error);
 });
+await t("la Matriz mueve la hora de una pieza aprobada sin tocar el contenido; no si cambió, al pasado o sin motivo", async () => {
+  const env = nuevoEnv(), c = llamar(env), S = await sesion(env);
+  const H = { Authorization: "Bearer " + "c".repeat(32) };
+  await S("/api/llaves/x", llavesX);
+  const nueva = new Date(Date.now() + 864e5).toISOString();
+  const p = (await S("/api/pieza", { red: "x", texto: "Se mueve.", fecha: new Date(Date.now() + 5 * 864e5).toISOString() })).j;
+  assert.equal((await c(req(`/api/claude/pieza/${p.id}/fecha`, { fecha: nueva, motivo: "Emi pidió adelantarla" }, H))).s, 400, "sin aprobar no");
+  await S(`/api/pieza/${p.id}/aprobar`, {});
+  assert.equal((await c(req(`/api/claude/pieza/${p.id}/fecha`, { fecha: new Date(Date.now() - 1000).toISOString(), motivo: "Emi pidió adelantarla" }, H))).s, 400, "al pasado no");
+  assert.equal((await c(req(`/api/claude/pieza/${p.id}/fecha`, { fecha: nueva }, H))).s, 400, "sin motivo no");
+  const r = (await c(req(`/api/claude/pieza/${p.id}/fecha`, { fecha: nueva, motivo: "Emi pidió adelantarla" }, H))).j;
+  assert.equal(r.fecha, nueva); assert.equal(r.estado, "programada"); assert.equal(r.texto, "Se mueve.");
+  assert.equal((await publicar(env, p.id, falsoX({ n: 0 }))).estado, "publicada", "la aprobación sigue valiendo con la hora nueva");
+  assert.ok(JSON.parse(env.ALMACEN.m.get("bitacora")).some((b) => /Movió la hora/.test(b.que)));
+  const q = (await S("/api/pieza", { red: "x", texto: "Cambiada." })).j;
+  await S(`/api/pieza/${q.id}/aprobar`, {});
+  cambiar(env, q.id, (x) => { x.texto = "Texto cambiado por debajo."; });
+  assert.equal((await c(req(`/api/claude/pieza/${q.id}/fecha`, { fecha: nueva, motivo: "Emi pidió adelantarla" }, H))).s, 400, "si el contenido cambió, no");
+});
 console.log(`\n${ok} pruebas aprobadas`);

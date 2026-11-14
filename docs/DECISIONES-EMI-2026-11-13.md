@@ -68,3 +68,7 @@ Emi aprobó tal cual la propuesta de la Matriz («Están perfectos así»). Tesi
 3. Boletines (datos de ejemplo): el aviso de boletines laborales. Opinión: revisar boletines es la tarea más cara y menos jurídica del litigante. Pregunta: «¿Cuántas horas a la semana se van en eso en tu despacho?»
 4. Vox: explica temas jurídicos en videos cortos. Opinión: el abogado que no explica en simple pierde frente al que sí. Pregunta: «¿Un abogado debería estar en TikTok?»
 Enviado a Editor Studio para los guiones cortos y los 3 ganchos por video.
+
+## Séptima ronda (14/11/2026, chat): mover horarios
+- En el chat de x-viral pidió adelantar el post del DOF en X al domingo y dijo: «HAZLO TÚ, TODO TIENE QUE ESTAR AUTOMATIZADO».
+- En el chat de la Matriz eligió la opción B: la Matriz puede mover la hora de piezas que él ya aprobó, sin tocar texto ni video, y cada cambio queda anotado en la pieza y en la actividad. Cambiar texto o archivos sigue pidiendo su aprobación.

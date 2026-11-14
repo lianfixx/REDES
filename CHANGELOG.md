@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-14 · La Matriz puede mover la hora de piezas ya aprobadas
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: Emi, 14/11/2026, en el chat de la Matriz: opción «B» (que la Matriz mueva horarios de piezas aprobadas sin tocar texto ni video); antes, en x-viral: «HAZLO TÚ, TODO TIENE QUE ESTAR AUTOMATIZADO».
+- Cambios: `POST /api/claude/pieza/<id>/fecha {fecha, motivo}` mueve la hora de una pieza aprobada y sin cambios (solo al futuro, máximo 60 días, con motivo obligatorio, no si está en pausa); recalcula la huella con la fecha nueva y lo anota en historial, notas de la pieza y bitácora. El estado de Claude informa si X tiene permiso de archivos. Regla 3 de `AGENTS.md` con la excepción.
+- Archivos: `worker/{index.js,prueba.mjs}`, `AGENTS.md`, `skills/matriz-redes/references/panel.md`, `docs/DECISIONES-EMI-2026-11-13.md`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado (28 pruebas del Worker, 1 nueva).
+- Pendiente: Emi sube el video del DOF al panel o lo publica desde la app el domingo.
+
 ## 2026-11-13 · Ángulos de los cuatro videos, aprobados por Emi
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: Editor Studio pidió el ángulo de cada video para escribir guiones y ganchos; Emi: «Están perfectos así».

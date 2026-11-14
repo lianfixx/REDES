@@ -841,6 +841,35 @@ async function aprobar(env, id, cuerpo = {}) {
   return q;
 }
 
+// Mover la hora de una pieza YA APROBADA sin tocar texto, red, enlace ni archivos. Lo autorizó Emi en el chat de la Matriz
+// el 14/11/2026 (docs/DECISIONES-EMI-2026-11-13.md, séptima ronda). La aprobación sigue valiendo porque el contenido no
+// cambia; se recalcula la huella con la fecha nueva y queda anotado en la bitácora, el historial y una nota de la pieza.
+async function reprogramar(env, id, cuerpo, quien) {
+  const f = new Date(cuerpo.fecha || "");
+  if (Number.isNaN(f.getTime())) throw new Error("Fecha inválida.");
+  if (f.getTime() < Date.now() + 15 * 60e3) throw new Error("La fecha nueva debe ser al menos 15 minutos en el futuro.");
+  if (f.getTime() > Date.now() + 60 * 864e5) throw new Error("La fecha nueva no puede pasar de 60 días.");
+  const motivo = limpiar(cuerpo.motivo || "", 300);
+  if (motivo.trim().length < 8) throw new Error("Escribe el motivo (quién lo pidió y por qué).");
+  const actual = (await piezas(env)).find((x) => x.id === id);
+  if (!actual) throw new Error("No existe esa pieza.");
+  if (!["aprobada", "programada"].includes(actual.estado) || !actual.aprobado_huella || actual.aprobado_huella !== (await huellaAprobacion(actual)))
+    throw new Error("Solo se mueve la hora de una pieza aprobada y sin cambios.");
+  if (actual.pausada) throw new Error("La pieza está en pausa: Emi decide.");
+  const nueva = f.toISOString(), antes = actual.fecha;
+  const h = await huellaAprobacion({ ...actual, fecha: nueva });
+  const p = await actualizarPieza(env, id, (x) => {
+    if (x.aprobado_huella !== actual.aprobado_huella || x.estado !== actual.estado) throw new Error("La pieza cambió mientras se movía.");
+    x.fecha = nueva; x.aprobado_huella = h; x.hora_asignada_por = quien;
+    if (x.estado === "aprobada" && PUBLICADORES[x.red] && !x.solo_app) x.estado = "programada";
+    delete x.subida; delete x.publicar_al_terminar;
+    x.historial.unshift({ fecha: ahoraISO(), quien, que: `movió la hora (antes: ${antes || "sin fecha"}; ahora: ${nueva}): ${motivo}` });
+    x.comentarios = [...(x.comentarios || []), { fecha: ahoraISO(), quien, texto: `Moví la hora: ${motivo}` }].slice(-60);
+  });
+  await bitacora(env, quien, `Movió la hora de «${p.titulo || p.red}» a ${nueva}: ${motivo}`);
+  return p;
+}
+
 // Hora sugerida: la que dejó la Matriz (si sigue en el futuro) o el siguiente hueco libre según la red.
 // Horas base de crecimiento/redes.json (hipótesis que se ajustan con métricas); hora del centro de México (UTC−6, sin horario de verano).
 const HORA_BASE = { x: [9, 0], linkedin: [8, 30], instagram: [19, 0], tiktok: [19, 30] };
@@ -979,9 +1008,12 @@ export async function api(request, env, url) {
       if (ruta === "/api/claude/estado" && metodo === "GET")
         return json({ piezas: await piezas(env), notas: await leer(env, "notas", []), encargos: await leer(env, "encargos", []), enlaces: await leer(env, "enlaces", []), inspiracion: await leer(env, "inspiracion", []), bitacora: (await leer(env, "bitacora", [])).slice(0, 50),
           archivos: (await archivosDe(env)).map(resumenArchivo),
-          conexiones: Object.fromEntries(await Promise.all(["x", "x2", "x_app", "linkedin", "linkedin_app"].map(async (n) => [n, !!(await leer(env, `cred:${n}`, null))]))) });
+          conexiones: { ...Object.fromEntries(await Promise.all(["x", "x2", "x_app", "linkedin", "linkedin_app"].map(async (n) => [n, !!(await leer(env, `cred:${n}`, null))]))),
+            x_media: !!(await leer(env, "cred:x", null)) || /\bmedia\.write\b/.test((await leerSecreto(env, "x2").catch(() => null))?.scope || "") } });
       if (ruta === "/api/claude/pieza" && metodo === "POST") return json(await editarPieza(env, cuerpo, "claude"));
       if (ruta === "/api/claude/nota" && metodo === "POST") return json(await agregarNota(env, cuerpo, "claude"));
+      const mf = ruta.match(/^\/api\/claude\/pieza\/([a-f0-9]{12})\/fecha$/);
+      if (mf && metodo === "POST") return json(await reprogramar(env, mf[1], cuerpo, "Matriz"));
       const mc = ruta.match(/^\/api\/claude\/pieza\/([a-f0-9]{12})\/(comentario|sugerencia)$/);
       if (mc && metodo === "POST") {
         if (mc[2] === "comentario") return json(await comentar(env, mc[1], cuerpo, "Matriz"));
