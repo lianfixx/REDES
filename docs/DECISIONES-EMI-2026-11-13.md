@@ -72,3 +72,11 @@ Enviado a Editor Studio para los guiones cortos y los 3 ganchos por video.
 ## Séptima ronda (14/11/2026, chat): mover horarios
 - En el chat de x-viral pidió adelantar el post del DOF en X al domingo y dijo: «HAZLO TÚ, TODO TIENE QUE ESTAR AUTOMATIZADO».
 - En el chat de la Matriz eligió la opción B: la Matriz puede mover la hora de piezas que él ya aprobó, sin tocar texto ni video, y cada cambio queda anotado en la pieza y en la actividad. Cambiar texto o archivos sigue pidiendo su aprobación.
+
+## Octava ronda (14/11/2026, chat de x-viral): que salga solo
+
+Sobre el post del DOF en X, Emi escribió: «HAZLO TÚ, TODO TIENE QUE ESTAR AUTOMATIZADO» y «TÚ YA TIENES EL VIDEO EN DRIVE, Hazlo y audita a fondo».
+
+- El video del DOF (`castorena-pagos-digitales-v5.mp4`, 56 s, 1080×1920) se sube al panel desde la computadora en la nube de Emi y se adjunta a la pieza de X que él ya aprobó; el texto no cambia.
+- La pieza deja de ser «solo app» y sale por la API el domingo 15/11 a las 10:00 (hora de México).
+- El panel permite adjuntar a una pieza aprobada el archivo que le faltaba, sin reemplazar ni tocar el texto, y lo deja anotado.

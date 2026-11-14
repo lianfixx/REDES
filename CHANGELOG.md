@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-14 · Adjuntar a una pieza aprobada el archivo que le faltaba
+- Agente: Claude Code (sesión de x-viral, en la nube)
+- Solicitud: Emi, 14/11/2026, en el chat de x-viral, sobre el post del DOF en X: «HAZLO TÚ, TODO TIENE QUE ESTAR AUTOMATIZADO» y «TÚ YA TIENES EL VIDEO EN DRIVE, Hazlo y audita a fondo».
+- Cambios: `POST /api/claude/pieza/<id>/archivos {archivos, motivo}` adjunta a una pieza aprobada y sin cambios el archivo que le faltaba. Solo agrega: la pieza no debe tener archivos ni enlace de archivo, el texto y la red no se tocan, los archivos deben estar completos en el panel y cumplir las reglas de la red, en X hace falta el permiso de archivos, y no aplica a piezas en pausa. Quita «solo app», recalcula la huella con el archivo, programa la pieza si su fecha es futura y lo anota en historial, notas de la pieza y bitácora. Con esto una pieza que esperaba a que Emi subiera el video desde la app puede salir sola por la API.
+- Archivos: `worker/{index.js,prueba.mjs}`, `skills/matriz-redes/references/panel.md`, `AGENTS.md`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado (29 pruebas del Worker, 1 nueva, con llamadas simuladas a X); subida real de un video a X → no ejecutada todavía.
+- Pendiente: primera publicación real con video (DOF, domingo 15/11 a las 10:00); vigilar la subida previa en la bitácora.
+
 ## 2026-11-14 · La Matriz puede mover la hora de piezas ya aprobadas
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: Emi, 14/11/2026, en el chat de la Matriz: opción «B» (que la Matriz mueva horarios de piezas aprobadas sin tocar texto ni video); antes, en x-viral: «HAZLO TÚ, TODO TIENE QUE ESTAR AUTOMATIZADO».

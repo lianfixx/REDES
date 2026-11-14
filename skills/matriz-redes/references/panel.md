@@ -29,6 +29,7 @@ POST /api/claude/pieza   {red, texto, titulo, fecha (ISO), idea, media, nota, ar
 POST /api/claude/pieza/<id>/comentario  {texto}
 POST /api/claude/pieza/<id>/sugerencia  {hora (ISO), motivo}
 POST /api/claude/pieza/<id>/fecha       {fecha (ISO, futura), motivo}  mueve la hora de una pieza YA aprobada sin tocar texto ni archivos (Emi, 14/11/2026); queda anotado
+POST /api/claude/pieza/<id>/archivos    {archivos: [id, …], motivo}    adjunta a una pieza YA aprobada y SIN archivos el que le faltaba (Emi, 14/11/2026); no reemplaza, no toca el texto, quita «solo app» y queda anotado
 POST /api/claude/nota    {texto, tipo, red, espacio}
 POST /api/claude/enlace  {nombre, url (https), grupo}
 POST /api/claude/encargo/<id> {estado, respuesta}

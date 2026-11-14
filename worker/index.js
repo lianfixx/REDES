@@ -870,6 +870,42 @@ async function reprogramar(env, id, cuerpo, quien) {
   return p;
 }
 
+// Adjuntar a una pieza YA aprobada el archivo que le faltaba (Emi, 14/11/2026: «tú ya tienes el video en Drive, hazlo»).
+// Solo agrega: la pieza no debe tener archivos, el texto y la red no se tocan, y queda anotado quién lo pidió.
+// Sirve para piezas que esperaban a que Emi subiera el archivo desde la app; con el archivo dentro, salen por la API.
+async function adjuntar(env, id, cuerpo, quien) {
+  const ids = (Array.isArray(cuerpo.archivos) ? cuerpo.archivos : []).map((x) => String(x).trim()).filter(Boolean);
+  if (!ids.length || ids.length > 20 || ids.some((x) => !/^[a-f0-9]{12}$/.test(x)) || new Set(ids).size !== ids.length) throw new Error("Lista de archivos inválida.");
+  const motivo = limpiar(cuerpo.motivo || "", 300);
+  if (motivo.trim().length < 8) throw new Error("Escribe el motivo (quién lo pidió y por qué).");
+  const actual = (await piezas(env)).find((x) => x.id === id);
+  if (!actual) throw new Error("No existe esa pieza.");
+  if (!["aprobada", "programada"].includes(actual.estado) || !actual.aprobado_huella || actual.aprobado_huella !== (await huellaAprobacion(actual)))
+    throw new Error("Solo se adjunta a una pieza aprobada y sin cambios.");
+  if (actual.pausada) throw new Error("La pieza está en pausa: Emi decide.");
+  if ((actual.archivos || []).length) throw new Error("La pieza ya tiene archivos: cambiarlos reinicia la aprobación y lo hace Emi.");
+  if (actual.media) throw new Error("La pieza lleva un enlace de archivo que puso Emi: él decide.");
+  const todos = await archivosDe(env), arch = ids.map((x) => todos.find((a) => a.id === x));
+  if (arch.some((a) => !a || a.estado !== "listo")) throw new Error("Un archivo no existe o no ha terminado de subir al panel.");
+  const err = revisarArchivos(actual.red, arch);
+  if (err) throw new Error(err);
+  if (actual.red === "x" && !(await leer(env, "cred:x", null)) && !/\bmedia\.write\b/.test((await leerSecreto(env, "x2").catch(() => null))?.scope || ""))
+    throw new Error("X no tiene permiso para subir archivos: Emi debe reconectar X en Ajustes.");
+  const h = await huellaAprobacion({ ...actual, archivos: ids });
+  const nombres = arch.map((a) => a.nombre).join(", ");
+  const p = await actualizarPieza(env, id, (x) => {
+    if (x.aprobado_huella !== actual.aprobado_huella || x.estado !== actual.estado || (x.archivos || []).length) throw new Error("La pieza cambió mientras se adjuntaba.");
+    x.archivos = ids; x.solo_app = false; x.aprobado_huella = h; x.actualizada = ahoraISO();
+    const futura = x.fecha && Date.parse(x.fecha) > Date.now() + 60e3;
+    x.estado = futura && PUBLICADORES[x.red] ? "programada" : "aprobada";
+    delete x.subida; delete x.publicar_al_terminar; delete x.error;
+    x.historial.unshift({ fecha: ahoraISO(), quien, que: `adjuntó ${nombres} (el texto aprobado no cambió): ${motivo}` });
+    x.comentarios = [...(x.comentarios || []), { fecha: ahoraISO(), quien, texto: `Adjunté ${nombres}: ${motivo}` }].slice(-60);
+  });
+  await bitacora(env, quien, `Adjuntó ${nombres} a «${p.titulo || p.red}»: ${motivo}`);
+  return p;
+}
+
 // Hora sugerida: la que dejó la Matriz (si sigue en el futuro) o el siguiente hueco libre según la red.
 // Horas base de crecimiento/redes.json (hipótesis que se ajustan con métricas); hora del centro de México (UTC−6, sin horario de verano).
 const HORA_BASE = { x: [9, 0], linkedin: [8, 30], instagram: [19, 0], tiktok: [19, 30] };
@@ -1014,6 +1050,8 @@ export async function api(request, env, url) {
       if (ruta === "/api/claude/nota" && metodo === "POST") return json(await agregarNota(env, cuerpo, "claude"));
       const mf = ruta.match(/^\/api\/claude\/pieza\/([a-f0-9]{12})\/fecha$/);
       if (mf && metodo === "POST") return json(await reprogramar(env, mf[1], cuerpo, "Matriz"));
+      const mj = ruta.match(/^\/api\/claude\/pieza\/([a-f0-9]{12})\/archivos$/);
+      if (mj && metodo === "POST") return json(await adjuntar(env, mj[1], cuerpo, "Matriz"));
       const mc = ruta.match(/^\/api\/claude\/pieza\/([a-f0-9]{12})\/(comentario|sugerencia)$/);
       if (mc && metodo === "POST") {
         if (mc[2] === "comentario") return json(await comentar(env, mc[1], cuerpo, "Matriz"));
