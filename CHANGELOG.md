@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-14 · Quitar «solo app» pide aprobar otra vez
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: Emi quitó «Prefiero subirla yo desde la app» en el post del DOF y la pieza se quedó «aprobada» sin programarse ni llevar el video.
+- Cambios: cambiar «solo app» ahora reinicia la aprobación (decide si la pieza sale sola por API), igual que el texto, la fecha o los archivos.
+- Archivos: `worker/{index.js,prueba.mjs}`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado (29 pruebas del Worker).
+- Pendiente: Emi agrega el video a la pieza y la aprueba.
+
 ## 2026-11-14 · Adjuntar a una pieza aprobada el archivo que le faltaba
 - Agente: Claude Code (sesión de x-viral, en la nube)
 - Solicitud: Emi, 14/11/2026, en el chat de x-viral, sobre el post del DOF en X: «HAZLO TÚ, TODO TIENE QUE ESTAR AUTOMATIZADO» y «TÚ YA TIENES EL VIDEO EN DRIVE, Hazlo y audita a fondo».

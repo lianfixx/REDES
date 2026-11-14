@@ -563,4 +563,11 @@ await t("la Matriz adjunta a una pieza aprobada el archivo que faltaba: sale por
   cambiar(env, z.id, (y) => { y.pausada = true; });
   assert.equal((await adj(z.id, { archivos: [foto], motivo: "Emi pidió que saliera sola" })).s, 400, "en pausa no");
 });
+await t("quitar «solo app» a una pieza aprobada pide aprobarla otra vez (decide si sale sola)", async () => {
+  const env = nuevoEnv(), S = await sesion(env);
+  const p = (await S("/api/pieza", { red: "x", texto: "Solo app.", solo_app: true })).j;
+  await S(`/api/pieza/${p.id}/aprobar`, {});
+  const e = (await S("/api/pieza", { id: p.id, red: "x", texto: "Solo app.", solo_app: false })).j;
+  assert.equal(e.aprobado_huella, undefined); assert.equal(e.estado, "borrador");
+});
 console.log(`\n${ok} pruebas aprobadas`);

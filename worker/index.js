@@ -763,7 +763,7 @@ async function editarPieza(env, datos, quien) {
   }
   const nueva = !p;
   if (!p) { p = { id: nuevoId(), creada: ahoraISO(), creada_por: quien, historial: [] }; lista.unshift(p); }
-  const antes = { red: p.red, texto: p.texto, fecha: p.fecha || null, media: p.media || "", archivos: (p.archivos || []).join(",") };
+  const antes = { red: p.red, texto: p.texto, fecha: p.fecha || null, media: p.media || "", archivos: (p.archivos || []).join(","), solo_app: !!p.solo_app };
   let archivos = p.archivos || [];
   if (datos.archivos !== undefined) {
     const ids = (Array.isArray(datos.archivos) ? datos.archivos : String(datos.archivos || "").split(",")).map((x) => String(x).trim()).filter(Boolean);
@@ -786,7 +786,7 @@ async function editarPieza(env, datos, quien) {
     solo_app: datos.solo_app !== undefined ? !!datos.solo_app : !!p.solo_app,
     fecha: fecha ? fecha.toISOString() : datos.fecha === "" || datos.fecha === null ? null : p.fecha || null, actualizada: ahoraISO(),
   });
-  const cambio = nueva || antes.red !== p.red || antes.texto !== p.texto || antes.fecha !== p.fecha || antes.media !== p.media || antes.archivos !== p.archivos.join(",");
+  const cambio = nueva || antes.red !== p.red || antes.texto !== p.texto || antes.fecha !== p.fecha || antes.media !== p.media || antes.archivos !== p.archivos.join(",") || antes.solo_app !== !!p.solo_app;
   if (cambio) {
     // Si cambia el texto, la red, la fecha o el archivo, la aprobación anterior deja de valer.
     delete p.aprobado; delete p.aprobado_huella; delete p.error; delete p.publicar_al_terminar; delete p.intentos_publicar;
