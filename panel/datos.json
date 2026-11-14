@@ -1,5 +1,5 @@
 {
- "generado": "2026-11-13",
+ "generado": "2026-11-14",
  "redes": {
   "x": {
    "skill": "x-viral",
@@ -333,19 +333,6 @@
   }
  ],
  "proximas": [
-  {
-   "id": "li-dof-video",
-   "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-13T12:00:00-06:00",
-   "red": "linkedin",
-   "cuenta": "linkedin.com/in/emiliano-milla",
-   "skill": "linkedin-pro",
-   "titulo": "Video del DOF (tal cual) con el texto B de Emi",
-   "estado": "lista para aprobar",
-   "minutos_emi": 20,
-   "en_panel": true,
-   "semana": "2026-W46"
-  },
   {
    "id": "li-documento",
    "idea": "2026-11-13-lanzamiento",

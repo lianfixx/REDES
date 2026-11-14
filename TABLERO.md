@@ -1,6 +1,6 @@
 # Tablero de la Matriz de Redes
 
-Generado el 2026-11-13 por `redes.py tablero`. No se edita a mano.
+Generado el 2026-11-14 por `redes.py tablero`. No se edita a mano.
 
 ## Pendiente de Emi
 
@@ -18,7 +18,6 @@ Generado el 2026-11-13 por `redes.py tablero`. No se edita a mano.
 
 ## Próximas
 
-- 2026-11-13 12:00 · linkedin · Video del DOF (tal cual) con el texto B de Emi (lista para aprobar)
 - 2026-11-17 08:30 · linkedin · Documento de 8 láminas: herramientas que construí (en produccion)
 - 2026-11-17 09:00 · x · Post de lanzamiento (A o B) (borrador)
 - 2026-11-17 19:00 · instagram · Reel 1 · Matriz (idea)
