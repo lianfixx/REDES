@@ -971,6 +971,9 @@ async function registrarExterna(env, d) {
   if (estado === "publicada" && (!url || !DOMINIOS[red].test(url))) throw new Error("Hace falta el enlace del post.");
   const lista = await piezas(env);
   let p = lista.find((x) => x.externa?.clave === clave && x.red === red);
+  // Corregir la clave de un registro anterior (p. ej., la skill usa otro id): se renombra, no se duplica.
+  const anterior = limpiar(d.clave_anterior || "", 80);
+  if (!p && anterior) p = lista.find((x) => x.externa?.clave === anterior && x.red === red);
   if (p && p.estado === "publicada" && estado !== "publicada") return p;
   if (!p) { p = { id: nuevoId(), creada: ahoraISO(), creada_por: "skill", historial: [], solo_app: true }; lista.unshift(p); }
   Object.assign(p, { red, estado, fecha: fecha.toISOString(), titulo: limpiar(d.titulo || "", 120), texto: limpiar(d.texto || "", 5000), externa: { clave, fuente }, actualizada: ahoraISO() });

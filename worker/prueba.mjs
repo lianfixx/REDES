@@ -627,6 +627,8 @@ await t("sincronía con las skills: marcar publicada con enlace y registrar lo p
   assert.equal(e.estado, "programada en la red");
   const e2 = (await c(req("/api/claude/externa", { red: "linkedin", clave: "doc-pagos", titulo: "Documento", texto: "Hola", fecha: fut, fuente: "linkedin-pro" }, H))).j;
   assert.equal(e2.id, e.id, "no se duplica");
+  const e3 = (await c(req("/api/claude/externa", { red: "linkedin", clave: "doc-pagos-2", clave_anterior: "doc-pagos", titulo: "Documento", texto: "Hola", fecha: fut, fuente: "linkedin-pro" }, H))).j;
+  assert.equal(e3.id, e.id); assert.equal(e3.externa.clave, "doc-pagos-2");
   assert.equal((await S("/api/pieza", { id: e.id, red: "linkedin", texto: "x" })).s, 400, "no se edita desde el panel");
   cambiar(env, e.id, (x) => { x.fecha = new Date(Date.now() - 1000).toISOString(); });
   await tic(env, async () => assert.fail("el cron no la publica"));

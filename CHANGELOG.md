@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-15 · Registro externo: corregir la clave sin duplicar
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: la sesión de LinkedIn avisó que el id real del documento del lunes es «2026-W47-pagos-doc».
+- Cambios: `POST /api/claude/externa` acepta `clave_anterior` para renombrar un registro en vez de duplicarlo.
+- Archivos: `worker/{index.js,prueba.mjs}`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado.
+- Pendiente: aplicar la clave correcta en el panel tras el despliegue.
+
 ## 2026-11-15 · Auditoría: calendario al día con la realidad y video del DOF ya subido a X
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: Emi, 15/11/2026: «Audita».
