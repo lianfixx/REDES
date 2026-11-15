@@ -428,9 +428,16 @@ await t("sin aprobación no se sube nada a la red; con fallos de subida, a los 3
   await S("/api/pieza", { id: p.id, red: "x", texto: "Sin aprobar.", archivos: [id], fecha: fut });
   assert.equal((await S(`/api/pieza/${p.id}/aprobar`, {})).j.estado, "programada");
   const malo = async () => Response.json({ title: "Forbidden" }, { status: 403 });
-  for (let i = 0; i < 3; i++) { cambiar(env, p.id, (x) => { if (x.subida) delete x.subida.ocupada_hasta; }); await tic(env, malo); }
-  const x = piezasDe(env).find((y) => y.id === p.id);
-  assert.equal(x.estado, "aprobada"); assert.match(x.error, /reconecta X/);
+  const otraVuelta = () => cambiar(env, p.id, (x) => { if (x.subida) { delete x.subida.ocupada_hasta; delete x.subida.esperar_hasta; } });
+  for (let i = 0; i < 3; i++) { otraVuelta(); await tic(env, malo); }
+  let x = piezasDe(env).find((y) => y.id === p.id);
+  assert.equal(x.estado, "programada", "antes de su hora sigue intentando"); assert.match(x.error, /reconecta X/); assert.ok(x.subida.errores >= 3);
+  await tic(env, async () => assert.fail("respeta la espera entre intentos"));
+  // Ya pasada la hora y con 3 errores, deja de intentar y espera a Emi.
+  cambiar(env, p.id, (y) => { y.subida.esperar_hasta = new Date(Date.now() - 1000).toISOString(); y.publicar_al_terminar = true; y.estado = "aprobada"; });
+  await tic(env, malo);
+  x = piezasDe(env).find((y) => y.id === p.id);
+  assert.equal(x.estado, "aprobada"); assert.equal(x.publicar_al_terminar, undefined);
 });
 await t("LinkedIn: video en partes con ETag, espera a que procese y publica con content.media; PDF con título", async () => {
   const env = nuevoEnv(), S = await sesion(env);
@@ -632,5 +639,35 @@ await t("sincronía con las skills: marcar publicada con enlace y registrar lo p
   assert.equal((await S("/api/pieza", { id: e.id, red: "linkedin", texto: "x" })).s, 400, "no se edita desde el panel");
   cambiar(env, e.id, (x) => { x.fecha = new Date(Date.now() - 1000).toISOString(); });
   await tic(env, async () => assert.fail("el cron no la publica"));
+});
+await t("auditoría 15/11: sin presupuesto no hay «fallo»; dos renovaciones de X a la vez no borran el permiso", async () => {
+  const env = nuevoEnv(), S = await sesion(env);
+  await S("/api/llaves/x", llavesX);
+  const p = (await S("/api/pieza", { red: "x", texto: "Sin presupuesto.", fecha: new Date(Date.now() + 3600e3).toISOString() })).j;
+  await S(`/api/pieza/${p.id}/aprobar`, {});
+  const { default: _ } = await import("./index.js");
+  const agotado = async () => { throw Object.assign(new Error("Se acabó el presupuesto"), { presupuesto: true }); };
+  await assert.rejects(publicar(env, p.id, agotado), /presupuesto/);
+  assert.equal(piezasDe(env).find((x) => x.id === p.id).estado, "programada", "vuelve a programada, no a fallo");
+  // Renovaciones simultáneas: X rota el token; la segunda con el token viejo daría 400.
+  const env2 = nuevoEnv(), S2 = await sesion(env2);
+  await S2("/api/llaves/x-app", { client_id: "cliente-x-123", client_secret: "secreto-x-456" });
+  await guardarSecreto(env2, "x2", { access_token: "viejo", refresh_token: "r0", vence: new Date(Date.now() - 1000).toISOString() });
+  let usados = new Set(), n = 0;
+  const fx = async (url, o) => {
+    if (url.includes("oauth2/token")) {
+      const rt = new URLSearchParams(o.body).get("refresh_token");
+      await new Promise((r) => setTimeout(r, 20));
+      if (usados.has(rt)) return Response.json({ error: "invalid_request" }, { status: 400 });
+      usados.add(rt); n++;
+      return Response.json({ access_token: "nuevo", refresh_token: "r1", expires_in: 7200 });
+    }
+    return Response.json({ data: { id: "1", username: "emi" } });
+  };
+  const q1 = (await S2("/api/pieza", { red: "x", texto: "Uno." })).j, q2 = (await S2("/api/pieza", { red: "x", texto: "Dos distinto." })).j;
+  await S2(`/api/pieza/${q1.id}/aprobar`, {}); await S2(`/api/pieza/${q2.id}/aprobar`, {});
+  await Promise.all([publicar(env2, q1.id, fx), publicar(env2, q2.id, fx)]);
+  assert.equal(n, 1, "una sola renovación");
+  assert.equal((await leerSecreto(env2, "x2"))?.access_token, "nuevo", "el permiso sigue guardado");
 });
 console.log(`\n${ok} pruebas aprobadas`);

@@ -271,10 +271,18 @@ async function pedirTokenX(app, params, fetcher) {
   }
   return { r, t, modo: "confidencial" };
 }
+// Una sola renovación a la vez dentro del Durable Object: X cambia el token de renovación en cada uso, y dos renovaciones
+// simultáneas harían que una reciba 400 y borre el permiso bueno (auditoría 15/11/2026).
+let renovandoX = null;
 async function tokenX2(env, fetcher) {
   const t = await leerSecreto(env, "x2");
   if (!t) return null;
   if (t.vence && Date.parse(t.vence) > Date.now() + 120e3) return t.access_token;
+  if (renovandoX) return renovandoX;
+  renovandoX = renovarX2(env, t, fetcher).finally(() => { renovandoX = null; });
+  return renovandoX;
+}
+async function renovarX2(env, t, fetcher) {
   const app = await leerSecreto(env, "x_app");
   if (!app || !t.refresh_token) throw new Error("X necesita reconectarse: Ajustes → Conectar X.");
   const { r, t: n } = await pedirTokenX(app, { grant_type: "refresh_token", refresh_token: t.refresh_token }, fetcher);
@@ -282,6 +290,9 @@ async function tokenX2(env, fetcher) {
     // Solo se borra el permiso cuando X lo rechaza de verdad (400/401: token de actualización inválido o usado).
     // Con una caída pasajera de X (429, 5xx) el permiso se conserva y se reintenta en la siguiente vuelta.
     if ([400, 401].includes(r.status)) {
+      // Si mientras tanto otra vuelta ya renovó (token distinto), se usa ese y no se borra nada.
+      const ahora = await leerSecreto(env, "x2").catch(() => null);
+      if (ahora?.refresh_token && ahora.refresh_token !== t.refresh_token && Date.parse(ahora.vence || 0) > Date.now() + 60e3) return ahora.access_token;
       await borrar(env, "cred:x2"); // falla cerrado: hay que reconectar
       throw new Error(`X no renovó el permiso (${r.status}): reconecta X en Ajustes.`);
     }
@@ -386,7 +397,8 @@ const MB = 1024 * 1024;
 const PARTE = 4 * MB;   // lo que llega por petición; coincide con las partes de LinkedIn y cabe en las de X (≤ 5 MB)
 const TROZO = 1 * MB;   // lo que se guarda por llave (el Durable Object acepta hasta 2 MB por valor)
 const TIPOS = { "image/jpeg": "imagen", "image/png": "imagen", "image/webp": "imagen", "image/gif": "gif", "video/mp4": "video", "video/quicktime": "video", "application/pdf": "pdf" };
-const TOPE_CLASE = { imagen: 20 * MB, gif: 15 * MB, video: 300 * MB, pdf: 100 * MB };
+// Imágenes y PDF se suben enteros en memoria (el Durable Object tiene 128 MB): por eso el PDF se queda en 20 MB.
+const TOPE_CLASE = { imagen: 20 * MB, gif: 15 * MB, video: 300 * MB, pdf: 20 * MB };
 const TOPE_TOTAL = 4 * 1024 * MB; // el plan gratuito da 5 GB al Durable Object
 const binClave = (id, i) => `bin:${id}:${i}`;
 async function binLeer(env, id, i) {
@@ -423,8 +435,9 @@ async function crearArchivo(env, d, quien) {
   const num = (v, max) => { const n = Number(v); return Number.isFinite(n) && n > 0 && n <= max ? Math.round(n * 100) / 100 : null; };
   const a = { id: nuevoId(), nombre: limpiar(d.nombre || "archivo", 120).replace(/[\\/\n]/g, " "), tipo, clase, bytes, partes: Math.ceil(bytes / PARTE), recibidas: [],
     estado: "subiendo", fecha: ahoraISO(), quien, origen: limpiar(d.origen || "", 20), ancho: num(d.ancho, 20000), alto: num(d.alto, 20000), duracion: num(d.duracion, 36000) };
+  if (lista.length >= 2000) throw new Error("El panel ya guarda 2000 archivos: borra los que ya salieron (Recursos → Archivos).");
   lista.unshift(a);
-  await guardar(env, "archivos", lista.slice(0, 2000));
+  await guardar(env, "archivos", lista);
   return resumenArchivo(a);
 }
 async function subirParte(env, id, n, buf, quien) {
@@ -645,12 +658,13 @@ async function prepararArchivos(env, id, fetcher) {
       await SUBIDORES[p.red](env, p, a, it, fetcher, () => escribir(false));
     }
     const listo = sub.items.every((i) => i.estado === "lista");
-    if (listo) { sub.errores = 0; delete sub.error; }
+    sub.errores = 0; delete sub.error; delete sub.esperar_hasta; // hubo avance sin error
     return listo;
   } catch (e) {
     if (e.presupuesto) return false;
     sub.errores = (sub.errores || 0) + 1;
     sub.error = String(e.message || e).slice(0, 300);
+    sub.esperar_hasta = new Date(Date.now() + Math.min(sub.errores * 5, 30) * 60e3).toISOString();
     throw Object.assign(e, { subida: true });
   } finally {
     await escribir(true);
@@ -661,7 +675,9 @@ async function errorSubida(env, id, e) {
   if (e.presupuesto) return;
   await actualizarPieza(env, id, (x) => {
     x.error = `No se pudo subir el archivo: ${String(e.message || e).slice(0, 250)}`;
-    if ((x.subida?.errores || 0) >= 3) {
+    // Mientras falte para la hora, se sigue reintentando con espera creciente; ya pasada la hora y con 3 errores, espera a Emi.
+    const yaToca = !x.fecha || Date.parse(x.fecha) <= Date.now() || x.publicar_al_terminar;
+    if ((x.subida?.errores || 0) >= 3 && yaToca) {
       if (x.estado === "programada") x.estado = "aprobada";
       delete x.publicar_al_terminar;
       x.historial.unshift({ fecha: ahoraISO(), quien: "panel", que: "no se pudo subir el archivo tras 3 intentos; espera a Emi" });
@@ -712,6 +728,22 @@ function etiquetaOG(html, nombre) {
     || html.match(new RegExp(`<meta[^>]+content=["']([^"']*)["'][^>]*(?:property|name)=["']${nombre}["']`, "i"));
   return a ? entidades(a[1]).trim() : "";
 }
+// Lee un cuerpo hasta «tope» bytes; si se pasa, corta y devuelve lo leído (texto) o null (binario).
+async function leerConTope(r, tope, binario = false) {
+  const lector = r.body?.getReader?.();
+  if (!lector) return binario ? null : "";
+  const partes = []; let total = 0;
+  for (;;) {
+    const { done, value } = await lector.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > tope) { await lector.cancel().catch(() => {}); if (binario) return null; break; }
+    partes.push(value);
+  }
+  const u8 = new Uint8Array(partes.reduce((s, x) => s + x.byteLength, 0));
+  let pos = 0; for (const x of partes) { u8.set(x, pos); pos += x.byteLength; }
+  return binario ? u8 : new TextDecoder().decode(u8);
+}
 const NAVEGADOR = { "User-Agent": "Mozilla/5.0 (compatible; RedesPanel/1.0)", "Accept-Language": "es-MX,es;q=0.9" };
 export async function metaInspiracion(env, id, fetcher = env.FETCHER || fetch) {
   const e = (await leer(env, "inspiracion", [])).find((x) => x.id === id);
@@ -720,14 +752,15 @@ export async function metaInspiracion(env, id, fetcher = env.FETCHER || fetch) {
   let url = e.url, html = "";
   try {
     // Abre el enlace (resuelve pin.it, vm.tiktok.com…) y guarda las etiquetas públicas de la página como respaldo.
-    const r = await fetcher(url, { headers: NAVEGADOR, redirect: "follow" });
+    const r = await fetcher(url, { headers: NAVEGADOR, redirect: "follow", signal: AbortSignal.timeout(8000) });
     if (r.url) url = r.url;
-    if ((r.headers.get("content-type") || "").includes("html")) html = (await r.text()).slice(0, 600000);
+    if ((r.headers.get("content-type") || "").includes("html") && Number(r.headers.get("content-length") || 0) <= 3 * MB) html = (await leerConTope(r, 3 * MB)).slice(0, 600000);
+    else r.body?.cancel?.();
   } catch (err) { meta.error = `No abrió la página: ${String(err.message || err).slice(0, 120)}`; }
   try {
     const prov = plataformaDe(url);
     if (OEMBED[prov]) {
-      const r = await fetcher(OEMBED[prov](url), { headers: NAVEGADOR });
+      const r = await fetcher(OEMBED[prov](url), { headers: NAVEGADOR, signal: AbortSignal.timeout(8000) });
       if (r.ok) {
         const o = await r.json();
         Object.assign(meta, { titulo: limpiar(o.title, 500), autor: limpiar(o.author_name, 120), miniatura_url: limpiarUrl(o.thumbnail_url), fuente: "oEmbed" });
@@ -744,17 +777,20 @@ export async function metaInspiracion(env, id, fetcher = env.FETCHER || fetch) {
   meta.url_final = limpiarUrl(url);
   if (meta.miniatura_url) {
     try {
-      const r = await fetcher(meta.miniatura_url, { headers: NAVEGADOR });
+      const r = await fetcher(meta.miniatura_url, { headers: NAVEGADOR, signal: AbortSignal.timeout(8000) });
       const tipo = (r.headers.get("content-type") || "").split(";")[0].trim();
-      if (r.ok && ["image/jpeg", "image/png", "image/webp"].includes(tipo)) {
-        const u8 = new Uint8Array(await r.arrayBuffer());
-        if (u8.byteLength > 0 && u8.byteLength <= 3 * MB) meta.miniatura = await guardarArchivoCompleto(env, { nombre: `miniatura-${id}`, tipo, origen: "inspiracion" }, u8, "panel");
+      if (r.ok && ["image/jpeg", "image/png", "image/webp"].includes(tipo) && Number(r.headers.get("content-length") || 0) <= 3 * MB) {
+        const buf = await leerConTope(r, 3 * MB, true);
+        if (buf && buf.byteLength > 0) meta.miniatura = await guardarArchivoCompleto(env, { nombre: `miniatura-${id}`, tipo, origen: "inspiracion" }, buf, "panel");
       }
     } catch (err) { meta.error = `Miniatura: ${String(err.message || err).slice(0, 120)}`; }
   }
   const l = await leer(env, "inspiracion", []), x = l.find((y) => y.id === id);
   if (!x) return null;
+  // La miniatura anterior se borra para no acumular archivos.
+  const vieja = x.meta?.miniatura;
   x.meta = meta;
+  if (vieja && vieja !== meta.miniatura) await borrarArchivo(env, vieja, "panel").catch(() => {});
   await guardar(env, "inspiracion", l);
   return x;
 }
@@ -890,13 +926,15 @@ async function reprogramar(env, id, cuerpo, quien) {
   if (!["aprobada", "programada"].includes(actual.estado) || !actual.aprobado_huella || actual.aprobado_huella !== (await huellaAprobacion(actual)))
     throw new Error("Solo se mueve la hora de una pieza aprobada y sin cambios.");
   if (actual.pausada) throw new Error("La pieza está en pausa: Emi decide.");
+  const iAprob = (actual.historial || []).findIndex((h) => /^aprobada \(/.test(h.que));
+  if ((actual.historial || []).slice(0, iAprob < 0 ? 0 : iAprob).some((h) => /espera a Emi/.test(h.que))) throw new Error("La pieza quedó esperando a Emi: él decide si sale.");
   const nueva = f.toISOString(), antes = actual.fecha;
   const h = await huellaAprobacion({ ...actual, fecha: nueva });
   const p = await actualizarPieza(env, id, (x) => {
     if (x.aprobado_huella !== actual.aprobado_huella || x.estado !== actual.estado) throw new Error("La pieza cambió mientras se movía.");
     x.fecha = nueva; x.aprobado_huella = h; x.hora_asignada_por = quien;
     if (x.estado === "aprobada" && PUBLICADORES[x.red] && !x.solo_app) x.estado = "programada";
-    delete x.subida; delete x.publicar_al_terminar;
+    delete x.publicar_al_terminar; // la subida se conserva: su clave no depende de la fecha
     x.historial.unshift({ fecha: ahoraISO(), quien, que: `movió la hora (antes: ${antes || "sin fecha"}; ahora: ${nueva}): ${motivo}` });
     x.comentarios = [...(x.comentarios || []), { fecha: ahoraISO(), quien, texto: `Moví la hora: ${motivo}` }].slice(-60);
   });
@@ -975,6 +1013,7 @@ async function registrarExterna(env, d) {
   const anterior = limpiar(d.clave_anterior || "", 80);
   if (!p && anterior) p = lista.find((x) => x.externa?.clave === anterior && x.red === red);
   if (p && p.estado === "publicada" && estado !== "publicada") return p;
+  if (!p && lista.filter((x) => x.externa && x.estado !== "publicada").length >= 100) throw new Error("Hay demasiadas piezas externas abiertas.");
   if (!p) { p = { id: nuevoId(), creada: ahoraISO(), creada_por: "skill", historial: [], solo_app: true }; lista.unshift(p); }
   Object.assign(p, { red, estado, fecha: fecha.toISOString(), titulo: limpiar(d.titulo || "", 120), texto: limpiar(d.texto || "", 5000), externa: { clave, fuente }, actualizada: ahoraISO() });
   if (estado === "publicada") p.publicada = { fecha: fecha.toISOString(), url, id: "", fuente };
@@ -1043,7 +1082,14 @@ export async function publicar(env, id, fetcher = fetch) {
   });
   if (!tomado) throw new Error("Otra publicación de esta pieza ya está en curso o cambió.");
   let resultado, error, reintentar = false;
-  try { resultado = await PUBLICADORES[p.red](env, p, fetcher); } catch (e) { error = String(e.message || e).slice(0, 400); reintentar = !!e.reintentar; }
+  try { resultado = await PUBLICADORES[p.red](env, p, fetcher); } catch (e) {
+    if (e.presupuesto) {
+      // No se llamó a la red: se suelta el candado y sale en la siguiente vuelta.
+      await actualizarPieza(env, id, (x) => { if (x.estado === "publicando") { x.estado = x.estado_previo || "programada"; delete x.publicando_desde; delete x.estado_previo; } });
+      throw e;
+    }
+    error = String(e.message || e).slice(0, 400); reintentar = !!e.reintentar;
+  }
   return actualizarPieza(env, id, (x) => {
     if (resultado) {
       x.estado = "publicada"; x.publicada = { fecha: ahoraISO(), ...resultado };
@@ -1467,15 +1513,11 @@ async function linkedinVolver(request, env, url) {
 // ---------------------------------------------------------------- cron: publica lo programado y pide métricas
 
 export async function tic(env, fetcherBase = fetch) {
-  const fetcher = conPresupuesto(fetcherBase, 40);
+  // Presupuestos separados (el plan gratuito permite 50 llamadas por vuelta): publicar no se queda sin llamadas por
+  // culpa de una subida larga (auditoría 15/11/2026).
+  const pub = conPresupuesto(fetcherBase, 12), prep = conPresupuesto(fetcherBase, 28), fetcher = conPresupuesto(fetcherBase, 8);
   const ahora = Date.now();
-  // 1) Archivos: se suben a la red con anticipación (las programadas de las próximas 6 h y las que Emi mandó publicar).
-  const porPreparar = (await piezas(env)).filter((x) => (x.archivos || []).length && !x.pausada && PUBLICADORES[x.red] && !x.solo_app && !subidaLista(x) &&
-    ((x.estado === "programada" && x.fecha && Date.parse(x.fecha) - ahora < 6 * 3600e3) || (x.estado === "aprobada" && x.publicar_al_terminar)));
-  for (const p of porPreparar) {
-    try { await prepararArchivos(env, p.id, fetcher); } catch (e) { await errorSubida(env, p.id, e); }
-  }
-  // 2) Lo que ya toca: programadas vencidas y las que esperaban a que terminaran sus archivos.
+  // 1) Lo que ya toca y tiene sus archivos listos: programadas vencidas y las que esperaban a que terminaran sus archivos.
   const vencidas = (await piezas(env)).filter((x) => (x.estado === "programada" && x.fecha && Date.parse(x.fecha) <= ahora) || (x.estado === "aprobada" && x.publicar_al_terminar)).map((x) => x.id);
   for (const id of vencidas) {
     const p = (await piezas(env)).find((x) => x.id === id);
@@ -1485,8 +1527,8 @@ export async function tic(env, fetcherBase = fetch) {
       await actualizarPieza(env, id, (x) => { x.estado = "aprobada"; delete x.publicar_al_terminar; x.historial.unshift({ fecha: ahoraISO(), quien: "panel", que: "no salió a su hora; espera a Emi" }); });
       continue;
     }
-    if (!subidaLista(p)) continue; // sus archivos siguen subiendo o procesándose
-    try { await publicar(env, id, fetcher); } catch (e) {
+    if (!subidaLista(p)) continue; // sus archivos siguen subiendo o procesándose (paso 2)
+    try { await publicar(env, id, pub); } catch (e) {
       if (e.presupuesto) break;
       if (e.subida) { await errorSubida(env, id, e); continue; }
       await actualizarPieza(env, id, (x) => {
@@ -1494,6 +1536,19 @@ export async function tic(env, fetcherBase = fetch) {
         else if (x.publicar_al_terminar) { delete x.publicar_al_terminar; x.error = String(e.message || e).slice(0, 300); }
       });
     }
+  }
+  // 2) Archivos: se suben a la red con anticipación (las programadas de las próximas 6 h y las que Emi mandó publicar).
+  const porPreparar = (await piezas(env)).filter((x) => (x.archivos || []).length && !x.pausada && PUBLICADORES[x.red] && !x.solo_app && !subidaLista(x) &&
+    ((x.estado === "programada" && x.fecha && Date.parse(x.fecha) - ahora < 6 * 3600e3) || (x.estado === "aprobada" && x.publicar_al_terminar)) &&
+    !(x.subida?.esperar_hasta && Date.parse(x.subida.esperar_hasta) > ahora));
+  for (const p of porPreparar) {
+    try { await prepararArchivos(env, p.id, prep); } catch (e) { await errorSubida(env, p.id, e); }
+  }
+  // 3) Las que terminaron de subir en esta vuelta y ya tocaban salen ahora mismo.
+  for (const id of vencidas) {
+    const p = (await piezas(env)).find((x) => x.id === id);
+    if (!p || !["programada", "aprobada"].includes(p.estado) || p.pausada || !subidaLista(p) || !(p.archivos || []).length) continue;
+    try { await publicar(env, id, pub); } catch (e) { if (e.presupuesto) break; if (e.subida) await errorSubida(env, id, e); }
   }
   // Métricas de X a las 48 h y a los 7 días (una lectura cada vez).
   for (const p of (await piezas(env)).filter((x) => x.red === "x" && x.estado === "publicada" && x.publicada?.id)) {
@@ -1510,8 +1565,12 @@ export async function tic(env, fetcherBase = fetch) {
     }
   }
   // 3) Inspiración sin datos del enlace (una por vuelta) y limpieza de archivos que ya no se usan.
-  const sinMeta = (await leer(env, "inspiracion", [])).find((x) => !x.meta);
-  if (sinMeta) await metaInspiracion(env, sinMeta.id, (...a) => fetcher(...a)).catch(() => {});
+  const insp = await leer(env, "inspiracion", []);
+  const sinMeta = insp.find((x) => !x.meta && !(x.meta_intento && Date.now() - Date.parse(x.meta_intento) < 864e5));
+  if (sinMeta) {
+    sinMeta.meta_intento = ahoraISO(); await guardar(env, "inspiracion", insp);
+    await metaInspiracion(env, sinMeta.id, (...a) => fetcher(...a)).catch(() => {});
+  }
   await limpiarArchivos(env);
 }
 

@@ -41,3 +41,17 @@ Un agente revisor sin el contexto de quien construyó el sistema intentó tumbar
 ## Lo que el revisor confirmó sin falla
 
 Firma OAuth 1.0a igual al ejemplo de la documentación de X; ninguna ruta devuelve llaves; Claude no puede aprobar ni publicar; CSP aplicada a todo; todo `innerHTML` pasa por `esc()`; `state` de LinkedIn de un solo uso sin redirección abierta; la huella coincide entre Worker y Python; no hay secretos en archivos ni en el historial.
+
+## Auditoría 3 (15/11/2026): archivos, subida a X y LinkedIn, excepciones de Emi
+Revisor independiente sobre `88ecaac..HEAD` de `worker/index.js`. Resultado y arreglo:
+1. ALTA · Si una subida larga agotaba las llamadas de la vuelta, el post a su hora quedaba en «fallo». → Presupuestos separados (publicar 12, subir 28, resto 8), primero se publica y luego se sube; sin presupuesto la pieza vuelve a su estado, no a «fallo». Prueba nueva.
+2. ALTA · Dos renovaciones simultáneas del permiso de X podían borrar el permiso bueno. → Una sola renovación a la vez; ante 400 se relee el permiso y no se borra si otra vuelta ya renovó. Prueba nueva.
+3. ALTA · Un PDF grande se subía entero en memoria y podía tumbar el cron. → Tope de PDF a 20 MB.
+4. MEDIA · Tres errores pasajeros desprogramaban la pieza horas antes. → El contador vuelve a cero con cualquier avance, espera creciente (5 a 30 min) y solo se desprograma ya pasada la hora. Prueba ajustada.
+5. MEDIA · `adjuntar` (excepción de Emi del 14/11, hecha por la sesión de x-viral) no comprueba que el archivo sea el que Emi indicó. → Se deja anotado; se pregunta a Emi si la quiere así.
+6. MEDIA · `reprogramar` podía revivir piezas que esperaban a Emi y borraba la subida. → Rechaza si quedó «espera a Emi» después de la aprobación; conserva la subida.
+7. MEDIA · La lista de archivos se recortaba a 2000 y cada lectura de inspiración dejaba una miniatura más. → Se rechaza en vez de recortar; la miniatura anterior se borra.
+8. MEDIA · Un enlace de inspiración malo podía agotar memoria o colgar la vuelta. → Tiempo límite de 8 s, tope de 3 MB por respuesta y marca de intento (un día).
+9. BAJA · Candado de subida sin dueño ni renovación. → Pendiente.
+10. BAJA · Piezas externas sin tope. → Máximo 100 abiertas.
+11. BAJA · `prepararAhora` con la llave de Claude gasta del tope de X. → Pendiente (bajo: 0.005 USD por llamada y respeta el tope).

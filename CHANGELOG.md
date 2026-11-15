@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-15 · Auditoría 3: arreglos del camino de archivos y de X
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: Emi, 15/11/2026: «Audita».
+- Cambios: arreglos de la auditoría 3 (detalle en `docs/AUDITORIA-2026-11-13.md`): presupuesto de llamadas separado y sin «fallo» falso; una sola renovación de X a la vez; PDF hasta 20 MB; reintentos de subida con espera y sin desprogramar antes de la hora; `reprogramar` no revive piezas que esperan a Emi y conserva la subida; archivos sin recorte silencioso; inspiración con tiempo límite, tope de tamaño y sin miniaturas acumuladas; tope de piezas externas.
+- Archivos: `worker/{index.js,prueba.mjs}`, `docs/AUDITORIA-2026-11-13.md`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado (33 pruebas del Worker).
+- Pendiente: candado de subida con dueño; decisión de Emi sobre `adjuntar`.
+
 ## 2026-11-15 · Documento de 8 láminas: tentativo
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: la sesión de LinkedIn avisó que Emi rechazó la primera muestra («se ven extremadamente IA») y que la nueva espera su foto y capturas reales.
