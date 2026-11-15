@@ -63,7 +63,7 @@ Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 - Solicitud: Emi, 14/11/2026, chat de x-viral: «Hazlo y audita a fondo» (post del DOF con video, programado para el domingo 15/11).
 - Cambios: (1) Hallazgo: al renovar el permiso de X, cualquier respuesta que no fuera correcta (también una caída pasajera, 429 o 5xx) borraba el permiso y obligaba a Emi a reconectar; ahora solo se borra con 400/401 y lo demás se reintenta solo. (2) `POST /api/claude/x/probar`: renueva el permiso si hace falta y pregunta a X qué cuenta es, sin publicar. (3) `POST /api/claude/pieza/<id>/preparar`: sube ya a X o LinkedIn los archivos de una pieza aprobada, sin publicar, para detectar fallas con horas de margen (el cron solo empieza 6 h antes). (4) El código de subida se cotejó con la guía oficial de X (initialize, append, finalize, STATUS): coincide.
 - Archivos: `worker/{index.js,prueba.mjs}`, `skills/matriz-redes/references/panel.md`, este registro.
-- Verificación: `python3 ia/verificar.py ci` → aprobado (31 pruebas del Worker, 1 nueva y 1 ampliada, con llamadas simuladas); prueba real contra X → ver la entrada siguiente o la bitácora del panel.
+- Verificación: `python3 ia/verificar.py ci` → aprobado (31 pruebas del Worker, 1 nueva y 1 ampliada, con llamadas simuladas); prueba real contra X el 15/11/2026 → aprobada: a las 05:30 UTC X respondió como `@emilianomilla_` y el video del DOF (39 MB, 10 partes) quedó subido y procesado; a las 16:30:56 UTC el panel publicó el post con el video (https://x.com/emilianomilla_/status/2122004433412161742), comprobado abriéndolo sin sesión.
 - Pendiente: publicación real del DOF a las 10:30 (hora de México).
 
 ## 2026-11-14 · Adjuntar a una pieza aprobada el archivo que le faltaba
