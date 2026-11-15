@@ -58,12 +58,6 @@
   "estado": "decidida",
   "pendiente_de_emi": [
     {
-      "que": "Tener créditos en la consola de X antes de que salga el lanzamiento",
-      "prioridad": 1,
-      "sesion": "x",
-      "donde": "https://console.x.com"
-    },
-    {
       "que": "Abrir las cuentas de TikTok e Instagram (@emilianomilla_; Instagram tipo Creador)",
       "prioridad": 2,
       "sesion": "TikTok e Instagram",

@@ -1,18 +1,30 @@
 {
- "semana": "2026-W46",
- "tope_minutos_emi": 120,
- "items": [
-  {
-   "id": "li-dof-video",
-   "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-13T12:00:00-06:00",
-   "red": "linkedin",
-   "cuenta": "linkedin.com/in/emiliano-milla",
-   "skill": "linkedin-pro",
-   "titulo": "Video del DOF (tal cual) con el texto B de Emi",
-   "estado": "lista para aprobar",
-   "minutos_emi": 20,
-   "en_panel": true
-  }
- ]
+  "semana": "2026-W46",
+  "tope_minutos_emi": 120,
+  "items": [
+    {
+      "id": "li-dof-video",
+      "idea": "2026-11-13-lanzamiento",
+      "fecha": "2026-11-13T12:52:00-06:00",
+      "red": "linkedin",
+      "cuenta": "linkedin.com/in/emiliano-milla",
+      "skill": "linkedin-pro",
+      "titulo": "Video del DOF (tal cual) con el texto B de Emi",
+      "estado": "publicada",
+      "minutos_emi": 20,
+      "en_panel": true,
+      "url": "https://www.linkedin.com/feed/update/urn:li:activity:7527081695200595968/"
+    },
+    {
+      "id": "x-dof",
+      "idea": "2026-11-13-lanzamiento",
+      "fecha": "2026-11-15T10:30:00-06:00",
+      "red": "x",
+      "skill": "x-viral",
+      "titulo": "Video del DOF nativo (adelantado por Emi al domingo)",
+      "estado": "programada",
+      "minutos_emi": 20,
+      "en_panel": true
+    }
+  ]
 }

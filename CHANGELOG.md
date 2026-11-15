@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-15 · Auditoría: calendario al día con la realidad y video del DOF ya subido a X
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: Emi, 15/11/2026: «Audita».
+- Cambios: calendario W46/W47 al día: el video del DOF en LinkedIn salió el 13/11 a las 12:52 (con enlace); el DOF en X va el domingo 15 a las 10:30; el documento de pagos digitales está programado en LinkedIn para el lunes 16 a las 10:30; el lanzamiento A está programado. El documento de 8 láminas pasa al miércoles 18 a las 8:30, porque el martes quedaba a 22 h del lunes y LinkedIn pide 24 h entre piezas. Se quita el pendiente de créditos de X: una lectura de pago respondió bien. Subida adelantada del video del DOF a X: 10 partes, procesado y listo (vence el 16/11 a las 05:30 UTC).
+- Archivos: `calendario/2026-W46.json`, `calendario/2026-W47.json`, `ideas/2026-11-13-lanzamiento.json`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado; `/api/claude/x/probar` → @emilianomilla_ con permiso de archivos; `/api/claude/pieza/fcabaee3c560/preparar` → listo.
+- Pendiente: hallazgos del revisor independiente del código.
+
 ## 2026-11-15 · El panel se sincroniza con lo que hacen las skills de cada red
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: Emi, 15/11/2026: «pero está programado no? según la sesión de linkedin (recuerda tener estos datos frescos y en tiempo real)». El panel mostraba el video del DOF de LinkedIn como pendiente, pero ya había salido el 13/11, y no mostraba el documento programado directo en LinkedIn para el 16/11.
