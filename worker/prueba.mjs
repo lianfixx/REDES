@@ -250,6 +250,13 @@ await t("X con OAuth 2.0 + PKCE: conectar, publicar con Bearer y renovar el toke
   const falla = async (url) => url.includes("oauth2/token") ? Response.json({ error: "invalid_request" }, { status: 400 }) : assert.fail("no debe publicar");
   assert.match((await publicar(env, z.id, falla)).error, /reconecta X/);
   assert.equal(await leerSecreto(env, "x2"), null);
+  // Con una caída pasajera de X (503) el permiso NO se borra: se reintenta después.
+  await guardarSecreto(env, "x2", { access_token: "viejo", refresh_token: "bueno", vence: new Date(Date.now() - 1000).toISOString() });
+  const w = (await S("/api/pieza", { red: "x", texto: "Cuarto, X caído un momento." })).j;
+  await S(`/api/pieza/${w.id}/aprobar`, {});
+  const caido = async (url) => url.includes("oauth2/token") ? new Response("caído", { status: 503 }) : assert.fail("no debe publicar");
+  assert.match((await publicar(env, w.id, caido)).error, /se reintenta solo/);
+  assert.equal((await leerSecreto(env, "x2")).refresh_token, "bueno");
 });
 await t("X como app pública: si Basic da 401, se pide el token sin secreto", async () => {
   const env = nuevoEnv(), S = await sesion(env);
@@ -569,5 +576,41 @@ await t("quitar «solo app» a una pieza aprobada pide aprobarla otra vez (decid
   await S(`/api/pieza/${p.id}/aprobar`, {});
   const e = (await S("/api/pieza", { id: p.id, red: "x", texto: "Solo app.", solo_app: false })).j;
   assert.equal(e.aprobado_huella, undefined); assert.equal(e.estado, "borrador");
+});
+await t("prueba de conexión con X y subida adelantada: no publican nada; la subida queda lista para la hora", async () => {
+  const env = nuevoEnv(), c = llamar(env), S = await sesion(env);
+  const H = { Authorization: "Bearer " + "c".repeat(32) };
+  await S("/api/llaves/x", llavesX);
+  const vistas = [];
+  env.FETCHER = async (url, o = {}) => {
+    const u = String(url).replace("https://api.x.com", "");
+    vistas.push(`${o.method || "GET"} ${u}`);
+    if (u === "/2/users/me") return Response.json({ data: { id: "42", username: "emilianomilla_" } });
+    if (u === "/2/tweets") assert.fail("no debe publicar");
+    if (u.endsWith("/finalize")) return Response.json({ data: { id: "77", processing_info: { state: "pending", check_after_secs: 1 } } });
+    if (u.includes("command=STATUS")) return Response.json({ data: { id: "77", processing_info: { state: "succeeded" } } });
+    return Response.json({ data: { id: "77", expires_after_secs: 86400 } });
+  };
+  const pr = await c(req("/api/claude/x/probar", {}, H));
+  assert.equal(pr.s, 200); assert.equal(pr.j.usuario, "emilianomilla_"); assert.equal(pr.j.permiso_archivos, true);
+  const a = (await c(req("/api/claude/archivo", { nombre: "v.mp4", tipo: "video/mp4", bytes: 3000, duracion: 20 }, H))).j;
+  await W.fetch(new Request(`${O}/api/claude/archivo/${a.id}/0`, { method: "PUT", headers: { ...H, "Content-Type": "application/octet-stream", "Content-Length": "3000" }, body: new Uint8Array(3000).fill(1) }), env);
+  const p = (await S("/api/pieza", { red: "x", texto: "Con video adelantado.", fecha: new Date(Date.now() + 10 * 3600e3).toISOString(), archivos: [a.id] })).j;
+  assert.equal((await c(req(`/api/claude/pieza/${p.id}/preparar`, {}, H))).s, 400, "sin aprobar no sube nada");
+  await S(`/api/pieza/${p.id}/aprobar`, {});
+  const uno = (await c(req(`/api/claude/pieza/${p.id}/preparar`, {}, H))).j;
+  assert.equal(uno.listo, false); assert.equal(uno.items[0].estado, "procesando"); assert.equal(uno.estado, "programada");
+  cambiar(env, p.id, (x) => { x.subida.items[0].revisar = new Date(Date.now() - 1000).toISOString(); delete x.subida.ocupada_hasta; });
+  const dos = (await c(req(`/api/claude/pieza/${p.id}/preparar`, {}, H))).j;
+  assert.equal(dos.listo, true); assert.equal(dos.items[0].estado, "lista"); assert.equal(dos.error, "");
+  assert.ok(!vistas.includes("POST /2/tweets"));
+  // Si X rechaza la subida, lo dice y cuenta el error sin publicar.
+  env.FETCHER = async () => Response.json({ title: "Forbidden" }, { status: 403 });
+  const b = (await c(req("/api/claude/archivo", { nombre: "w.mp4", tipo: "video/mp4", bytes: 2000, duracion: 20 }, H))).j;
+  await W.fetch(new Request(`${O}/api/claude/archivo/${b.id}/0`, { method: "PUT", headers: { ...H, "Content-Type": "application/octet-stream", "Content-Length": "2000" }, body: new Uint8Array(2000).fill(1) }), env);
+  const q = (await S("/api/pieza", { red: "x", texto: "Con video rechazado.", fecha: new Date(Date.now() + 10 * 3600e3).toISOString(), archivos: [b.id] })).j;
+  await S(`/api/pieza/${q.id}/aprobar`, {});
+  const mal = (await c(req(`/api/claude/pieza/${q.id}/preparar`, {}, H))).j;
+  assert.equal(mal.listo, false); assert.match(mal.error, /403/); assert.equal(mal.errores, 1);
 });
 console.log(`\n${ok} pruebas aprobadas`);

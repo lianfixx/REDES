@@ -10,6 +10,14 @@ Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 - Verificación: `python3 ia/verificar.py ci` → aprobado (29 pruebas del Worker).
 - Pendiente: Emi agrega el video a la pieza y la aprueba.
 
+## 2026-11-15 · Auditoría del camino de video en X: prueba de conexión, subida adelantada y permiso que no se pierde por una caída
+- Agente: Claude Code (sesión de x-viral, en la nube)
+- Solicitud: Emi, 14/11/2026, chat de x-viral: «Hazlo y audita a fondo» (post del DOF con video, programado para el domingo 15/11).
+- Cambios: (1) Hallazgo: al renovar el permiso de X, cualquier respuesta que no fuera correcta (también una caída pasajera, 429 o 5xx) borraba el permiso y obligaba a Emi a reconectar; ahora solo se borra con 400/401 y lo demás se reintenta solo. (2) `POST /api/claude/x/probar`: renueva el permiso si hace falta y pregunta a X qué cuenta es, sin publicar. (3) `POST /api/claude/pieza/<id>/preparar`: sube ya a X o LinkedIn los archivos de una pieza aprobada, sin publicar, para detectar fallas con horas de margen (el cron solo empieza 6 h antes). (4) El código de subida se cotejó con la guía oficial de X (initialize, append, finalize, STATUS): coincide.
+- Archivos: `worker/{index.js,prueba.mjs}`, `skills/matriz-redes/references/panel.md`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado (31 pruebas del Worker, 1 nueva y 1 ampliada, con llamadas simuladas); prueba real contra X → ver la entrada siguiente o la bitácora del panel.
+- Pendiente: publicación real del DOF a las 10:30 (hora de México).
+
 ## 2026-11-14 · Adjuntar a una pieza aprobada el archivo que le faltaba
 - Agente: Claude Code (sesión de x-viral, en la nube)
 - Solicitud: Emi, 14/11/2026, en el chat de x-viral, sobre el post del DOF en X: «HAZLO TÚ, TODO TIENE QUE ESTAR AUTOMATIZADO» y «TÚ YA TIENES EL VIDEO EN DRIVE, Hazlo y audita a fondo».

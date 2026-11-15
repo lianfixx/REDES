@@ -279,8 +279,13 @@ async function tokenX2(env, fetcher) {
   if (!app || !t.refresh_token) throw new Error("X necesita reconectarse: Ajustes → Conectar X.");
   const { r, t: n } = await pedirTokenX(app, { grant_type: "refresh_token", refresh_token: t.refresh_token }, fetcher);
   if (!r.ok || !n.access_token) {
-    await borrar(env, "cred:x2"); // falla cerrado: hay que reconectar
-    throw new Error(`X no renovó el permiso (${r.status}): reconecta X en Ajustes.`);
+    // Solo se borra el permiso cuando X lo rechaza de verdad (400/401: token de actualización inválido o usado).
+    // Con una caída pasajera de X (429, 5xx) el permiso se conserva y se reintenta en la siguiente vuelta.
+    if ([400, 401].includes(r.status)) {
+      await borrar(env, "cred:x2"); // falla cerrado: hay que reconectar
+      throw new Error(`X no renovó el permiso (${r.status}): reconecta X en Ajustes.`);
+    }
+    throw new Error(`X no respondió al renovar el permiso (${r.status}); se reintenta solo.`);
   }
   await guardarSecreto(env, "x2", { access_token: n.access_token, refresh_token: n.refresh_token || t.refresh_token, scope: n.scope || t.scope || "", vence: new Date(Date.now() + (Number(n.expires_in) || 7200) * 1000).toISOString() });
   return n.access_token;
@@ -662,6 +667,34 @@ async function errorSubida(env, id, e) {
       x.historial.unshift({ fecha: ahoraISO(), quien: "panel", que: "no se pudo subir el archivo tras 3 intentos; espera a Emi" });
     }
   });
+}
+
+// Subir YA a la red los archivos de una pieza aprobada, sin publicar nada (para probar la subida con tiempo y no a última hora).
+async function prepararAhora(env, id, quien, fetcherBase = env.FETCHER || fetch) {
+  const p = (await piezas(env)).find((x) => x.id === id);
+  if (!p) throw new Error("No existe esa pieza.");
+  if (!(p.archivos || []).length) throw new Error("La pieza no tiene archivos.");
+  if (p.pausada) throw new Error("La pieza está en pausa: Emi decide.");
+  let listo = false, error = "";
+  try { listo = await prepararArchivos(env, id, conPresupuesto(fetcherBase, 40)); }
+  catch (e) { if (!e.subida) throw e; error = String(e.message || e).slice(0, 300); await errorSubida(env, id, e); }
+  const q = (await piezas(env)).find((x) => x.id === id);
+  const items = (q.subida?.items || []).map((i) => ({ archivo: i.archivo, estado: i.estado, parte: i.parte ?? null, remoto: i.remoto ? "sí" : "no", vence: i.vence || null }));
+  await bitacora(env, quien, `Subida adelantada de «${q.titulo || q.red}» a ${q.red}: ${error ? "falló: " + error.slice(0, 120) : listo ? "lista" : "en curso"}`);
+  return { id, estado: q.estado, listo, items, errores: q.subida?.errores || 0, error };
+}
+// Prueba de la conexión con X: renueva el permiso si hace falta y pregunta a X qué cuenta es. No publica nada.
+async function probarX(env, quien, fetcher = env.FETCHER || fetch) {
+  const url = "https://api.x.com/2/users/me";
+  const auth = await autorizacionX(env, "GET", url, fetcher);
+  await gastoX(env, COSTO_X.lectura, "prueba de conexión");
+  const r = await fetcher(url, { headers: { Authorization: auth } });
+  const c = await r.json().catch(() => ({}));
+  if (!r.ok || !c?.data?.username) throw new Error(`X respondió ${r.status}: ${JSON.stringify(c).slice(0, 200)}`);
+  const x2 = await leerSecreto(env, "x2").catch(() => null);
+  const res = { usuario: c.data.username, id: String(c.data.id || ""), permiso_archivos: !!(await leer(env, "cred:x", null)) || /\bmedia\.write\b/.test(x2?.scope || ""), permiso_vence: x2?.vence || null };
+  await bitacora(env, quien, `Probó la conexión con X: responde @${res.usuario}`);
+  return res;
 }
 
 // ---------------------------------------------------------------- inspiración: datos públicos del enlace (para que Claude la analice)
@@ -1050,6 +1083,9 @@ export async function api(request, env, url) {
       if (ruta === "/api/claude/nota" && metodo === "POST") return json(await agregarNota(env, cuerpo, "claude"));
       const mf = ruta.match(/^\/api\/claude\/pieza\/([a-f0-9]{12})\/fecha$/);
       if (mf && metodo === "POST") return json(await reprogramar(env, mf[1], cuerpo, "Matriz"));
+      if (ruta === "/api/claude/x/probar" && metodo === "POST") return json(await probarX(env, "Matriz"));
+      const mpr = ruta.match(/^\/api\/claude\/pieza\/([a-f0-9]{12})\/preparar$/);
+      if (mpr && metodo === "POST") return json(await prepararAhora(env, mpr[1], "Matriz"));
       const mj = ruta.match(/^\/api\/claude\/pieza\/([a-f0-9]{12})\/archivos$/);
       if (mj && metodo === "POST") return json(await adjuntar(env, mj[1], cuerpo, "Matriz"));
       const mc = ruta.match(/^\/api\/claude\/pieza\/([a-f0-9]{12})\/(comentario|sugerencia)$/);
