@@ -530,52 +530,27 @@ await t("la Matriz mueve la hora de una pieza aprobada sin tocar el contenido; n
   cambiar(env, q.id, (x) => { x.texto = "Texto cambiado por debajo."; });
   assert.equal((await c(req(`/api/claude/pieza/${q.id}/fecha`, { fecha: nueva, motivo: "Emi pidió adelantarla" }, H))).s, 400, "si el contenido cambió, no");
 });
-await t("la Matriz adjunta a una pieza aprobada el archivo que faltaba: sale por la API con el mismo texto; no reemplaza, no sin motivo, no si cambió", async () => {
+await t("propuesta de archivos: la Matriz propone sin tocar la pieza; solo Emi la acepta (y eso es su aprobación)", async () => {
   const env = nuevoEnv(), c = llamar(env), S = await sesion(env);
   const H = { Authorization: "Bearer " + "c".repeat(32) };
   await S("/api/llaves/x", llavesX);
-  const subir = async (nombre, tipo, n) => {
-    const a = (await c(req("/api/claude/archivo", { nombre, tipo, bytes: n, duracion: 20 }, H))).j;
-    const r = await W.fetch(new Request(`${O}/api/claude/archivo/${a.id}/0`, { method: "PUT", headers: { ...H, "Content-Type": "application/octet-stream", "Content-Length": String(n) }, body: new Uint8Array(n).fill(7) }), env);
-    assert.equal(r.status, 200);
-    return a.id;
-  };
-  const video = await subir("dof.mp4", "video/mp4", 3000), foto = await subir("foto.jpg", "image/jpeg", 2000);
+  const a = (await c(req("/api/claude/archivo", { nombre: "captura.png", tipo: "image/png", bytes: 2000 }, H))).j;
+  await W.fetch(new Request(`${O}/api/claude/archivo/${a.id}/0`, { method: "PUT", headers: { ...H, "Content-Type": "application/octet-stream" }, body: new Uint8Array(2000).fill(7) }), env);
   const fecha = new Date(Date.now() + 864e5).toISOString();
-  const p = (await S("/api/pieza", { red: "x", texto: "Texto aprobado por Emi.", fecha, solo_app: true })).j;
-  const adj = (id, cuerpo) => c(req(`/api/claude/pieza/${id}/archivos`, cuerpo, H));
-  assert.equal((await adj(p.id, { archivos: [video], motivo: "Emi pidió que saliera sola" })).s, 400, "sin aprobar no");
+  const p = (await S("/api/pieza", { red: "x", texto: "Texto aprobado.", fecha })).j;
   const ap = (await S(`/api/pieza/${p.id}/aprobar`, {})).j;
-  assert.equal(ap.estado, "aprobada", "solo_app no se programa");
-  assert.equal((await adj(p.id, { archivos: [video] })).s, 400, "sin motivo no");
-  assert.equal((await adj(p.id, { archivos: [] , motivo: "Emi pidió que saliera sola" })).s, 400, "sin archivos no");
-  assert.equal((await adj(p.id, { archivos: ["0123456789ab"], motivo: "Emi pidió que saliera sola" })).s, 400, "archivo inexistente no");
-  assert.equal((await adj(p.id, { archivos: [video, foto], motivo: "Emi pidió que saliera sola" })).s, 400, "X: video con imagen no");
-  const r = (await adj(p.id, { archivos: [video], motivo: "Emi pidió que saliera sola" })).j;
-  assert.deepEqual(r.archivos, [video]); assert.equal(r.solo_app, false); assert.equal(r.estado, "programada"); assert.equal(r.texto, "Texto aprobado por Emi.");
-  assert.notEqual(r.aprobado_huella, ap.aprobado_huella, "la huella cubre el archivo");
-  assert.equal(r.aprobado.por, "Emi");
-  assert.equal((await adj(p.id, { archivos: [foto], motivo: "Emi pidió que saliera sola" })).s, 400, "no reemplaza un archivo ya puesto");
-  assert.ok(JSON.parse(env.ALMACEN.m.get("bitacora")).some((b) => /Adjuntó dof\.mp4/.test(b.que)));
-  // Sale por la API con el video: sube en partes y publica con media_ids.
-  const vistas = [];
-  const x = async (url, o) => {
-    vistas.push(`${o.method || "GET"} ${String(url).replace("https://api.x.com", "")}`);
-    if (String(url).endsWith("/2/tweets")) { assert.deepEqual(JSON.parse(o.body).media.media_ids, ["77"]); return new Response(JSON.stringify({ data: { id: "900" } }), { status: 201 }); }
-    return new Response(JSON.stringify({ data: { id: "77" } }), { status: 200 });
-  };
-  assert.equal((await publicar(env, p.id, x)).estado, "publicada");
-  assert.ok(vistas.some((v) => v.includes("/2/media/upload/initialize")) && vistas.some((v) => v.includes("/77/finalize")));
-  // Si el contenido cambió por debajo, no adjunta.
-  const q = (await S("/api/pieza", { red: "x", texto: "Otra aprobada." })).j;
-  await S(`/api/pieza/${q.id}/aprobar`, {});
-  cambiar(env, q.id, (y) => { y.texto = "Cambiada por debajo."; });
-  assert.equal((await adj(q.id, { archivos: [foto], motivo: "Emi pidió que saliera sola" })).s, 400, "si el contenido cambió, no");
-  // En pausa decide Emi.
-  const z = (await S("/api/pieza", { red: "x", texto: "En pausa queda." })).j;
-  await S(`/api/pieza/${z.id}/aprobar`, {});
-  cambiar(env, z.id, (y) => { y.pausada = true; });
-  assert.equal((await adj(z.id, { archivos: [foto], motivo: "Emi pidió que saliera sola" })).s, 400, "en pausa no");
+  assert.equal((await c(req(`/api/claude/pieza/${p.id}/archivos`, { archivos: [a.id], motivo: "Emi lo pidió" }, H))).s, 404, "ya no se adjunta sin Emi");
+  assert.equal((await c(req(`/api/claude/pieza/${p.id}/propuesta`, { archivos: [a.id] }, H))).s, 400, "sin motivo no");
+  const r = (await c(req(`/api/claude/pieza/${p.id}/propuesta`, { archivos: [a.id], motivo: "Captura del mapa para el lanzamiento" }, H))).j;
+  assert.deepEqual(r.propuesta.archivos, [a.id]); assert.deepEqual(r.archivos || [], []);
+  assert.equal(r.aprobado_huella, ap.aprobado_huella, "proponer no cambia la aprobación"); assert.equal(r.estado, "programada");
+  assert.equal((await c(req(`/api/pieza/${p.id}/propuesta`, { accion: "aceptar" }, H))).s, 401, "Claude no acepta");
+  const ok = (await S(`/api/pieza/${p.id}/propuesta`, { accion: "aceptar" })).j;
+  assert.deepEqual(ok.archivos, [a.id]); assert.equal(ok.estado, "programada"); assert.equal(ok.fecha, fecha); assert.equal(ok.propuesta, undefined);
+  assert.notEqual(ok.aprobado_huella, ap.aprobado_huella, "la huella nueva cubre la imagen");
+  const q = (await S("/api/pieza", { red: "x", texto: "Otra distinta." })).j;
+  await c(req(`/api/claude/pieza/${q.id}/propuesta`, { archivos: [a.id], motivo: "Otra propuesta aquí" }, H));
+  assert.equal((await S(`/api/pieza/${q.id}/propuesta`, { accion: "descartar" })).j.propuesta, undefined);
 });
 await t("quitar «solo app» a una pieza aprobada pide aprobarla otra vez (decide si sale sola)", async () => {
   const env = nuevoEnv(), S = await sesion(env);

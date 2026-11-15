@@ -149,6 +149,7 @@ function pendientes() {
   for (const p of S.estado?.piezas || []) {
     const t = p.titulo || p.texto.slice(0, 50);
     if (p.estado === "lista para aprobar") L.push({ que: `Aprobar «${t}»`, prioridad: 1, sesion: p.red, donde: `#pieza/${p.id}` });
+    if (p.propuesta && !["publicada", "cancelada", "publicando"].includes(p.estado)) L.push({ que: `Ver la imagen o video que propone la Matriz para «${t}»${p.fecha ? ` · sale ${fmt(p.fecha)}` : ""}`, prioridad: 1, sesion: p.red, donde: `#pieza/${p.id}` });
     if (p.estado === "aprobada" && (p.solo_app || !API_PUBLICA.includes(p.red))) L.push({ que: `Subir desde la app «${t}»${p.fecha ? ` · ${fmt(p.fecha)}` : ""} y marcar «Ya la publiqué»`, prioridad: 1, sesion: p.red, donde: `#pieza/${p.id}` });
     if (p.estado === "aprobada" && !p.solo_app && API_PUBLICA.includes(p.red) && !p.fecha && !p.publicar_al_terminar) L.push({ que: `Ponerle hora o publicar «${t}»`, prioridad: 1, sesion: p.red, donde: `#pieza/${p.id}` });
     if (p.estado === "fallo") L.push({ que: `Revisar el fallo de «${t}»`, prioridad: 1, sesion: p.red, donde: `#pieza/${p.id}` });
@@ -239,6 +240,10 @@ V.pieza = (id) => {
       <div class="fila"><button type="button" class="boton suave" id="agregar-archivo">Agregar archivo</button>${(S.estado?.archivos || []).some((a) => a.estado === "listo" && a.origen !== "inspiracion") ? `<select class="mini-sel" id="de-biblioteca"><option value="">O elige uno ya subido…</option>${(S.estado.archivos || []).filter((a) => a.estado === "listo" && a.origen !== "inspiracion").map((a) => `<option value="${a.id}">${esc(a.nombre)} · ${tam(a.bytes)}</option>`).join("")}</select>` : ""}<span class="tenue chico" id="progreso"></span></div>
       <p class="tenue chico">${p.red === "x" ? "X: hasta 4 imágenes (5 MB c/u) o un video de hasta 2:20." : p.red === "linkedin" ? "LinkedIn: un video MP4, un PDF (carrusel) o de 1 a 20 imágenes." : "Instagram y TikTok se suben desde la app: aquí lo dejas listo para descargarlo en tu teléfono."}</p>`}
       ${subidaHtml(p)}
+      ${p.propuesta && !cerrada ? `<div class="tarjeta vidrio" style="margin:10px 0"><h3>La Matriz propone</h3><p class="tenue chico">${esc(p.propuesta.motivo)}</p>
+        <div class="archivos">${p.propuesta.archivos.map((x) => miniArchivo(archivoDe(x))).join("")}</div>
+        <div class="fila"><button type="button" class="boton acento" id="aceptar-propuesta">Agregar y aprobar</button><button type="button" class="boton suave" id="descartar-propuesta">Descartar</button></div>
+        <p class="tenue chico">«Agregar y aprobar» pone esto en la pieza y la aprueba con la misma hora. No cambia el texto.</p></div>` : ""}
       <details ${p.media ? "open" : ""}><summary class="tenue chico">Enlace de referencia (Drive)</summary><input name="media" value="${esc(p.media)}" placeholder="https://drive.google.com/…"></details>
       <label class="check"><input type="checkbox" name="solo_app" value="1" ${p.solo_app ? "checked" : ""}> Prefiero subirla yo desde la app</label>
       <label>Nota interna</label><input name="nota" value="${esc(p.nota)}" maxlength="600">
@@ -484,6 +489,13 @@ function conectar(vista, arg) {
         if (arg !== "nueva") ed.requestSubmit(); else $("#progreso").textContent = "Listo. Ahora guarda la pieza.";
       } catch (e) { aviso(e.message); $("#progreso").textContent = ""; } finally { b.disabled = false; ev.target.value = ""; }
     });
+    $("#aceptar-propuesta")?.addEventListener("click", (ev) => accion(ev, async () => {
+      if (ed.dataset.sucio) return aviso("Primero guarda tus cambios.");
+      if (!confirm("¿Agregar lo que propone la Matriz y aprobar la pieza?")) return;
+      const r = await api(`/api/pieza/${arg}/propuesta`, { accion: "aceptar" });
+      aviso(r.fecha ? `Aprobada · sale ${fmt(r.fecha)}` : "Aprobada.");
+    }));
+    $("#descartar-propuesta")?.addEventListener("click", (ev) => accion(ev, async () => { await api(`/api/pieza/${arg}/propuesta`, { accion: "descartar" }); aviso("Descartada."); }));
     $("#de-biblioteca")?.addEventListener("change", (ev) => {
       const id = ev.target.value;
       if (!id) return;

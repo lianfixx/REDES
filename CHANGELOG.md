@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-15 · Archivos siempre con aprobación de Emi; propuesta de la Matriz
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: Emi, 15/11/2026: «Del martes 17 tú haz la captura o recrea lo de obsidian y que siempre pida mi aprobación».
+- Cambios: se quita `POST /api/claude/pieza/<id>/archivos` (adjuntar sin aprobación). Nuevo `POST /api/claude/pieza/<id>/propuesta`: la Matriz propone archivos sin tocar la pieza; en el editor aparece «La Matriz propone» con «Agregar y aprobar» (pone los archivos y aprueba con la misma hora) o «Descartar»; sale en «Lo que necesito de ti» con prioridad alta. Regla 3 de `AGENTS.md` actualizada. Imagen del grafo de la Matriz General (estilo Obsidian, sin clientes ni despachos) propuesta para el lanzamiento del martes 17.
+- Archivos: `worker/{index.js,prueba.mjs}`, `panel/app.js`, `AGENTS.md`, `skills/matriz-redes/references/panel.md`, `docs/DECISIONES-EMI-2026-11-13.md`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado.
+- Pendiente: Emi acepta o descarta la imagen del lanzamiento antes del martes 17 a las 9:00.
+
 ## 2026-11-15 · Auditoría 3: arreglos del camino de archivos y de X
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: Emi, 15/11/2026: «Audita».

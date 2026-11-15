@@ -942,40 +942,42 @@ async function reprogramar(env, id, cuerpo, quien) {
   return p;
 }
 
-// Adjuntar a una pieza YA aprobada el archivo que le faltaba (Emi, 14/11/2026: «tú ya tienes el video en Drive, hazlo»).
-// Solo agrega: la pieza no debe tener archivos, el texto y la red no se tocan, y queda anotado quién lo pidió.
-// Sirve para piezas que esperaban a que Emi subiera el archivo desde la app; con el archivo dentro, salen por la API.
-async function adjuntar(env, id, cuerpo, quien) {
+// Propuesta de archivos: la Matriz deja en una pieza las imágenes o el video que sugiere; NO cambia la pieza ni su
+// aprobación. Emi la ve en el editor y decide con «Agregar y aprobar» (Emi, 15/11/2026: «que siempre pida mi aprobación»).
+async function proponerArchivos(env, id, cuerpo, quien) {
   const ids = (Array.isArray(cuerpo.archivos) ? cuerpo.archivos : []).map((x) => String(x).trim()).filter(Boolean);
   if (!ids.length || ids.length > 20 || ids.some((x) => !/^[a-f0-9]{12}$/.test(x)) || new Set(ids).size !== ids.length) throw new Error("Lista de archivos inválida.");
   const motivo = limpiar(cuerpo.motivo || "", 300);
-  if (motivo.trim().length < 8) throw new Error("Escribe el motivo (quién lo pidió y por qué).");
+  if (motivo.trim().length < 8) throw new Error("Escribe el motivo de la propuesta.");
   const actual = (await piezas(env)).find((x) => x.id === id);
   if (!actual) throw new Error("No existe esa pieza.");
-  if (!["aprobada", "programada"].includes(actual.estado) || !actual.aprobado_huella || actual.aprobado_huella !== (await huellaAprobacion(actual)))
-    throw new Error("Solo se adjunta a una pieza aprobada y sin cambios.");
-  if (actual.pausada) throw new Error("La pieza está en pausa: Emi decide.");
-  if ((actual.archivos || []).length) throw new Error("La pieza ya tiene archivos: cambiarlos reinicia la aprobación y lo hace Emi.");
-  if (actual.media) throw new Error("La pieza lleva un enlace de archivo que puso Emi: él decide.");
+  if (FINALES.includes(actual.estado) || ["cancelada"].includes(actual.estado) || actual.externa) throw new Error("Esa pieza ya no se cambia.");
   const todos = await archivosDe(env), arch = ids.map((x) => todos.find((a) => a.id === x));
   if (arch.some((a) => !a || a.estado !== "listo")) throw new Error("Un archivo no existe o no ha terminado de subir al panel.");
   const err = revisarArchivos(actual.red, arch);
   if (err) throw new Error(err);
-  if (actual.red === "x" && !(await leer(env, "cred:x", null)) && !/\bmedia\.write\b/.test((await leerSecreto(env, "x2").catch(() => null))?.scope || ""))
-    throw new Error("X no tiene permiso para subir archivos: Emi debe reconectar X en Ajustes.");
-  const h = await huellaAprobacion({ ...actual, archivos: ids });
-  const nombres = arch.map((a) => a.nombre).join(", ");
   const p = await actualizarPieza(env, id, (x) => {
-    if (x.aprobado_huella !== actual.aprobado_huella || x.estado !== actual.estado || (x.archivos || []).length) throw new Error("La pieza cambió mientras se adjuntaba.");
-    x.archivos = ids; x.solo_app = false; x.aprobado_huella = h; x.actualizada = ahoraISO();
-    const futura = x.fecha && Date.parse(x.fecha) > Date.now() + 60e3;
-    x.estado = futura && PUBLICADORES[x.red] ? "programada" : "aprobada";
-    delete x.subida; delete x.publicar_al_terminar; delete x.error;
-    x.historial.unshift({ fecha: ahoraISO(), quien, que: `adjuntó ${nombres} (el texto aprobado no cambió): ${motivo}` });
-    x.comentarios = [...(x.comentarios || []), { fecha: ahoraISO(), quien, texto: `Adjunté ${nombres}: ${motivo}` }].slice(-60);
+    x.propuesta = { archivos: ids, motivo, quien, fecha: ahoraISO() };
+    x.comentarios = [...(x.comentarios || []), { fecha: ahoraISO(), quien, texto: `Propongo ${arch.map((a) => a.nombre).join(", ")}: ${motivo}` }].slice(-60);
   });
-  await bitacora(env, quien, `Adjuntó ${nombres} a «${p.titulo || p.red}»: ${motivo}`);
+  await bitacora(env, quien, `Propuso ${arch.map((a) => a.nombre).join(", ")} para «${p.titulo || p.red}»`);
   return p;
+}
+// Emi acepta (pone los archivos y aprueba, en un solo paso) o descarta la propuesta.
+async function decidirPropuesta(env, id, cuerpo) {
+  const actual = (await piezas(env)).find((x) => x.id === id);
+  if (!actual?.propuesta) throw new Error("Esa pieza no tiene propuesta.");
+  if (cuerpo.accion === "descartar") {
+    const p = await actualizarPieza(env, id, (x) => { delete x.propuesta; x.historial.unshift({ fecha: ahoraISO(), quien: "Emi", que: "descartó la propuesta de archivos" }); });
+    await bitacora(env, "Emi", `Descartó la propuesta de archivos de «${p.titulo || p.red}»`);
+    return p;
+  }
+  if (cuerpo.accion !== "aceptar") throw new Error("Acción inválida.");
+  const ids = actual.propuesta.archivos;
+  await editarPieza(env, { id, red: actual.red, texto: actual.texto, titulo: actual.titulo, idea: actual.idea, media: actual.media || "", nota: actual.nota || "",
+    fecha: actual.fecha || "", archivos: ids, solo_app: PUBLICADORES[actual.red] ? false : !!actual.solo_app }, "Emi");
+  await actualizarPieza(env, id, (x) => { delete x.propuesta; });
+  return aprobar(env, id, {});
 }
 
 // Sincronía con las skills de cada red (Emi, 15/11/2026: «recuerda tener estos datos frescos y en tiempo real»).
@@ -1181,8 +1183,8 @@ export async function api(request, env, url) {
       if (ruta === "/api/claude/x/probar" && metodo === "POST") return json(await probarX(env, "Matriz"));
       const mpr = ruta.match(/^\/api\/claude\/pieza\/([a-f0-9]{12})\/preparar$/);
       if (mpr && metodo === "POST") return json(await prepararAhora(env, mpr[1], "Matriz"));
-      const mj = ruta.match(/^\/api\/claude\/pieza\/([a-f0-9]{12})\/archivos$/);
-      if (mj && metodo === "POST") return json(await adjuntar(env, mj[1], cuerpo, "Matriz"));
+      const mj = ruta.match(/^\/api\/claude\/pieza\/([a-f0-9]{12})\/propuesta$/);
+      if (mj && metodo === "POST") return json(await proponerArchivos(env, mj[1], cuerpo, "Matriz"));
       const mc = ruta.match(/^\/api\/claude\/pieza\/([a-f0-9]{12})\/(comentario|sugerencia)$/);
       if (mc && metodo === "POST") {
         if (mc[2] === "comentario") return json(await comentar(env, mc[1], cuerpo, "Matriz"));
@@ -1317,6 +1319,8 @@ export async function api(request, env, url) {
     if (ruta === "/api/inspiracion" && metodo === "POST") return json(await agregarInspiracion(env, cuerpo));
     const mesp = ruta.match(/^\/api\/(nota|inspiracion)\/([a-f0-9]{12})\/espacio$/);
     if (mesp && metodo === "POST") return json(await proponerEspacio(env, mesp[1], mesp[2], cuerpo, "Emi"));
+    const mprop = ruta.match(/^\/api\/pieza\/([a-f0-9]{12})\/propuesta$/);
+    if (mprop && metodo === "POST") return json(await decidirPropuesta(env, mprop[1], cuerpo));
     const mpc = ruta.match(/^\/api\/pieza\/([a-f0-9]{12})\/(comentario|pausa)$/);
     if (mpc && metodo === "POST") {
       if (mpc[2] === "comentario") return json(await comentar(env, mpc[1], cuerpo, "Emi"));

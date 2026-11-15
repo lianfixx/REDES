@@ -80,3 +80,7 @@ Sobre el post del DOF en X, Emi escribió: «HAZLO TÚ, TODO TIENE QUE ESTAR AUT
 - El video del DOF (`castorena-pagos-digitales-v5.mp4`, 56 s, 1080×1920) se sube al panel desde la computadora en la nube de Emi y se adjunta a la pieza de X que él ya aprobó; el texto no cambia.
 - La pieza deja de ser «solo app» y sale por la API el domingo 15/11 a las 10:00 (hora de México).
 - El panel permite adjuntar a una pieza aprobada el archivo que le faltaba, sin reemplazar ni tocar el texto, y lo deja anotado.
+
+## Octava ronda (15/11/2026, chat de la Matriz)
+- Lanzamiento del martes 17 (X): «tú haz la captura o recrea lo de obsidian». La Matriz recrea el grafo de su Matriz General, sin nombres de clientes ni despachos, y lo propone en la pieza.
+- Archivos: «que siempre pida mi aprobación». Se retira la excepción del 14/11 (adjuntar sin aprobación). La Matriz solo PROPONE archivos; él acepta con «Agregar y aprobar».
