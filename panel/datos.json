@@ -123,6 +123,12 @@
    "estado": "decidida",
    "pendiente_de_emi": [
     {
+     "que": "Mandar foto y capturas reales de tus herramientas para el documento de 8 láminas de LinkedIn (la primera muestra «se veía muy IA»)",
+     "prioridad": 2,
+     "sesion": "linkedin",
+     "donde": ""
+    },
+    {
      "que": "Abrir las cuentas de TikTok e Instagram (@emilianomilla_; Instagram tipo Creador)",
      "prioridad": 2,
      "sesion": "TikTok e Instagram",
@@ -225,8 +231,8 @@
    "fecha": "2026-11-18T08:30:00-06:00",
    "red": "linkedin",
    "skill": "linkedin-pro",
-   "titulo": "Documento de 8 láminas: herramientas que construí",
-   "estado": "en produccion",
+   "titulo": "Documento de 8 láminas: herramientas que construí (tentativo: pendiente de foto y capturas reales de Emi)",
+   "estado": "idea",
    "minutos_emi": 20,
    "semana": "2026-W47"
   },
@@ -421,8 +427,8 @@
    "fecha": "2026-11-18T08:30:00-06:00",
    "red": "linkedin",
    "skill": "linkedin-pro",
-   "titulo": "Documento de 8 láminas: herramientas que construí",
-   "estado": "en produccion",
+   "titulo": "Documento de 8 láminas: herramientas que construí (tentativo: pendiente de foto y capturas reales de Emi)",
+   "estado": "idea",
    "minutos_emi": 20,
    "semana": "2026-W47"
   },
@@ -533,6 +539,12 @@
    "prioridad": 2,
    "sesion": "Videos",
    "donde": "#ideas"
+  },
+  {
+   "que": "Mandar foto y capturas reales de tus herramientas para el documento de 8 láminas de LinkedIn (la primera muestra «se veía muy IA»)",
+   "prioridad": 2,
+   "sesion": "linkedin",
+   "donde": ""
   },
   {
    "que": "Perfil de X: acento en «García» y sitio web emilianomilla.site",
