@@ -123,12 +123,6 @@
    "estado": "decidida",
    "pendiente_de_emi": [
     {
-     "que": "Tener créditos en la consola de X antes de que salga el lanzamiento",
-     "prioridad": 1,
-     "sesion": "x",
-     "donde": "https://console.x.com"
-    },
-    {
      "que": "Abrir las cuentas de TikTok e Instagram (@emilianomilla_; Instagram tipo Creador)",
      "prioridad": 2,
      "sesion": "TikTok e Instagram",
@@ -153,25 +147,40 @@
   {
    "id": "li-dof-video",
    "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-13T12:00:00-06:00",
+   "fecha": "2026-11-13T12:52:00-06:00",
    "red": "linkedin",
    "cuenta": "linkedin.com/in/emiliano-milla",
    "skill": "linkedin-pro",
    "titulo": "Video del DOF (tal cual) con el texto B de Emi",
-   "estado": "lista para aprobar",
+   "estado": "publicada",
+   "minutos_emi": 20,
+   "en_panel": true,
+   "url": "https://www.linkedin.com/feed/update/urn:li:activity:7527081695200595968/",
+   "semana": "2026-W46"
+  },
+  {
+   "id": "x-dof",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-15T10:30:00-06:00",
+   "red": "x",
+   "skill": "x-viral",
+   "titulo": "Video del DOF nativo (adelantado por Emi al domingo)",
+   "estado": "programada",
    "minutos_emi": 20,
    "en_panel": true,
    "semana": "2026-W46"
   },
   {
-   "id": "li-documento",
+   "id": "li-doc-pagos",
    "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-17T08:30:00-06:00",
+   "fecha": "2026-11-16T10:30:00-06:00",
    "red": "linkedin",
+   "cuenta": "linkedin.com/in/emiliano-milla",
    "skill": "linkedin-pro",
-   "titulo": "Documento de 8 láminas: herramientas que construí",
-   "estado": "en produccion",
-   "minutos_emi": 20,
+   "titulo": "Documento de 6 láminas: ¿Adiós al efectivo? (programado en LinkedIn por su skill)",
+   "estado": "programada",
+   "minutos_emi": 0,
+   "en_panel": true,
    "semana": "2026-W47"
   },
   {
@@ -180,8 +189,8 @@
    "fecha": "2026-11-17T09:00:00-06:00",
    "red": "x",
    "skill": "x-viral",
-   "titulo": "Post de lanzamiento (A o B)",
-   "estado": "borrador",
+   "titulo": "Post de lanzamiento (opción A)",
+   "estado": "programada",
    "minutos_emi": 30,
    "en_panel": true,
    "semana": "2026-W47"
@@ -211,6 +220,17 @@
    "semana": "2026-W47"
   },
   {
+   "id": "li-documento",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-18T08:30:00-06:00",
+   "red": "linkedin",
+   "skill": "linkedin-pro",
+   "titulo": "Documento de 8 láminas: herramientas que construí",
+   "estado": "en produccion",
+   "minutos_emi": 20,
+   "semana": "2026-W47"
+  },
+  {
    "id": "ig-reel-dof",
    "idea": "2026-11-13-lanzamiento",
    "fecha": "2026-11-19T19:00:00-06:00",
@@ -232,18 +252,6 @@
    "estado": "idea",
    "minutos_emi": 10,
    "productora": "editor-studio",
-   "semana": "2026-W47"
-  },
-  {
-   "id": "x-dof",
-   "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-20T09:00:00-06:00",
-   "red": "x",
-   "skill": "x-viral",
-   "titulo": "Video del DOF nativo",
-   "estado": "borrador",
-   "minutos_emi": 20,
-   "en_panel": true,
    "semana": "2026-W47"
   },
   {
@@ -321,12 +329,25 @@
   {
    "id": "li-dof-video",
    "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-13T12:00:00-06:00",
+   "fecha": "2026-11-13T12:52:00-06:00",
    "red": "linkedin",
    "cuenta": "linkedin.com/in/emiliano-milla",
    "skill": "linkedin-pro",
    "titulo": "Video del DOF (tal cual) con el texto B de Emi",
-   "estado": "lista para aprobar",
+   "estado": "publicada",
+   "minutos_emi": 20,
+   "en_panel": true,
+   "url": "https://www.linkedin.com/feed/update/urn:li:activity:7527081695200595968/",
+   "semana": "2026-W46"
+  },
+  {
+   "id": "x-dof",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-15T10:30:00-06:00",
+   "red": "x",
+   "skill": "x-viral",
+   "titulo": "Video del DOF nativo (adelantado por Emi al domingo)",
+   "estado": "programada",
    "minutos_emi": 20,
    "en_panel": true,
    "semana": "2026-W46"
@@ -334,14 +355,28 @@
  ],
  "proximas": [
   {
-   "id": "li-documento",
+   "id": "x-dof",
    "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-17T08:30:00-06:00",
-   "red": "linkedin",
-   "skill": "linkedin-pro",
-   "titulo": "Documento de 8 láminas: herramientas que construí",
-   "estado": "en produccion",
+   "fecha": "2026-11-15T10:30:00-06:00",
+   "red": "x",
+   "skill": "x-viral",
+   "titulo": "Video del DOF nativo (adelantado por Emi al domingo)",
+   "estado": "programada",
    "minutos_emi": 20,
+   "en_panel": true,
+   "semana": "2026-W46"
+  },
+  {
+   "id": "li-doc-pagos",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-16T10:30:00-06:00",
+   "red": "linkedin",
+   "cuenta": "linkedin.com/in/emiliano-milla",
+   "skill": "linkedin-pro",
+   "titulo": "Documento de 6 láminas: ¿Adiós al efectivo? (programado en LinkedIn por su skill)",
+   "estado": "programada",
+   "minutos_emi": 0,
+   "en_panel": true,
    "semana": "2026-W47"
   },
   {
@@ -350,8 +385,8 @@
    "fecha": "2026-11-17T09:00:00-06:00",
    "red": "x",
    "skill": "x-viral",
-   "titulo": "Post de lanzamiento (A o B)",
-   "estado": "borrador",
+   "titulo": "Post de lanzamiento (opción A)",
+   "estado": "programada",
    "minutos_emi": 30,
    "en_panel": true,
    "semana": "2026-W47"
@@ -381,6 +416,17 @@
    "semana": "2026-W47"
   },
   {
+   "id": "li-documento",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-18T08:30:00-06:00",
+   "red": "linkedin",
+   "skill": "linkedin-pro",
+   "titulo": "Documento de 8 láminas: herramientas que construí",
+   "estado": "en produccion",
+   "minutos_emi": 20,
+   "semana": "2026-W47"
+  },
+  {
    "id": "ig-reel-dof",
    "idea": "2026-11-13-lanzamiento",
    "fecha": "2026-11-19T19:00:00-06:00",
@@ -402,18 +448,6 @@
    "estado": "idea",
    "minutos_emi": 10,
    "productora": "editor-studio",
-   "semana": "2026-W47"
-  },
-  {
-   "id": "x-dof",
-   "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-20T09:00:00-06:00",
-   "red": "x",
-   "skill": "x-viral",
-   "titulo": "Video del DOF nativo",
-   "estado": "borrador",
-   "minutos_emi": 20,
-   "en_panel": true,
    "semana": "2026-W47"
   },
   {
@@ -489,18 +523,6 @@
  ],
  "pendientes_emi": [
   {
-   "que": "Aprobar: Video del DOF (tal cual) con el texto B de Emi",
-   "prioridad": 1,
-   "sesion": "linkedin",
-   "donde": "#piezas"
-  },
-  {
-   "que": "Tener créditos en la consola de X antes de que salga el lanzamiento",
-   "prioridad": 1,
-   "sesion": "x",
-   "donde": "https://console.x.com"
-  },
-  {
    "que": "Abrir las cuentas de TikTok e Instagram (@emilianomilla_; Instagram tipo Creador)",
    "prioridad": 2,
    "sesion": "TikTok e Instagram",
@@ -532,7 +554,7 @@
    "skill": "linkedin-pro",
    "red": "linkedin",
    "version_skill": "1.0.0",
-   "actualizado": "2026-11-13",
+   "actualizado": "2026-11-14",
    "cuentas": [
     {
      "espacio": "personal",
@@ -615,6 +637,17 @@
       "fuente": "",
       "valores": {}
      }
+    }
+   ],
+   "programados": [
+    {
+     "id": "2026-W47-pagos-doc",
+     "fecha": "2026-11-16T10:30:00-06:00",
+     "espacio": "personal",
+     "pilar": "opinion",
+     "formato": "documento",
+     "huella_texto": "612d43e2bf521b30ac8654af31c7a92a838ea1a035038eba445b19a8d0aa8905",
+     "donde": "programador nativo de LinkedIn"
     }
    ],
    "lecciones": [

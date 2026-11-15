@@ -4,8 +4,6 @@ Generado el 2026-11-14 por `redes.py tablero`. No se edita a mano.
 
 ## Pendiente de Emi
 
-- [ ] **alta** · linkedin · Aprobar: Video del DOF (tal cual) con el texto B de Emi
-- [ ] **alta** · x · Tener créditos en la consola de X antes de que salga el lanzamiento
 - [ ] **media** · TikTok e Instagram · Abrir las cuentas de TikTok e Instagram (@emilianomilla_; Instagram tipo Creador)
 - [ ] **media** · Videos · Elegir el día para grabar los 4 videos (Matriz, DOF, Boletines, Vox)
 - [ ] **baja** · x · Perfil de X: acento en «García» y sitio web emilianomilla.site
@@ -14,17 +12,19 @@ Generado el 2026-11-14 por `redes.py tablero`. No se edita a mano.
 
 | Día y hora | Red | Pieza | Skill | Estado |
 |---|---|---|---|---|
-| 2026-11-13 12:00 | linkedin | Video del DOF (tal cual) con el texto B de Emi | linkedin-pro | lista para aprobar |
+| 2026-11-13 12:52 | linkedin | Video del DOF (tal cual) con el texto B de Emi | linkedin-pro | publicada |
+| 2026-11-15 10:30 | x | Video del DOF nativo (adelantado por Emi al domingo) | x-viral | programada |
 
 ## Próximas
 
-- 2026-11-17 08:30 · linkedin · Documento de 8 láminas: herramientas que construí (en produccion)
-- 2026-11-17 09:00 · x · Post de lanzamiento (A o B) (borrador)
+- 2026-11-15 10:30 · x · Video del DOF nativo (adelantado por Emi al domingo) (programada)
+- 2026-11-16 10:30 · linkedin · Documento de 6 láminas: ¿Adiós al efectivo? (programado en LinkedIn por su skill) (programada)
+- 2026-11-17 09:00 · x · Post de lanzamiento (opción A) (programada)
 - 2026-11-17 19:00 · instagram · Reel 1 · Matriz (idea)
 - 2026-11-17 19:30 · tiktok · Video 1 · Matriz (idea)
+- 2026-11-18 08:30 · linkedin · Documento de 8 láminas: herramientas que construí (en produccion)
 - 2026-11-19 19:00 · instagram · Reel 2 · DOF (idea)
 - 2026-11-19 19:30 · tiktok · Video 2 · DOF (idea)
-- 2026-11-20 09:00 · x · Video del DOF nativo (borrador)
 - 2026-11-21 12:00 · tiktok · Video animado del DOF (tal cual) (idea)
 - 2026-11-24 19:00 · instagram · Reel 3 · Boletines (datos de ejemplo) (idea)
 - 2026-11-24 19:30 · tiktok · Video 3 · Boletines (idea)
@@ -45,7 +45,7 @@ Generado el 2026-11-14 por `redes.py tablero`. No se edita a mano.
 | Skill | Leído | Publicados | Lecciones |
 |---|---|---|---|
 | x | no se pudo leer | — | — |
-| linkedin | 2026-11-13 | 1 | 1 |
+| linkedin | 2026-11-14 | 1 | 1 |
 | tiktok | no se pudo leer | — | — |
 | instagram | 2026-11-12 | 0 | 3 |
 | instagram-historias | no se pudo leer | — | — |
