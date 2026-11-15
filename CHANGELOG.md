@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-15 · Documento de 8 láminas: tentativo
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: la sesión de LinkedIn avisó que Emi rechazó la primera muestra («se ven extremadamente IA») y que la nueva espera su foto y capturas reales.
+- Cambios: el documento de 8 láminas queda como idea tentativa el miércoles 18 a las 8:30; se agrega el pendiente de Emi.
+- Archivos: `calendario/2026-W47.json`, `ideas/2026-11-13-lanzamiento.json`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado.
+- Pendiente: material de Emi.
+
 ## 2026-11-15 · Registro externo: corregir la clave sin duplicar
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: la sesión de LinkedIn avisó que el id real del documento del lunes es «2026-W47-pagos-doc».

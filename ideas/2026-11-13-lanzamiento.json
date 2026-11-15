@@ -58,6 +58,12 @@
   "estado": "decidida",
   "pendiente_de_emi": [
     {
+      "que": "Mandar foto y capturas reales de tus herramientas para el documento de 8 láminas de LinkedIn (la primera muestra «se veía muy IA»)",
+      "prioridad": 2,
+      "sesion": "linkedin",
+      "donde": ""
+    },
+    {
       "que": "Abrir las cuentas de TikTok e Instagram (@emilianomilla_; Instagram tipo Creador)",
       "prioridad": 2,
       "sesion": "TikTok e Instagram",
