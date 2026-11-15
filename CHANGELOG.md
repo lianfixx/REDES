@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-15 · El panel se sincroniza con lo que hacen las skills de cada red
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: Emi, 15/11/2026: «pero está programado no? según la sesión de linkedin (recuerda tener estos datos frescos y en tiempo real)». El panel mostraba el video del DOF de LinkedIn como pendiente, pero ya había salido el 13/11, y no mostraba el documento programado directo en LinkedIn para el 16/11.
+- Cambios: `POST /api/claude/pieza/<id>/publicada` registra como publicada una pieza «solo app» aprobada (con el enlace de esa red y la fuente). `POST /api/claude/externa` registra lo que una skill programó o publicó directo en la red (estado «programada en la red»; no se edita en el panel y el cron nunca la publica). La revisión de las 13:17 y 21:17 lee el `red/estado.json` de cada skill y sincroniza.
+- Archivos: `worker/{index.js,prueba.mjs}`, `panel/app.js`, `skills/matriz-redes/references/panel.md`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado.
+- Pendiente: que la skill de LinkedIn agregue a su `red/estado.json` lo que programa (hoy solo trae lo publicado).
+
 ## 2026-11-14 · Quitar «solo app» pide aprobar otra vez
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: Emi quitó «Prefiero subirla yo desde la app» en el post del DOF y la pieza se quedó «aprobada» sin programarse ni llevar el video.

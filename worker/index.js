@@ -788,6 +788,7 @@ async function editarPieza(env, datos, quien) {
   let p = datos.id ? lista.find((x) => x.id === datos.id) : null;
   if (datos.id && !p) throw new Error("No existe esa pieza.");
   if (p && FINALES.includes(p.estado)) throw new Error("Ya se publicó o se está publicando: no se edita.");
+  if (p && p.externa) throw new Error("Esta pieza se programó directo en la red: se cambia allá.");
   if (quien === "claude") {
     if (p && p.creada_por !== "claude") throw new Error("Claude solo edita borradores que dejó Claude.");
     if (p && !["borrador", "lista para aprobar"].includes(p.estado)) throw new Error("Claude no edita piezas que Emi ya aprobó o cerró.");
@@ -939,6 +940,48 @@ async function adjuntar(env, id, cuerpo, quien) {
   return p;
 }
 
+// Sincronía con las skills de cada red (Emi, 15/11/2026: «recuerda tener estos datos frescos y en tiempo real»).
+// Solo REGISTRA lo que ya pasó o ya está programado en la red; el panel nunca publica estas piezas.
+const DOMINIOS = { x: /^https:\/\/(x|twitter)\.com\//, linkedin: /^https:\/\/(www\.)?linkedin\.com\//, instagram: /^https:\/\/(www\.)?instagram\.com\//, tiktok: /^https:\/\/(www\.)?tiktok\.com\// };
+async function marcarPublicada(env, id, cuerpo) {
+  const url = limpiarUrl(cuerpo.url), fuente = limpiar(cuerpo.fuente || "", 200);
+  const p0 = (await piezas(env)).find((x) => x.id === id);
+  if (!p0) throw new Error("No existe esa pieza.");
+  if (!url || !DOMINIOS[p0.red]?.test(url)) throw new Error("Hace falta el enlace del post en esa red.");
+  if (!fuente.trim()) throw new Error("Hace falta la fuente (qué skill o estado lo confirma).");
+  const manual = p0.estado === "aprobada" && (p0.solo_app || !PUBLICADORES[p0.red]);
+  if (!manual) throw new Error("Solo se marca así una pieza aprobada que se sube desde la app.");
+  const fecha = cuerpo.fecha && !Number.isNaN(Date.parse(cuerpo.fecha)) ? new Date(cuerpo.fecha).toISOString() : ahoraISO();
+  const p = await actualizarPieza(env, id, (x) => {
+    if (x.estado !== "aprobada") throw new Error("La pieza cambió.");
+    x.estado = "publicada"; x.publicada = { fecha, url, id: "", fuente };
+    x.historial.unshift({ fecha: ahoraISO(), quien: "Matriz", que: `registrada como publicada (${fuente}): ${url}` });
+  });
+  await bitacora(env, "Matriz", `Registró como publicada «${p.titulo || p.red}» (${fuente})`);
+  return p;
+}
+async function registrarExterna(env, d) {
+  const red = String(d.red || "");
+  if (!REDES.includes(red)) throw new Error("Red inválida.");
+  const estado = d.estado === "publicada" ? "publicada" : "programada en la red";
+  const fecha = new Date(d.fecha || "");
+  if (Number.isNaN(fecha.getTime())) throw new Error("Fecha inválida.");
+  const url = limpiarUrl(d.url), fuente = limpiar(d.fuente || "", 200), clave = limpiar(d.clave || "", 80);
+  if (!fuente.trim() || !clave.trim()) throw new Error("Hacen falta «fuente» y «clave» (id de la pieza en la skill).");
+  if (estado === "publicada" && (!url || !DOMINIOS[red].test(url))) throw new Error("Hace falta el enlace del post.");
+  const lista = await piezas(env);
+  let p = lista.find((x) => x.externa?.clave === clave && x.red === red);
+  if (p && p.estado === "publicada" && estado !== "publicada") return p;
+  if (!p) { p = { id: nuevoId(), creada: ahoraISO(), creada_por: "skill", historial: [], solo_app: true }; lista.unshift(p); }
+  Object.assign(p, { red, estado, fecha: fecha.toISOString(), titulo: limpiar(d.titulo || "", 120), texto: limpiar(d.texto || "", 5000), externa: { clave, fuente }, actualizada: ahoraISO() });
+  if (estado === "publicada") p.publicada = { fecha: fecha.toISOString(), url, id: "", fuente };
+  p.historial.unshift({ fecha: ahoraISO(), quien: "Matriz", que: `${estado} fuera del panel (${fuente})` });
+  p.historial = p.historial.slice(0, 50);
+  await guardarPiezas(env, lista);
+  await bitacora(env, "Matriz", `Registró ${red} «${p.titulo || clave}»: ${estado} (${fuente})`);
+  return p;
+}
+
 // Hora sugerida: la que dejó la Matriz (si sigue en el futuro) o el siguiente hueco libre según la red.
 // Horas base de crecimiento/redes.json (hipótesis que se ajustan con métricas); hora del centro de México (UTC−6, sin horario de verano).
 const HORA_BASE = { x: [9, 0], linkedin: [8, 30], instagram: [19, 0], tiktok: [19, 30] };
@@ -1081,6 +1124,9 @@ export async function api(request, env, url) {
             x_media: !!(await leer(env, "cred:x", null)) || /\bmedia\.write\b/.test((await leerSecreto(env, "x2").catch(() => null))?.scope || "") } });
       if (ruta === "/api/claude/pieza" && metodo === "POST") return json(await editarPieza(env, cuerpo, "claude"));
       if (ruta === "/api/claude/nota" && metodo === "POST") return json(await agregarNota(env, cuerpo, "claude"));
+      if (ruta === "/api/claude/externa" && metodo === "POST") return json(await registrarExterna(env, cuerpo));
+      const mpub = ruta.match(/^\/api\/claude\/pieza\/([a-f0-9]{12})\/publicada$/);
+      if (mpub && metodo === "POST") return json(await marcarPublicada(env, mpub[1], cuerpo));
       const mf = ruta.match(/^\/api\/claude\/pieza\/([a-f0-9]{12})\/fecha$/);
       if (mf && metodo === "POST") return json(await reprogramar(env, mf[1], cuerpo, "Matriz"));
       if (ruta === "/api/claude/x/probar" && metodo === "POST") return json(await probarX(env, "Matriz"));

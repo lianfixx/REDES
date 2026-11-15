@@ -16,7 +16,7 @@ const diaClave = (iso) => new Intl.DateTimeFormat("en-CA", { timeZone: ZONA }).f
 const hoyMX = () => diaClave(new Date().toISOString());
 const mayus = (t) => t.charAt(0).toUpperCase() + t.slice(1);
 const chipRed = (r) => `<span class="chip ${esc(r)}">${esc(REDES[r] || r)}</span>`;
-const ESTADO_CHIP = { publicada: "ok", aprobada: "ok", programada: "ok", fallo: "malo", "lista para aprobar": "aviso", publicando: "aviso" };
+const ESTADO_CHIP = { publicada: "ok", aprobada: "ok", programada: "ok", "programada en la red": "ok", fallo: "malo", "lista para aprobar": "aviso", publicando: "aviso" };
 const chipEstado = (e) => `<span class="chip ${ESTADO_CHIP[e] ?? ""}">${esc(e)}</span>`;
 const seguro = (u) => { try { const x = new URL(u); return x.protocol === "https:" ? x.href : ""; } catch { return ""; } };
 const HOSTS_MEDIA = ["drive.google.com", "lh3.googleusercontent.com", "pbs.twimg.com", "media.licdn.com"];
@@ -119,6 +119,7 @@ function siguiente(p) {
     case "publicando": return ["Saliendo…", "Panel"];
     case "fallo": return ["Tú: revisar el fallo", "Emi"];
     case "publicada": return ["Medir a las 48 h", "Panel"];
+    case "programada en la red": return [`Programada en ${REDES[p.red] || p.red}${p.fecha ? " · " + hora(p.fecha) : ""}`, p.externa?.fuente || "skill"];
     default: return ["—", "—"];
   }
 }
@@ -199,7 +200,7 @@ V.hoy = () => {
 };
 
 const GRUPOS = [["Para aprobar", (p) => p.estado === "lista para aprobar"], ["Para subir desde la app", (p) => p.estado === "aprobada" && (p.solo_app || !API_PUBLICA.includes(p.red))],
-  ["Programadas", (p) => ["programada", "publicando"].includes(p.estado) || (p.estado === "aprobada" && API_PUBLICA.includes(p.red) && !p.solo_app)],
+  ["Programadas", (p) => ["programada", "publicando", "programada en la red"].includes(p.estado) || (p.estado === "aprobada" && API_PUBLICA.includes(p.red) && !p.solo_app)],
   ["Con fallo", (p) => p.estado === "fallo"], ["Borradores", (p) => p.estado === "borrador"], ["Publicadas", (p) => p.estado === "publicada"]];
 V.piezas = () => {
   if (!S.editor) return entrarPrimero("Las piezas (textos listos para aprobar y publicar) son privadas.");

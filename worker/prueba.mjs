@@ -613,4 +613,22 @@ await t("prueba de conexión con X y subida adelantada: no publican nada; la sub
   const mal = (await c(req(`/api/claude/pieza/${q.id}/preparar`, {}, H))).j;
   assert.equal(mal.listo, false); assert.match(mal.error, /403/); assert.equal(mal.errores, 1);
 });
+await t("sincronía con las skills: marcar publicada con enlace y registrar lo programado en la red", async () => {
+  const env = nuevoEnv(), c = llamar(env), S = await sesion(env);
+  const H = { Authorization: "Bearer " + "c".repeat(32) };
+  const p = (await S("/api/pieza", { red: "linkedin", texto: "Video.", solo_app: true })).j;
+  assert.equal((await c(req(`/api/claude/pieza/${p.id}/publicada`, { url: "https://www.linkedin.com/feed/update/x/", fuente: "linkedin-pro" }, H))).s, 400, "sin aprobar no");
+  await S(`/api/pieza/${p.id}/aprobar`, {});
+  assert.equal((await c(req(`/api/claude/pieza/${p.id}/publicada`, { url: "https://malo.com/x", fuente: "linkedin-pro" }, H))).s, 400, "enlace de otra red no");
+  const r = (await c(req(`/api/claude/pieza/${p.id}/publicada`, { url: "https://www.linkedin.com/feed/update/x/", fuente: "linkedin-pro red/estado.json", fecha: "2026-11-13T18:52:00Z" }, H))).j;
+  assert.equal(r.estado, "publicada"); assert.equal(r.publicada.fecha, "2026-11-13T18:52:00.000Z");
+  const fut = new Date(Date.now() + 864e5).toISOString();
+  const e = (await c(req("/api/claude/externa", { red: "linkedin", clave: "doc-pagos", titulo: "Documento", texto: "Hola", fecha: fut, fuente: "linkedin-pro" }, H))).j;
+  assert.equal(e.estado, "programada en la red");
+  const e2 = (await c(req("/api/claude/externa", { red: "linkedin", clave: "doc-pagos", titulo: "Documento", texto: "Hola", fecha: fut, fuente: "linkedin-pro" }, H))).j;
+  assert.equal(e2.id, e.id, "no se duplica");
+  assert.equal((await S("/api/pieza", { id: e.id, red: "linkedin", texto: "x" })).s, 400, "no se edita desde el panel");
+  cambiar(env, e.id, (x) => { x.fecha = new Date(Date.now() - 1000).toISOString(); });
+  await tic(env, async () => assert.fail("el cron no la publica"));
+});
 console.log(`\n${ok} pruebas aprobadas`);

@@ -28,6 +28,8 @@ GET  /api/claude/estado                       piezas, notas, encargos, inspiraci
 POST /api/claude/pieza   {red, texto, titulo, fecha (ISO), idea, media, nota, archivos: [id, …]}
 POST /api/claude/pieza/<id>/comentario  {texto}
 POST /api/claude/pieza/<id>/sugerencia  {hora (ISO), motivo}
+POST /api/claude/pieza/<id>/publicada   {url (de esa red), fuente, fecha?}  registra como publicada una pieza «solo app» ya aprobada
+POST /api/claude/externa {red, clave, titulo, texto, fecha, estado: programada|publicada, url?, fuente}  registra lo que una skill programó o publicó directo en la red (el panel nunca la publica)
 POST /api/claude/pieza/<id>/fecha       {fecha (ISO, futura), motivo}  mueve la hora de una pieza YA aprobada sin tocar texto ni archivos (Emi, 14/11/2026); queda anotado
 POST /api/claude/pieza/<id>/archivos    {archivos: [id, …], motivo}    adjunta a una pieza YA aprobada y SIN archivos el que le faltaba (Emi, 14/11/2026); no reemplaza, no toca el texto, quita «solo app» y queda anotado
 POST /api/claude/pieza/<id>/preparar    sube YA a la red los archivos de una pieza aprobada, sin publicar (para probar la subida con tiempo); devuelve el avance o el error
