@@ -22,9 +22,10 @@
       "red": "x",
       "skill": "x-viral",
       "titulo": "Video del DOF nativo (adelantado por Emi al domingo)",
-      "estado": "programada",
+      "estado": "publicada",
       "minutos_emi": 20,
-      "en_panel": true
+      "en_panel": true,
+      "url": "https://x.com/emilianomilla_/status/2122004433412161742"
     }
   ]
 }

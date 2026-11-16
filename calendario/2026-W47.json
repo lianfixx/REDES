@@ -10,10 +10,11 @@
       "red": "linkedin",
       "cuenta": "linkedin.com/in/emiliano-milla",
       "skill": "linkedin-pro",
-      "titulo": "Documento de 6 láminas: ¿Adiós al efectivo? (programado en LinkedIn por su skill)",
-      "estado": "programada",
+      "titulo": "Documento de 6 láminas: ¿Adiós al efectivo? (publicado por la skill de LinkedIn)",
+      "estado": "publicada",
       "minutos_emi": 0,
-      "en_panel": true
+      "en_panel": true,
+      "url": "https://www.linkedin.com/feed/update/urn:li:activity:7528132303097692160/"
     },
     {
       "id": "x-lanzamiento",
@@ -21,7 +22,7 @@
       "fecha": "2026-11-17T09:00:00-06:00",
       "red": "x",
       "skill": "x-viral",
-      "titulo": "Post de lanzamiento (opción A)",
+      "titulo": "Post de lanzamiento (opción A, con el mapa de la Matriz General)",
       "estado": "programada",
       "minutos_emi": 30,
       "en_panel": true

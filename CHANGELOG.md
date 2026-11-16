@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-16 · Calendario: DOF en X y documento en LinkedIn, publicados; lanzamiento con imagen
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: sincronía pedida por Emi (15/11: datos frescos y en tiempo real).
+- Cambios: el DOF en X salió el 15/11 a las 10:30 y el documento de pagos digitales en LinkedIn el 16/11 a las 10:30, ambos con su enlace. El lanzamiento A lleva el mapa de la Matriz General: Emi lo aceptó y aprobó en el panel el 16/11 a las 02:07 UTC; la subida de prueba de la imagen a X respondió «lista».
+- Archivos: `calendario/2026-W46.json`, `calendario/2026-W47.json`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado; enlaces tomados del panel y de `red/estado.json` de LinkedIn.
+- Pendiente: lanzamiento el martes 17 a las 9:00.
+
 ## 2026-11-15 · Archivos siempre con aprobación de Emi; propuesta de la Matriz
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: Emi, 15/11/2026: «Del martes 17 tú haz la captura o recrea lo de obsidian y que siempre pida mi aprobación».
