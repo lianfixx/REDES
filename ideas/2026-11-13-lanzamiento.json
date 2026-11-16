@@ -80,6 +80,36 @@
       "prioridad": 3,
       "sesion": "x",
       "donde": "https://x.com/settings/profile"
+    },
+    {
+      "que": "Martes 17, de 9:00 a 11:00: responder a quien comente el lanzamiento en X",
+      "prioridad": 1,
+      "sesion": "x",
+      "donde": ""
+    },
+    {
+      "que": "Reescribir con tus palabras y aprobar los dos posts nuevos de X (jueves: pagos digitales; viernes: boletines)",
+      "prioridad": 1,
+      "sesion": "x",
+      "donde": "#piezas"
+    },
+    {
+      "que": "Para el miércoles 18: subir al panel una foto o clip (más de 10 s) del gym de esta semana, y decir qué entrenaste y a qué hora",
+      "prioridad": 2,
+      "sesion": "x",
+      "donde": "#recursos"
+    },
+    {
+      "que": "Para el sábado 21: otra foto o clip (gym o maestría) y una frase de cómo acomodas entreno, trabajo y maestría",
+      "prioridad": 2,
+      "sesion": "x",
+      "donde": "#recursos"
+    },
+    {
+      "que": "Opcional, domingo 22: qué decisión pública de la semana te importa y qué piensas, en dos líneas tuyas",
+      "prioridad": 3,
+      "sesion": "x",
+      "donde": ""
     }
   ]
 }

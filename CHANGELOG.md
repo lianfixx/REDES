@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-16 · Semana de X en el calendario y pendientes de Emi
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: paquete de la sesión de x-viral para la semana W47 (información para calendario y pendientes).
+- Cambios: calendario W47 con los posts de X del jueves 19 (pagos digitales) y viernes 20 (boletines), ya en el panel para aprobar, y dos de estilo de vida (miércoles 18 y sábado 21) como idea hasta que Emi dé material. Pendientes de Emi: responder comentarios del lanzamiento, aprobar los dos posts, material de estilo de vida y, opcional, postura política.
+- Archivos: `calendario/2026-W47.json`, `ideas/2026-11-13-lanzamiento.json`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado.
+- Pendiente: material y aprobaciones de Emi.
+
 ## 2026-11-16 · Calendario: DOF en X y documento en LinkedIn, publicados; lanzamiento con imagen
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: sincronía pedida por Emi (15/11: datos frescos y en tiempo real).
