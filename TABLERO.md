@@ -1,6 +1,6 @@
 # Tablero de la Matriz de Redes
 
-Generado el 2026-11-15 por `redes.py tablero`. No se edita a mano.
+Generado el 2026-11-16 por `redes.py tablero`. No se edita a mano.
 
 ## Pendiente de Emi
 
@@ -13,14 +13,19 @@ Generado el 2026-11-15 por `redes.py tablero`. No se edita a mano.
 
 | Día y hora | Red | Pieza | Skill | Estado |
 |---|---|---|---|---|
-| 2026-11-13 12:52 | linkedin | Video del DOF (tal cual) con el texto B de Emi | linkedin-pro | publicada |
-| 2026-11-15 10:30 | x | Video del DOF nativo (adelantado por Emi al domingo) | x-viral | programada |
+| 2026-11-16 10:30 | linkedin | Documento de 6 láminas: ¿Adiós al efectivo? (publicado por la skill de LinkedIn) | linkedin-pro | publicada |
+| 2026-11-17 09:00 | x | Post de lanzamiento (opción A, con el mapa de la Matriz General) | x-viral | programada |
+| 2026-11-17 19:00 | instagram | Reel 1 · Matriz | instagram-studio | idea |
+| 2026-11-17 19:30 | tiktok | Video 1 · Matriz | tiktok | idea |
+| 2026-11-18 08:30 | linkedin | Documento de 8 láminas: herramientas que construí (tentativo: pendiente de foto y capturas reales de Emi) | linkedin-pro | idea |
+| 2026-11-19 19:00 | instagram | Reel 2 · DOF | instagram-studio | idea |
+| 2026-11-19 19:30 | tiktok | Video 2 · DOF | tiktok | idea |
+| 2026-11-21 12:00 | tiktok | Video animado del DOF (tal cual) | tiktok | idea |
 
 ## Próximas
 
-- 2026-11-15 10:30 · x · Video del DOF nativo (adelantado por Emi al domingo) (programada)
-- 2026-11-16 10:30 · linkedin · Documento de 6 láminas: ¿Adiós al efectivo? (programado en LinkedIn por su skill) (programada)
-- 2026-11-17 09:00 · x · Post de lanzamiento (opción A) (programada)
+- 2026-11-16 10:30 · linkedin · Documento de 6 láminas: ¿Adiós al efectivo? (publicado por la skill de LinkedIn) (publicada)
+- 2026-11-17 09:00 · x · Post de lanzamiento (opción A, con el mapa de la Matriz General) (programada)
 - 2026-11-17 19:00 · instagram · Reel 1 · Matriz (idea)
 - 2026-11-17 19:30 · tiktok · Video 1 · Matriz (idea)
 - 2026-11-18 08:30 · linkedin · Documento de 8 láminas: herramientas que construí (tentativo: pendiente de foto y capturas reales de Emi) (idea)
@@ -46,7 +51,7 @@ Generado el 2026-11-15 por `redes.py tablero`. No se edita a mano.
 | Skill | Leído | Publicados | Lecciones |
 |---|---|---|---|
 | x | no se pudo leer | — | — |
-| linkedin | 2026-11-14 | 1 | 1 |
+| linkedin | 2026-11-16 | 2 | 1 |
 | tiktok | no se pudo leer | — | — |
 | instagram | 2026-11-12 | 0 | 3 |
 | instagram-historias | no se pudo leer | — | — |
