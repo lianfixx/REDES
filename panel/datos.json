@@ -1,5 +1,5 @@
 {
- "generado": "2026-11-16",
+ "generado": "2026-11-17",
  "redes": {
   "x": {
    "skill": "x-viral",
@@ -566,20 +566,6 @@
   }
  ],
  "proximas": [
-  {
-   "id": "li-doc-pagos",
-   "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-16T10:30:00-06:00",
-   "red": "linkedin",
-   "cuenta": "linkedin.com/in/emiliano-milla",
-   "skill": "linkedin-pro",
-   "titulo": "Documento de 6 láminas: ¿Adiós al efectivo? (publicado por la skill de LinkedIn)",
-   "estado": "publicada",
-   "minutos_emi": 0,
-   "en_panel": true,
-   "url": "https://www.linkedin.com/feed/update/urn:li:activity:7528132303097692160/",
-   "semana": "2026-W47"
-  },
   {
    "id": "x-lanzamiento",
    "idea": "2026-11-13-lanzamiento",

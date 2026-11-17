@@ -1,6 +1,6 @@
 # Tablero de la Matriz de Redes
 
-Generado el 2026-11-16 por `redes.py tablero`. No se edita a mano.
+Generado el 2026-11-17 por `redes.py tablero`. No se edita a mano.
 
 ## Pendiente de Emi
 
@@ -35,7 +35,6 @@ Generado el 2026-11-16 por `redes.py tablero`. No se edita a mano.
 
 ## Próximas
 
-- 2026-11-16 10:30 · linkedin · Documento de 6 láminas: ¿Adiós al efectivo? (publicado por la skill de LinkedIn) (publicada)
 - 2026-11-17 09:00 · x · Post de lanzamiento (opción A, con el mapa de la Matriz General) (programada)
 - 2026-11-17 19:00 · instagram · Reel 1 · Matriz (idea)
 - 2026-11-17 19:30 · tiktok · Video 1 · Matriz (idea)
