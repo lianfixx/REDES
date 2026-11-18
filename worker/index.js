@@ -1186,6 +1186,20 @@ export async function api(request, env, url) {
       if (ruta === "/api/claude/externa" && metodo === "POST") return json(await registrarExterna(env, cuerpo));
       const mpub = ruta.match(/^\/api\/claude\/pieza\/([a-f0-9]{12})\/publicada$/);
       if (mpub && metodo === "POST") return json(await marcarPublicada(env, mpub[1], cuerpo));
+      // Retirar un borrador propio que Emi no ha aprobado (solo quita; nada aprobado ni programado se toca).
+      const mcan = ruta.match(/^\/api\/claude\/pieza\/([a-f0-9]{12})\/cancelar$/);
+      if (mcan && metodo === "POST") {
+        const motivo = limpiar(cuerpo.motivo || "", 300);
+        if (motivo.trim().length < 8) throw new Error("Escribe el motivo.");
+        const p = await actualizarPieza(env, mcan[1], (x) => {
+          if (x.creada_por !== "claude" || !["borrador", "lista para aprobar"].includes(x.estado) || x.aprobado_huella) throw new Error("Solo se retiran borradores de Claude que Emi no ha aprobado.");
+          x.estado = "cancelada"; delete x.propuesta;
+          x.historial.unshift({ fecha: ahoraISO(), quien: "Matriz", que: `retirada: ${motivo}` });
+        });
+        if (!p) return json({ error: "No existe esa pieza." }, 404);
+        await bitacora(env, "Matriz", `Retiró el borrador «${p.titulo || p.red}»: ${motivo}`);
+        return json(p);
+      }
       const mf = ruta.match(/^\/api\/claude\/pieza\/([a-f0-9]{12})\/fecha$/);
       if (mf && metodo === "POST") return json(await reprogramar(env, mf[1], cuerpo, "Matriz"));
       if (ruta === "/api/claude/x/probar" && metodo === "POST") return json(await probarX(env, "Matriz"));

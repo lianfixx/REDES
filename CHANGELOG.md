@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-18 · Claude puede retirar sus propios borradores sin aprobar
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: la sesión de x-viral informó que Emi pidió («Cancela tú») retirar las tres opciones cortas de The Economist.
+- Cambios: `POST /api/claude/pieza/<id>/cancelar {motivo}` retira solo borradores creados por Claude y sin aprobar; queda en historial y bitácora.
+- Archivos: `worker/{index.js,prueba.mjs}`, `skills/matriz-redes/references/panel.md`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado.
+- Pendiente: nada.
+
 ## 2026-11-18 · TikTok: cuenta @emiliano_milla_ activa
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: la sesión de TikTok informó las respuestas de Emi (17/11).

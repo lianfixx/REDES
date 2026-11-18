@@ -26,6 +26,7 @@ Cloudflare Worker (`worker/index.js`) con el panel (`panel/`). Se publica solo c
 ```
 GET  /api/claude/estado                       piezas, notas, encargos, inspiración, archivos, bitácora, conexiones
 POST /api/claude/pieza   {red, texto, titulo, fecha (ISO), idea, media, nota, archivos: [id, …]}
+POST /api/claude/pieza/<id>/cancelar    {motivo}  retira un borrador de Claude que Emi no ha aprobado
 POST /api/claude/pieza/<id>/comentario  {texto}
 POST /api/claude/pieza/<id>/sugerencia  {hora (ISO), motivo}
 POST /api/claude/pieza/<id>/publicada   {url (de esa red), fuente, fecha?}  registra como publicada una pieza «solo app» ya aprobada

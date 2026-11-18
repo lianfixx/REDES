@@ -661,4 +661,17 @@ await t("X Premium: posts largos solo mientras esté vigente; si X los rechaza, 
   const r = await publicar(env2, q.id, async () => { n++; return Response.json({ detail: "Tweet text is too long" }, { status: 403 }); });
   assert.equal(r.estado, "fallo"); assert.equal(n, 1, "sin reintentos");
 });
+await t("Claude retira sus borradores sin aprobar; no los de Emi ni los aprobados", async () => {
+  const env = nuevoEnv(), c = llamar(env), S = await sesion(env);
+  const H = { Authorization: "Bearer " + "c".repeat(32) };
+  const can = (id, m = "Emi pidió retirarla") => c(req(`/api/claude/pieza/${id}/cancelar`, { motivo: m }, H));
+  const a = (await c(req("/api/claude/pieza", { red: "x", texto: "Borrador uno." }, H))).j;
+  assert.equal((await can(a.id, "")).s, 400);
+  assert.equal((await can(a.id)).j.estado, "cancelada");
+  const b = (await c(req("/api/claude/pieza", { red: "x", texto: "Borrador dos distinto." }, H))).j;
+  await S(`/api/pieza/${b.id}/aprobar`, {});
+  assert.equal((await can(b.id)).s, 400, "aprobada no");
+  const e = (await S("/api/pieza", { red: "x", texto: "De Emi, otra cosa." })).j;
+  assert.equal((await can(e.id)).s, 400, "de Emi no");
+});
 console.log(`\n${ok} pruebas aprobadas`);
