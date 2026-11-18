@@ -5,6 +5,7 @@ Generado el 2026-11-18 por `redes.py tablero`. No se edita a mano.
 ## Pendiente de Emi
 
 - [ ] **alta** · linkedin · Elegir y reescribir la opción A o B del post de LinkedIn sobre la portada 2027 (en la sesión de LinkedIn); sale el jueves 19 a las 8:30
+- [ ] **alta** · tiktok · Aprobar: DOF 2: perdón de multas del SAT (video animado)
 - [ ] **alta** · x · Aprobar: Opinión: ley de pagos digitales (solo texto)
 - [ ] **alta** · x · Aprobar: IA + Derecho: boletines (solo texto)
 - [ ] **alta** · x · Reescribir con tus palabras y aprobar los dos posts nuevos de X (jueves: pagos digitales; viernes: boletines)
@@ -52,14 +53,14 @@ Generado el 2026-11-18 por `redes.py tablero`. No se edita a mano.
 - 2026-11-21 19:30 · tiktok · Video The Economist 2027, parte 1: ¿Profecía o agenda? (en produccion)
 - 2026-11-22 10:00 · x · Video The Economist 2027, parte 2: Firma sin leer (en produccion)
 - 2026-11-22 19:30 · tiktok · Video The Economist 2027, parte 2: Firma sin leer (en produccion)
-- 2026-11-24 19:00 · instagram · Reel 2 · DOF (idea)
-- 2026-11-24 19:30 · tiktok · Video 2 · DOF (idea)
+- 2026-11-24 19:30 · tiktok · DOF 2: perdón de multas del SAT (video animado) (lista para aprobar)
 - 2026-11-25 13:00 · instagram · Carrusel · 4 herramientas (idea)
 - 2026-11-26 19:00 · instagram · Reel 3 · Boletines (datos de ejemplo) (idea)
 - 2026-11-26 19:30 · tiktok · Video 3 · Boletines (idea)
 - 2026-11-28 19:00 · instagram · Reel 4 · Vox, el estudio de video que construí (narrado con la voz de Emi) (idea)
 - 2026-11-28 19:30 · tiktok · Video 4 · Vox (idea)
 - 2026-12-01 08:30 · linkedin · Documento de 8 láminas: herramientas que construí (tentativo: pendiente de foto y capturas reales de Emi) (idea)
+- 2026-12-01 19:00 · instagram · Reel 1 · Matriz (idea)
 
 ## Ideas abiertas
 

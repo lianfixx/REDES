@@ -488,28 +488,16 @@
    "semana": "2026-W47"
   },
   {
-   "id": "ig-reel-dof",
-   "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-24T19:00:00-06:00",
-   "red": "instagram",
-   "skill": "instagram-studio",
-   "titulo": "Reel 2 · DOF",
-   "estado": "idea",
-   "minutos_emi": 20,
-   "productora": "editor-studio",
-   "semana": "2026-W48"
-  },
-  {
-   "id": "tt-dof",
+   "id": "tt-dof2-multas",
    "idea": "2026-11-13-lanzamiento",
    "fecha": "2026-11-24T19:30:00-06:00",
    "red": "tiktok",
-   "skill": "tiktok-studio",
-   "titulo": "Video 2 · DOF",
-   "estado": "idea",
-   "minutos_emi": 10,
-   "productora": "editor-studio",
    "cuenta": "@emiliano_milla_",
+   "skill": "tiktok-studio",
+   "titulo": "DOF 2: perdón de multas del SAT (video animado)",
+   "estado": "lista para aprobar",
+   "minutos_emi": 10,
+   "en_panel": true,
    "semana": "2026-W48"
   },
   {
@@ -603,6 +591,31 @@
    "red": "tiktok",
    "skill": "tiktok-studio",
    "titulo": "Video 1 · Matriz",
+   "estado": "idea",
+   "minutos_emi": 10,
+   "productora": "editor-studio",
+   "cuenta": "@emiliano_milla_",
+   "semana": "2026-W49"
+  },
+  {
+   "id": "ig-reel-dof",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-12-03T19:00:00-06:00",
+   "red": "instagram",
+   "skill": "instagram-studio",
+   "titulo": "Reel 2 · DOF",
+   "estado": "idea",
+   "minutos_emi": 20,
+   "productora": "editor-studio",
+   "semana": "2026-W49"
+  },
+  {
+   "id": "tt-dof",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-12-03T19:30:00-06:00",
+   "red": "tiktok",
+   "skill": "tiktok-studio",
+   "titulo": "Video 2 · DOF",
    "estado": "idea",
    "minutos_emi": 10,
    "productora": "editor-studio",
@@ -991,28 +1004,16 @@
    "semana": "2026-W47"
   },
   {
-   "id": "ig-reel-dof",
-   "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-24T19:00:00-06:00",
-   "red": "instagram",
-   "skill": "instagram-studio",
-   "titulo": "Reel 2 · DOF",
-   "estado": "idea",
-   "minutos_emi": 20,
-   "productora": "editor-studio",
-   "semana": "2026-W48"
-  },
-  {
-   "id": "tt-dof",
+   "id": "tt-dof2-multas",
    "idea": "2026-11-13-lanzamiento",
    "fecha": "2026-11-24T19:30:00-06:00",
    "red": "tiktok",
-   "skill": "tiktok-studio",
-   "titulo": "Video 2 · DOF",
-   "estado": "idea",
-   "minutos_emi": 10,
-   "productora": "editor-studio",
    "cuenta": "@emiliano_milla_",
+   "skill": "tiktok-studio",
+   "titulo": "DOF 2: perdón de multas del SAT (video animado)",
+   "estado": "lista para aprobar",
+   "minutos_emi": 10,
+   "en_panel": true,
    "semana": "2026-W48"
   },
   {
@@ -1086,6 +1087,18 @@
    "estado": "idea",
    "minutos_emi": 20,
    "semana": "2026-W49"
+  },
+  {
+   "id": "ig-reel-matriz",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-12-01T19:00:00-06:00",
+   "red": "instagram",
+   "skill": "instagram-studio",
+   "titulo": "Reel 1 · Matriz",
+   "estado": "idea",
+   "minutos_emi": 20,
+   "productora": "editor-studio",
+   "semana": "2026-W49"
   }
  ],
  "pendientes_emi": [
@@ -1094,6 +1107,12 @@
    "prioridad": 1,
    "sesion": "linkedin",
    "donde": ""
+  },
+  {
+   "que": "Aprobar: DOF 2: perdón de multas del SAT (video animado)",
+   "prioridad": 1,
+   "sesion": "tiktok",
+   "donde": "#piezas"
   },
   {
    "que": "Aprobar: Opinión: ley de pagos digitales (solo texto)",
