@@ -243,7 +243,7 @@
      "donde": "#piezas"
     },
     {
-     "que": "Elegir y reescribir la opción A o B del post de LinkedIn sobre la portada 2027 (en la sesión de LinkedIn); sale el lunes 23 a las 8:30",
+     "que": "Elegir y reescribir la opción A o B del post de LinkedIn sobre la portada 2027 (en la sesión de LinkedIn); sale el jueves 19 a las 8:30",
      "prioridad": 1,
      "sesion": "linkedin",
      "donde": ""
@@ -352,6 +352,23 @@
    "semana": "2026-W47"
   },
   {
+   "id": "li-economist-2027",
+   "idea": "2026-11-18-economist-2027",
+   "fecha": "2026-11-19T08:30:00-06:00",
+   "red": "linkedin",
+   "cuenta": "linkedin.com/in/emiliano-milla",
+   "skill": "linkedin-pro",
+   "titulo": "Portada 2027 de The Economist: la IA y el derecho",
+   "estado": "borrador",
+   "minutos_emi": 15,
+   "en_panel": true,
+   "excepcion_emi": {
+    "texto": "Te dije que sea el jueves",
+    "fuente": "chat de la Matriz de Redes, 18/11/2026"
+   },
+   "semana": "2026-W47"
+  },
+  {
    "idea": "2026-11-13-lanzamiento",
    "red": "x",
    "cuenta": "@emilianomilla_",
@@ -424,19 +441,6 @@
    "minutos_emi": 10,
    "productora": "editor-studio",
    "semana": "2026-W47"
-  },
-  {
-   "id": "li-economist-2027",
-   "idea": "2026-11-18-economist-2027",
-   "fecha": "2026-11-23T08:30:00-06:00",
-   "red": "linkedin",
-   "cuenta": "linkedin.com/in/emiliano-milla",
-   "skill": "linkedin-pro",
-   "titulo": "Portada 2027 de The Economist: la IA y el derecho",
-   "estado": "borrador",
-   "minutos_emi": 15,
-   "en_panel": true,
-   "semana": "2026-W48"
   },
   {
    "id": "ig-reel-dof",
@@ -601,6 +605,23 @@
    "semana": "2026-W47"
   },
   {
+   "id": "li-economist-2027",
+   "idea": "2026-11-18-economist-2027",
+   "fecha": "2026-11-19T08:30:00-06:00",
+   "red": "linkedin",
+   "cuenta": "linkedin.com/in/emiliano-milla",
+   "skill": "linkedin-pro",
+   "titulo": "Portada 2027 de The Economist: la IA y el derecho",
+   "estado": "borrador",
+   "minutos_emi": 15,
+   "en_panel": true,
+   "excepcion_emi": {
+    "texto": "Te dije que sea el jueves",
+    "fuente": "chat de la Matriz de Redes, 18/11/2026"
+   },
+   "semana": "2026-W47"
+  },
+  {
    "idea": "2026-11-13-lanzamiento",
    "red": "x",
    "cuenta": "@emilianomilla_",
@@ -729,6 +750,23 @@
    "semana": "2026-W47"
   },
   {
+   "id": "li-economist-2027",
+   "idea": "2026-11-18-economist-2027",
+   "fecha": "2026-11-19T08:30:00-06:00",
+   "red": "linkedin",
+   "cuenta": "linkedin.com/in/emiliano-milla",
+   "skill": "linkedin-pro",
+   "titulo": "Portada 2027 de The Economist: la IA y el derecho",
+   "estado": "borrador",
+   "minutos_emi": 15,
+   "en_panel": true,
+   "excepcion_emi": {
+    "texto": "Te dije que sea el jueves",
+    "fuente": "chat de la Matriz de Redes, 18/11/2026"
+   },
+   "semana": "2026-W47"
+  },
+  {
    "idea": "2026-11-13-lanzamiento",
    "red": "x",
    "cuenta": "@emilianomilla_",
@@ -801,19 +839,6 @@
    "minutos_emi": 10,
    "productora": "editor-studio",
    "semana": "2026-W47"
-  },
-  {
-   "id": "li-economist-2027",
-   "idea": "2026-11-18-economist-2027",
-   "fecha": "2026-11-23T08:30:00-06:00",
-   "red": "linkedin",
-   "cuenta": "linkedin.com/in/emiliano-milla",
-   "skill": "linkedin-pro",
-   "titulo": "Portada 2027 de The Economist: la IA y el derecho",
-   "estado": "borrador",
-   "minutos_emi": 15,
-   "en_panel": true,
-   "semana": "2026-W48"
   },
   {
    "id": "ig-reel-dof",
@@ -912,7 +937,7 @@
  ],
  "pendientes_emi": [
   {
-   "que": "Elegir y reescribir la opción A o B del post de LinkedIn sobre la portada 2027 (en la sesión de LinkedIn); sale el lunes 23 a las 8:30",
+   "que": "Elegir y reescribir la opción A o B del post de LinkedIn sobre la portada 2027 (en la sesión de LinkedIn); sale el jueves 19 a las 8:30",
    "prioridad": 1,
    "sesion": "linkedin",
    "donde": ""
@@ -1009,7 +1034,7 @@
    "skill": "linkedin-pro",
    "red": "linkedin",
    "version_skill": "1.0.0",
-   "actualizado": "2026-11-16",
+   "actualizado": "2026-11-17",
    "cuentas": [
     {
      "espacio": "personal",
@@ -1109,7 +1134,17 @@
      }
     }
    ],
-   "programados": [],
+   "programados": [
+    {
+     "id": "2026-W47-mapa",
+     "fecha": "2026-11-18T08:30:00-06:00",
+     "espacio": "personal",
+     "pilar": "ia-derecho",
+     "formato": "imagen",
+     "huella_texto": "fedf66cfbcae05b99ace256cee6fbfbbf8eb0ab7d9de55e198f4ac941515492b",
+     "donde": "Emi lo publica desde su teléfono (Chrome en box no respondió)"
+    }
+   ],
    "lecciones": [
     {
      "fecha": "2026-11-13",

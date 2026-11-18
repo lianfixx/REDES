@@ -4,7 +4,7 @@ Generado el 2026-11-17 por `redes.py tablero`. No se edita a mano.
 
 ## Pendiente de Emi
 
-- [ ] **alta** · linkedin · Elegir y reescribir la opción A o B del post de LinkedIn sobre la portada 2027 (en la sesión de LinkedIn); sale el lunes 23 a las 8:30
+- [ ] **alta** · linkedin · Elegir y reescribir la opción A o B del post de LinkedIn sobre la portada 2027 (en la sesión de LinkedIn); sale el jueves 19 a las 8:30
 - [ ] **alta** · x · Aprobar: Opinión: ley de pagos digitales (solo texto)
 - [ ] **alta** · x · Aprobar: IA + Derecho: boletines (solo texto)
 - [ ] **alta** · x · Reescribir con tus palabras y aprobar los dos posts nuevos de X (jueves: pagos digitales; viernes: boletines)
@@ -28,6 +28,7 @@ Generado el 2026-11-17 por `redes.py tablero`. No se edita a mano.
 | 2026-11-18 08:30 | linkedin | Post del mapa de la Matriz General (aprobado por Emi el 17/11; lo publica él desde el teléfono) | linkedin-pro | aprobada |
 | 2026-11-18 09:00 | x | Portada 2027 de The Economist: la IA y el derecho (solo texto) | x-viral | borrador |
 | 2026-11-18 19:30 | x | Estilo de vida: gym (falta foto o clip de Emi) | x-viral | idea |
+| 2026-11-19 08:30 | linkedin | Portada 2027 de The Economist: la IA y el derecho | linkedin-pro | borrador |
 | 2026-11-19 09:00 | x | Opinión: ley de pagos digitales (solo texto) | x-viral | lista para aprobar |
 | 2026-11-19 19:30 | tiktok | Video animado del DOF (tal cual): primer video, el día que abra la cuenta | tiktok-studio | idea |
 | 2026-11-20 09:00 | x | IA + Derecho: boletines (solo texto) | x-viral | lista para aprobar |
@@ -41,13 +42,13 @@ Generado el 2026-11-17 por `redes.py tablero`. No se edita a mano.
 - 2026-11-18 08:30 · linkedin · Post del mapa de la Matriz General (aprobado por Emi el 17/11; lo publica él desde el teléfono) (aprobada)
 - 2026-11-18 09:00 · x · Portada 2027 de The Economist: la IA y el derecho (solo texto) (borrador)
 - 2026-11-18 19:30 · x · Estilo de vida: gym (falta foto o clip de Emi) (idea)
+- 2026-11-19 08:30 · linkedin · Portada 2027 de The Economist: la IA y el derecho (borrador)
 - 2026-11-19 09:00 · x · Opinión: ley de pagos digitales (solo texto) (lista para aprobar)
 - 2026-11-19 19:30 · tiktok · Video animado del DOF (tal cual): primer video, el día que abra la cuenta (idea)
 - 2026-11-20 09:00 · x · IA + Derecho: boletines (solo texto) (lista para aprobar)
 - 2026-11-21 10:00 · x · Estilo de vida: entreno, trabajo y maestría (falta material de Emi) (idea)
 - 2026-11-21 19:00 · instagram · Reel 1 · Matriz (idea)
 - 2026-11-21 19:30 · tiktok · Video 1 · Matriz (idea)
-- 2026-11-23 08:30 · linkedin · Portada 2027 de The Economist: la IA y el derecho (borrador)
 - 2026-11-24 19:00 · instagram · Reel 2 · DOF (idea)
 - 2026-11-24 19:30 · tiktok · Video 2 · DOF (idea)
 - 2026-11-25 13:00 · instagram · Carrusel · 4 herramientas (idea)
@@ -71,7 +72,7 @@ Generado el 2026-11-17 por `redes.py tablero`. No se edita a mano.
 | Skill | Leído | Publicados | Lecciones |
 |---|---|---|---|
 | x | no se pudo leer | — | — |
-| linkedin | 2026-11-16 | 2 | 1 |
+| linkedin | 2026-11-17 | 2 | 1 |
 | tiktok | no se pudo leer | — | — |
 | instagram | 2026-11-12 | 0 | 3 |
 | instagram-historias | no se pudo leer | — | — |
