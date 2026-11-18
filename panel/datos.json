@@ -28,8 +28,8 @@
   "tiktok": {
    "skill": "tiktok-studio",
    "repo": "lianfixx/TikTok",
-   "cuenta": "",
-   "activa": false,
+   "cuenta": "@emiliano_milla_",
+   "activa": true,
    "cadencia": {
     "max_por_dia": 1,
     "separacion_min_h": 48,
@@ -129,9 +129,9 @@
      "donde": ""
     },
     {
-     "que": "Abrir las cuentas de TikTok e Instagram (@emilianomilla_; Instagram tipo Creador)",
+     "que": "Abrir la cuenta de Instagram (@emilianomilla_, tipo Creador)",
      "prioridad": 2,
-     "sesion": "TikTok e Instagram",
+     "sesion": "instagram",
      "donde": ""
     },
     {
@@ -171,7 +171,7 @@
      "donde": ""
     },
     {
-     "que": "TikTok: decidir usuario, nombre visible, biografía, tipo de cuenta y pilares (preguntas en el chat de la Matriz, 18/11)",
+     "que": "TikTok (@emiliano_milla_): aprobar la descripción del video del DOF, poner bio y nombre en la app y decidir qué hacer con el video de 2020",
      "prioridad": 2,
      "sesion": "tiktok",
      "donde": ""
@@ -390,6 +390,7 @@
    "titulo": "Video animado del DOF (tal cual): primer video, el día que abra la cuenta",
    "estado": "idea",
    "minutos_emi": 10,
+   "cuenta": "@emiliano_milla_",
    "semana": "2026-W47"
   },
   {
@@ -440,6 +441,7 @@
    "estado": "idea",
    "minutos_emi": 10,
    "productora": "editor-studio",
+   "cuenta": "@emiliano_milla_",
    "semana": "2026-W47"
   },
   {
@@ -464,6 +466,7 @@
    "estado": "idea",
    "minutos_emi": 10,
    "productora": "editor-studio",
+   "cuenta": "@emiliano_milla_",
    "semana": "2026-W48"
   },
   {
@@ -499,6 +502,7 @@
    "estado": "idea",
    "minutos_emi": 10,
    "productora": "editor-studio",
+   "cuenta": "@emiliano_milla_",
    "semana": "2026-W48"
   },
   {
@@ -523,6 +527,7 @@
    "estado": "idea",
    "minutos_emi": 10,
    "productora": "editor-studio",
+   "cuenta": "@emiliano_milla_",
    "semana": "2026-W48"
   },
   {
@@ -643,6 +648,7 @@
    "titulo": "Video animado del DOF (tal cual): primer video, el día que abra la cuenta",
    "estado": "idea",
    "minutos_emi": 10,
+   "cuenta": "@emiliano_milla_",
    "semana": "2026-W47"
   },
   {
@@ -693,6 +699,7 @@
    "estado": "idea",
    "minutos_emi": 10,
    "productora": "editor-studio",
+   "cuenta": "@emiliano_milla_",
    "semana": "2026-W47"
   }
  ],
@@ -788,6 +795,7 @@
    "titulo": "Video animado del DOF (tal cual): primer video, el día que abra la cuenta",
    "estado": "idea",
    "minutos_emi": 10,
+   "cuenta": "@emiliano_milla_",
    "semana": "2026-W47"
   },
   {
@@ -838,6 +846,7 @@
    "estado": "idea",
    "minutos_emi": 10,
    "productora": "editor-studio",
+   "cuenta": "@emiliano_milla_",
    "semana": "2026-W47"
   },
   {
@@ -862,6 +871,7 @@
    "estado": "idea",
    "minutos_emi": 10,
    "productora": "editor-studio",
+   "cuenta": "@emiliano_milla_",
    "semana": "2026-W48"
   },
   {
@@ -897,6 +907,7 @@
    "estado": "idea",
    "minutos_emi": 10,
    "productora": "editor-studio",
+   "cuenta": "@emiliano_milla_",
    "semana": "2026-W48"
   },
   {
@@ -921,6 +932,7 @@
    "estado": "idea",
    "minutos_emi": 10,
    "productora": "editor-studio",
+   "cuenta": "@emiliano_milla_",
    "semana": "2026-W48"
   },
   {
@@ -967,12 +979,6 @@
    "donde": "#piezas"
   },
   {
-   "que": "Abrir las cuentas de TikTok e Instagram (@emilianomilla_; Instagram tipo Creador)",
-   "prioridad": 2,
-   "sesion": "TikTok e Instagram",
-   "donde": ""
-  },
-  {
    "que": "Elegir el día para grabar los 4 videos (Matriz, DOF, Boletines, Vox)",
    "prioridad": 2,
    "sesion": "Videos",
@@ -985,13 +991,19 @@
    "donde": ""
   },
   {
+   "que": "Abrir la cuenta de Instagram (@emilianomilla_, tipo Creador)",
+   "prioridad": 2,
+   "sesion": "instagram",
+   "donde": ""
+  },
+  {
    "que": "Mandar foto y capturas reales de tus herramientas para el documento de 8 láminas de LinkedIn (la primera muestra «se veía muy IA»)",
    "prioridad": 2,
    "sesion": "linkedin",
    "donde": ""
   },
   {
-   "que": "TikTok: decidir usuario, nombre visible, biografía, tipo de cuenta y pilares (preguntas en el chat de la Matriz, 18/11)",
+   "que": "TikTok (@emiliano_milla_): aprobar la descripción del video del DOF, poner bio y nombre en la app y decidir qué hacer con el video de 2020",
    "prioridad": 2,
    "sesion": "tiktok",
    "donde": ""
@@ -1143,6 +1155,15 @@
      "formato": "imagen",
      "huella_texto": "fedf66cfbcae05b99ace256cee6fbfbbf8eb0ab7d9de55e198f4ac941515492b",
      "donde": "Emi lo publica desde su teléfono (Chrome en box no respondió)"
+    },
+    {
+     "id": "2026-W47-economist",
+     "fecha": "2026-11-19T08:30:00-06:00",
+     "espacio": "personal",
+     "pilar": "ia-derecho",
+     "formato": "texto",
+     "huella_texto": "2dbb89d562ef0d0a4090ef2f121f52885a4d21ff9ccc4fe88df8fc1823aee323",
+     "donde": "se comparte en vivo el jueves (LinkedIn no programa contenido compartido)"
     }
    ],
    "lecciones": [
@@ -1197,7 +1218,86 @@
    }
   },
   "tiktok": {
-   "error": "HTTPError: HTTP Error 404: Not Found"
+   "contrato": "redes-estado/0.1.1",
+   "skill": "tiktok-studio",
+   "red": "tiktok",
+   "version_skill": "1.1.0",
+   "actualizado": "2026-11-17",
+   "cuentas": [
+    {
+     "espacio": "personal",
+     "usuario": "@emiliano_milla_",
+     "activa": true,
+     "notas": "cuenta de Emi creada el 08/02/2020 (reusada por decisión de Emi el 17/11/2026). Vista pública el 17/11/2026 a las 21:50 (hora de México): 1,007 seguidores, unos 55,000 likes, 1 video, sin biografía"
+    }
+   ],
+   "cadencia": {
+    "max_por_dia": 1,
+    "separacion_min_h": 48,
+    "max_por_semana": 3,
+    "dias_preferidos": [],
+    "fuente": "skills/tiktok-studio/references/cuenta-nueva.md#cadencia-criterio-ajustable",
+    "certeza": "criterio"
+   },
+   "formatos": [
+    {
+     "id": "video",
+     "que_premia": "Que lo terminen y lo vean más tiempo; likes, compartidos, comentarios, guardados y seguir al autor (sin pesos publicados).",
+     "fuente": "skills/tiktok-studio/references/algoritmo.md",
+     "certeza": "oficial"
+    },
+    {
+     "id": "fotos",
+     "que_premia": "Las mismas interacciones; TikTok mide retención en carruseles de 2 fotos o más. Sin dato oficial de que rinda más o menos que el video.",
+     "fuente": "skills/tiktok-studio/references/formato.md",
+     "certeza": "oficial"
+    }
+   ],
+   "minutos_emi_por_pieza": {
+    "video-vox": 10,
+    "video-editor": 20,
+    "video-emi": 30,
+    "fotos": 15
+   },
+   "publicados": [],
+   "lecciones": [
+    {
+     "fecha": "2026-11-17",
+     "texto": "El video del DOF del espacio Castorena se puede subir a la cuenta personal porque no muestra la marca ni el nombre del despacho (revisado cuadro por cuadro); cualquier otro video de otro espacio se revisa igual antes de subirlo.",
+     "evidencia": "cuenta/aprendizajes.md",
+     "alcance": "red"
+    }
+   ],
+   "ideas_para_otras": [],
+   "pendientes_de_emi": [
+    {
+     "que": "Aprobar la descripción B ajustada del video del DOF (o reescribirla)",
+     "desde": "2026-11-17",
+     "bloquea": "primer video"
+    },
+    {
+     "que": "Poner nombre visible y la bio «Disciplina > motivación. Derecho, gym y opiniones que incomodan.» en la app",
+     "desde": "2026-11-17",
+     "bloquea": "perfil"
+    },
+    {
+     "que": "Revisar el video viejo de la cuenta (2020): dejarlo o pasarlo a privado",
+     "desde": "2026-11-17",
+     "bloquea": "nada"
+    },
+    {
+     "que": "Grabar los 4 videos del lanzamiento y uno de gym o vlog por semana",
+     "desde": "2026-11-17",
+     "bloquea": "calendario"
+    }
+   ],
+   "fuentes": {
+    "publicados": "cuenta/publicados.jsonl",
+    "lecciones": "cuenta/aprendizajes.md",
+    "ideas_vox": "puente/para-vox.md",
+    "perfil": "cuenta/perfil.json",
+    "fuentes_oficiales": "skills/tiktok-studio/data/fuentes.json"
+   }
   },
   "instagram": {
    "contrato": "redes-estado/0.1.1",

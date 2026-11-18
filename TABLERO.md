@@ -9,11 +9,11 @@ Generado el 2026-11-17 por `redes.py tablero`. No se edita a mano.
 - [ ] **alta** · x · Aprobar: IA + Derecho: boletines (solo texto)
 - [ ] **alta** · x · Reescribir con tus palabras y aprobar los dos posts nuevos de X (jueves: pagos digitales; viernes: boletines)
 - [ ] **alta** · x · Reescribir y aprobar el post de X sobre la portada 2027 de The Economist (miércoles 18, 9:00)
-- [ ] **media** · TikTok e Instagram · Abrir las cuentas de TikTok e Instagram (@emilianomilla_; Instagram tipo Creador)
 - [ ] **media** · Videos · Elegir el día para grabar los 4 videos (Matriz, DOF, Boletines, Vox)
 - [ ] **media** · Videos · Video de la portada 2027: dar tu opinión y aprobar el guion en la sesión de videos (paso 1)
+- [ ] **media** · instagram · Abrir la cuenta de Instagram (@emilianomilla_, tipo Creador)
 - [ ] **media** · linkedin · Mandar foto y capturas reales de tus herramientas para el documento de 8 láminas de LinkedIn (la primera muestra «se veía muy IA»)
-- [ ] **media** · tiktok · TikTok: decidir usuario, nombre visible, biografía, tipo de cuenta y pilares (preguntas en el chat de la Matriz, 18/11)
+- [ ] **media** · tiktok · TikTok (@emiliano_milla_): aprobar la descripción del video del DOF, poner bio y nombre en la app y decidir qué hacer con el video de 2020
 - [ ] **media** · x · Para el miércoles 18: subir al panel una foto o clip (más de 10 s) del gym de esta semana, y decir qué entrenaste y a qué hora
 - [ ] **media** · x · Para el sábado 21: otra foto o clip (gym o maestría) y una frase de cómo acomodas entreno, trabajo y maestría
 - [ ] **baja** · x · Perfil de X: acento en «García» y sitio web emilianomilla.site
@@ -73,7 +73,7 @@ Generado el 2026-11-17 por `redes.py tablero`. No se edita a mano.
 |---|---|---|---|
 | x | no se pudo leer | — | — |
 | linkedin | 2026-11-17 | 2 | 1 |
-| tiktok | no se pudo leer | — | — |
+| tiktok | 2026-11-17 | 0 | 1 |
 | instagram | 2026-11-12 | 0 | 3 |
 | instagram-historias | no se pudo leer | — | — |
 
