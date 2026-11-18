@@ -106,7 +106,8 @@ function previaTel(p, red) {
     : ok && /\.(mp4|mov|webm)(\?|$)/i.test(p.media) ? `<video src="${esc(p.media)}" muted playsinline loop autoplay></video>` : ok ? `<img src="${esc(p.media)}" alt="">` : "";
   return `<div class="telefono"><div class="pantalla">${m}<div class="pie"><b>${red === "tiktok" ? "@emilianomilla_" : "emilianomilla_"}</b>${esc(p.texto)}</div></div></div>`;
 }
-const previa = (p) => p.red === "x" ? `${previaX(p)}<div style="height:12px"></div>${previaX(p, true)}` : p.red === "linkedin" ? previaLi(p) : previaTel(p, p.red);
+const previaHilo = (p) => (p.hilo || []).map((t) => `<div style="height:6px"></div>${previaX({ texto: t, fecha: p.fecha })}`).join("");
+const previa = (p) => p.red === "x" ? `${previaX(p)}${previaHilo(p)}<div style="height:12px"></div>${previaX(p, true)}` : p.red === "linkedin" ? previaLi(p) : previaTel(p, p.red);
 
 // ---------------------------------------------------------------- qué sigue con cada pieza (el «CRM»)
 function siguiente(p) {
@@ -248,6 +249,8 @@ V.pieza = (id) => {
         <p class="tenue chico">«Agregar y aprobar» pone esto en la pieza y la aprueba con la misma hora. No cambia el texto.</p></div>` : ""}
       <details ${p.media ? "open" : ""}><summary class="tenue chico">Enlace de referencia (Drive)</summary><input name="media" value="${esc(p.media)}" placeholder="https://drive.google.com/…"></details>
       <label class="check"><input type="checkbox" name="solo_app" value="1" ${p.solo_app ? "checked" : ""}> Prefiero subirla yo desde la app</label>
+      ${p.red === "x" || (p.hilo || []).length ? `<label>Respuestas propias (hilo, opcional, X)</label><textarea name="hilo" style="min-height:80px" placeholder="Primera respuesta&#10;---&#10;Segunda respuesta">${esc((p.hilo || []).join("\n---\n"))}</textarea>
+      <p class="tenue chico">Salen justo después del post, cada una contestando a la anterior. Sepáralas con una línea «---». Máximo 5. Forman parte de lo que apruebas.</p>` : ""}
       <label>Nota interna</label><input name="nota" value="${esc(p.nota)}" maxlength="600">
       <div class="fila" style="margin-top:16px">
         ${cerrada ? "" : `<button class="boton" name="guardar">Guardar</button>`}
@@ -470,7 +473,8 @@ function conectar(vista, arg) {
   const ed = $("#editor");
   if (ed) {
     const actualizar = () => {
-      const p = { red: ed.red.value, texto: ed.texto.value, media: ed.media.value, archivos: ed.archivos.value ? ed.archivos.value.split(",") : [], fecha: ed.fecha.value ? mxAISO(ed.fecha.value) : null };
+      const p = { red: ed.red.value, texto: ed.texto.value, media: ed.media.value, archivos: ed.archivos.value ? ed.archivos.value.split(",") : [], fecha: ed.fecha.value ? mxAISO(ed.fecha.value) : null,
+        hilo: ed.hilo ? ed.hilo.value.split(/\n\s*-{3,}\s*\n/).map((t) => t.trim()).filter(Boolean) : [] };
       const r = revisar(p.texto, p.red);
       $("#cont").textContent = `${r.largo}${LIMITES[p.red] ? " / " + (p.red === "x" ? (S.estado?.limite_x || 280).toLocaleString("es-MX") : LIMITES[p.red]) : ""}${p.red === "x" ? " (enlace = 23, emoji = 2)" : ""}`;
       $("#cont").classList.toggle("malo", r.e.some((x) => x.includes("caracteres")));

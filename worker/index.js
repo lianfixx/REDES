@@ -64,7 +64,9 @@ export async function huella(texto) {
 // (Sin archivos la huella queda igual que antes, así no se invalidan aprobaciones viejas.)
 async function huellaAprobacion(p) {
   const arch = (p.archivos || []).length ? `\n${p.archivos.join(",")}` : "";
-  return huella(`${p.red}\n${p.fecha || ""}\n${p.media || ""}\n${String(p.texto || "").normalize("NFC").trim()}${arch}`);
+  // Las respuestas propias (hilo) también son contenido aprobado: si cambian, la aprobación deja de valer.
+  const hilo = (p.hilo || []).length ? `\n--hilo--\n${p.hilo.map((t) => String(t).normalize("NFC").trim()).join("\n--\n")}` : "";
+  return huella(`${p.red}\n${p.fecha || ""}\n${p.media || ""}\n${String(p.texto || "").normalize("NFC").trim()}${arch}${hilo}`);
 }
 const URL_RE = () => /https?:\/\/\S+|\b[a-z0-9-]+(?:\.[a-z0-9-]+)*\.(?:com|mx|org|net|site|dev|io|gob\.mx|ai)(?:\/\S*)?/gi;
 export function largoX(texto) {
@@ -329,7 +331,27 @@ async function publicarX(env, pieza, fetcher = fetch) {
   const r = await fetcher(url, { method: "POST", headers: { Authorization: auth, "Content-Type": "application/json" }, body: JSON.stringify(cuerpoX) });
   const cuerpo = await r.json().catch(() => ({}));
   if (!r.ok || !cuerpo?.data?.id) throw new Error(`X respondió ${r.status}: ${JSON.stringify(cuerpo).slice(0, 300)}`);
-  return { id: cuerpo.data.id, url: `https://x.com/i/web/status/${cuerpo.data.id}` };
+  const res = { id: cuerpo.data.id, url: `https://x.com/i/web/status/${cuerpo.data.id}` };
+  // Hilo: cada respuesta contesta a la anterior. El post raíz ya salió: si una falla, se detiene sin reintentar y se avisa.
+  if ((pieza.hilo || []).length) {
+    res.hilo = [];
+    let previo = res.id;
+    for (const [i, t] of pieza.hilo.entries()) {
+      try {
+        await gastoX(env, URL_RE().test(t) ? COSTO_X.post_con_enlace : COSTO_X.post, `respuesta ${i + 1} de ${pieza.id}`);
+        const a2 = await autorizacionX(env, "POST", url, fetcher);
+        const r2 = await fetcher(url, { method: "POST", headers: { Authorization: a2, "Content-Type": "application/json" }, body: JSON.stringify({ text: t, reply: { in_reply_to_tweet_id: previo } }) });
+        const c2 = await r2.json().catch(() => ({}));
+        if (!r2.ok || !c2?.data?.id) throw new Error(`X respondió ${r2.status}: ${JSON.stringify(c2).slice(0, 200)}`);
+        previo = c2.data.id; res.hilo.push(c2.data.id);
+      } catch (e) {
+        if (e.presupuesto) { res.hilo_error = `Respuesta ${i + 1}: no alcanzó el presupuesto de la vuelta; publícala desde la app.`; break; }
+        res.hilo_error = `Respuesta ${i + 1} no salió (${String(e.message || e).slice(0, 200)}). El post principal sí salió: publica las que faltan desde la app.`;
+        break;
+      }
+    }
+  }
+  return res;
 }
 async function metricasX(env, id, fetcher = fetch) {
   const url = `https://api.x.com/2/tweets/${encodeURIComponent(id)}?tweet.fields=public_metrics,non_public_metrics,created_at`;
@@ -854,7 +876,14 @@ async function editarPieza(env, datos, quien) {
   }
   const nueva = !p;
   if (!p) { p = { id: nuevoId(), creada: ahoraISO(), creada_por: quien, historial: [] }; lista.unshift(p); }
-  const antes = { red: p.red, texto: p.texto, fecha: p.fecha || null, media: p.media || "", archivos: (p.archivos || []).join(","), solo_app: !!p.solo_app };
+  const antes = { red: p.red, texto: p.texto, fecha: p.fecha || null, media: p.media || "", archivos: (p.archivos || []).join(","), solo_app: !!p.solo_app, hilo: (p.hilo || []).join("\n--\n") };
+  // Hilo de X: hasta 5 respuestas propias que salen justo después del post (Emi, 18/11/2026). En el editor van separadas por una línea «---».
+  let hilo = p.hilo || [];
+  if (datos.hilo !== undefined) {
+    hilo = (Array.isArray(datos.hilo) ? datos.hilo : String(datos.hilo || "").split(/\n\s*-{3,}\s*\n/)).map((t) => limpiar(t, 26000).trim()).filter(Boolean);
+    if (hilo.length && red !== "x") throw new Error("Las respuestas encadenadas solo existen en X.");
+    if (hilo.length > 5) throw new Error("Máximo 5 respuestas en el hilo.");
+  }
   let archivos = p.archivos || [];
   if (datos.archivos !== undefined) {
     const ids = (Array.isArray(datos.archivos) ? datos.archivos : String(datos.archivos || "").split(",")).map((x) => String(x).trim()).filter(Boolean);
@@ -879,7 +908,7 @@ async function editarPieza(env, datos, quien) {
     solo_app: datos.solo_app !== undefined ? !!datos.solo_app : !!p.solo_app,
     fecha: fecha ? fecha.toISOString() : datos.fecha === "" || datos.fecha === null ? null : p.fecha || null, actualizada: ahoraISO(),
   });
-  const cambio = nueva || antes.red !== p.red || antes.texto !== p.texto || antes.fecha !== p.fecha || antes.media !== p.media || antes.archivos !== p.archivos.join(",") || antes.solo_app !== !!p.solo_app;
+  const cambio = nueva || antes.red !== p.red || antes.texto !== p.texto || antes.fecha !== p.fecha || antes.media !== p.media || antes.archivos !== p.archivos.join(",") || antes.solo_app !== !!p.solo_app || antes.hilo !== hilo.join("\n--\n");
   if (cambio) {
     // Si cambia el texto, la red, la fecha o el archivo, la aprobación anterior deja de valer.
     delete p.aprobado; delete p.aprobado_huella; delete p.error; delete p.publicar_al_terminar; delete p.intentos_publicar;
@@ -887,7 +916,9 @@ async function editarPieza(env, datos, quien) {
   }
   p.historial.unshift({ fecha: ahoraISO(), quien, que: nueva ? "creada" : cambio ? "editada (la aprobación se reinicia)" : "datos editados" });
   p.historial = p.historial.slice(0, 50);
+  p.hilo = hilo.length ? hilo : undefined;
   p.revision = revisarTexto(texto, red, p.titulo, limiteX(env));
+  (p.hilo || []).forEach((t, i) => { const r = revisarTexto(t, red, "", limiteX(env)); r.errores.forEach((e) => p.revision.errores.push(`Respuesta ${i + 1}: ${e}`)); });
   await guardarPiezas(env, lista);
   await bitacora(env, quien, `${nueva ? "Pieza nueva" : "Pieza editada"} (${red}): ${p.titulo || texto.slice(0, 60)}`);
   return p;
@@ -901,6 +932,7 @@ async function aprobar(env, id, cuerpo = {}) {
   if (p.estado === "fallo" && !cuerpo.confirmo_que_no_salio)
     throw new Error("Esta pieza falló al publicarse. Antes de aprobarla otra vez, revisa en la red que no haya salido.");
   const rev = revisarTexto(p.texto, p.red, p.titulo, limiteX(env));
+  (p.hilo || []).forEach((t, i) => revisarTexto(t, p.red, "", limiteX(env)).errores.forEach((e) => rev.errores.push(`Respuesta ${i + 1}: ${e}`)));
   if (rev.errores.length) throw new Error("No se puede aprobar: " + rev.errores.join(" "));
   if ((p.archivos || []).length) {
     const todos = await archivosDe(env), arch = p.archivos.map((x) => todos.find((a) => a.id === x));
@@ -1090,6 +1122,7 @@ export async function publicar(env, id, fetcher = fetch) {
   const esperada = await huellaAprobacion(p);
   if (p.aprobado_huella !== esperada) throw new Error("La pieza cambió después de aprobarse: vuelve a aprobarla.");
   const rev = revisarTexto(p.texto, p.red, p.titulo, limiteX(env));
+  (p.hilo || []).forEach((t, i) => revisarTexto(t, p.red, "", limiteX(env)).errores.forEach((e) => rev.errores.push(`Respuesta ${i + 1}: ${e}`)));
   if (rev.errores.length) throw new Error(rev.errores.join(" "));
   // Primero los archivos: se suben a la red (sin publicar nada). Si la red aún los procesa, sale sola en cuanto estén.
   if ((p.archivos || []).length && !(await prepararArchivos(env, id, fetcher))) {
@@ -1119,6 +1152,7 @@ export async function publicar(env, id, fetcher = fetch) {
     if (resultado) {
       x.estado = "publicada"; x.publicada = { fecha: ahoraISO(), ...resultado };
       delete x.publicar_al_terminar; delete x.error;
+      if (resultado.hilo_error) { x.error = resultado.hilo_error; x.historial.unshift({ fecha: ahoraISO(), quien: "panel", que: resultado.hilo_error }); }
       x.historial.unshift({ fecha: ahoraISO(), quien: "panel", que: `publicada: ${resultado.url || resultado.id}` });
     } else if (reintentar && (x.intentos_publicar || 0) < 6) {
       // La red rechazó el post sin crearlo (p. ej., el video aún se procesa): se reintenta en la siguiente vuelta.

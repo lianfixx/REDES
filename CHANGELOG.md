@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-19 · Hilo de X: respuestas propias bajo la misma aprobación
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: decisión de Emi (18/11, chat de X; la informa esa sesión): los mejores posts llevan de 1 a 5 respuestas propias; primer caso, el video del domingo 22.
+- Cambios: una pieza de X puede llevar `hilo` (hasta 5 respuestas); el panel las publica justo después del post, cada una contestando a la anterior. La huella de aprobación las cubre (cambiarlas reinicia la aprobación) y el servidor revisa cada una con las mismas reglas. Si una falla, se detiene sin reintentar y lo avisa en la pieza (el post principal ya salió). Cada respuesta cuenta en el tope de gasto. En el editor van separadas por «---» y se ven en la vista previa.
+- Archivos: `worker/{index.js,prueba.mjs}`, `panel/app.js`, `skills/matriz-redes/references/panel.md`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado (37 pruebas del Worker).
+- Pendiente: que Emi ponga el PDF como «cualquier persona con el enlace».
+
 ## 2026-11-19 · TikTok: DOF 2 (perdón de multas) el martes 24
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: aviso de la sesión de TikTok: Emi pidió el DOF 2; la pieza está en el panel para aprobar.

@@ -692,4 +692,27 @@ await t("modo manual (TikTok): ajustes de la app, descarga con nombre legible, �
   await tic(env, async () => assert.fail("el panel no publica TikTok"));
   assert.equal((await S(`/api/pieza/${p.id}/resolver`, { salio: true, url: "https://www.tiktok.com/@emiliano_milla_/video/1" })).j.estado, "publicada");
 });
+await t("hilo de X: respuestas encadenadas bajo la misma aprobación; si una falla, no reintenta y avisa", async () => {
+  const env = nuevoEnv(), S = await sesion(env);
+  await S("/api/llaves/x", llavesX);
+  const p = (await S("/api/pieza", { red: "x", texto: "Post raíz.", hilo: "Respuesta uno.\n---\nRespuesta dos con https://emilianomilla.site" })).j;
+  assert.deepEqual(p.hilo, ["Respuesta uno.", "Respuesta dos con https://emilianomilla.site"]);
+  const ap = (await S(`/api/pieza/${p.id}/aprobar`, {})).j;
+  const sin = (await S("/api/pieza", { id: p.id, red: "x", texto: "Post raíz.", hilo: "Respuesta uno cambiada." })).j;
+  assert.equal(sin.aprobado_huella, undefined, "cambiar el hilo reinicia la aprobación");
+  await S("/api/pieza", { id: p.id, red: "x", texto: "Post raíz.", hilo: ["Respuesta uno.", "Respuesta dos con https://emilianomilla.site"] });
+  await S(`/api/pieza/${p.id}/aprobar`, {});
+  const vistos = []; let n = 0;
+  const fx = async (url, o) => { const b = JSON.parse(o.body); vistos.push(b); n++; return Response.json({ data: { id: String(100 + n) } }, { status: 201 }); };
+  const r = await publicar(env, p.id, fx);
+  assert.equal(r.estado, "publicada"); assert.deepEqual(r.publicada.hilo, ["102", "103"]);
+  assert.equal(vistos[1].reply.in_reply_to_tweet_id, "101"); assert.equal(vistos[2].reply.in_reply_to_tweet_id, "102");
+  const q = (await S("/api/pieza", { red: "x", texto: "Otro raíz distinto.", hilo: ["Uno.", "Dos."] })).j;
+  await S(`/api/pieza/${q.id}/aprobar`, {});
+  let m = 0;
+  const falla = async () => { m++; return m === 1 ? Response.json({ data: { id: "500" } }, { status: 201 }) : Response.json({ title: "error" }, { status: 503 }); };
+  const r2 = await publicar(env, q.id, falla);
+  assert.equal(r2.estado, "publicada"); assert.match(r2.error, /Respuesta 1 no salió/); assert.equal(m, 2, "sin reintentos");
+  assert.equal((await S("/api/pieza", { red: "linkedin", texto: "LI", hilo: ["no"] })).s, 400);
+});
 console.log(`\n${ok} pruebas aprobadas`);
