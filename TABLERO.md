@@ -4,11 +4,14 @@ Generado el 2026-11-17 por `redes.py tablero`. No se edita a mano.
 
 ## Pendiente de Emi
 
+- [ ] **alta** · linkedin · Reescribir y aprobar el post de LinkedIn sobre la portada 2027 (jueves 19, 8:30)
 - [ ] **alta** · x · Aprobar: Opinión: ley de pagos digitales (solo texto)
 - [ ] **alta** · x · Aprobar: IA + Derecho: boletines (solo texto)
 - [ ] **alta** · x · Reescribir con tus palabras y aprobar los dos posts nuevos de X (jueves: pagos digitales; viernes: boletines)
+- [ ] **alta** · x · Reescribir y aprobar el post de X sobre la portada 2027 de The Economist (miércoles 18, 9:00)
 - [ ] **media** · TikTok e Instagram · Abrir las cuentas de TikTok e Instagram (@emilianomilla_; Instagram tipo Creador)
 - [ ] **media** · Videos · Elegir el día para grabar los 4 videos (Matriz, DOF, Boletines, Vox)
+- [ ] **media** · Videos · Video de la portada 2027: dar tu opinión y aprobar el guion en la sesión de videos (paso 1)
 - [ ] **media** · linkedin · Mandar foto y capturas reales de tus herramientas para el documento de 8 láminas de LinkedIn (la primera muestra «se veía muy IA»)
 - [ ] **media** · tiktok · TikTok: decidir usuario, nombre visible, biografía, tipo de cuenta y pilares (preguntas en el chat de la Matriz, 18/11)
 - [ ] **media** · x · Para el miércoles 18: subir al panel una foto o clip (más de 10 s) del gym de esta semana, y decir qué entrenaste y a qué hora
@@ -22,8 +25,9 @@ Generado el 2026-11-17 por `redes.py tablero`. No se edita a mano.
 |---|---|---|---|---|
 | 2026-11-16 10:30 | linkedin | Documento de 6 láminas: ¿Adiós al efectivo? (publicado por la skill de LinkedIn) | linkedin-pro | publicada |
 | 2026-11-17 09:00 | x | Post de lanzamiento (opción A, con el mapa de la Matriz General) | x-viral | publicada |
-| 2026-11-18 08:30 | linkedin | Documento de 8 láminas: herramientas que construí (tentativo: pendiente de foto y capturas reales de Emi) | linkedin-pro | idea |
+| 2026-11-18 09:00 | x | Portada 2027 de The Economist: la IA y el derecho (solo texto) | x-viral | borrador |
 | 2026-11-18 19:30 | x | Estilo de vida: gym (falta foto o clip de Emi) | x-viral | idea |
+| 2026-11-19 08:30 | linkedin | Portada 2027 de The Economist: la IA y el derecho | linkedin-pro | borrador |
 | 2026-11-19 09:00 | x | Opinión: ley de pagos digitales (solo texto) | x-viral | lista para aprobar |
 | 2026-11-19 19:30 | tiktok | Video animado del DOF (tal cual): primer video, el día que abra la cuenta | tiktok-studio | idea |
 | 2026-11-20 09:00 | x | IA + Derecho: boletines (solo texto) | x-viral | lista para aprobar |
@@ -34,8 +38,9 @@ Generado el 2026-11-17 por `redes.py tablero`. No se edita a mano.
 ## Próximas
 
 - 2026-11-17 09:00 · x · Post de lanzamiento (opción A, con el mapa de la Matriz General) (publicada)
-- 2026-11-18 08:30 · linkedin · Documento de 8 láminas: herramientas que construí (tentativo: pendiente de foto y capturas reales de Emi) (idea)
+- 2026-11-18 09:00 · x · Portada 2027 de The Economist: la IA y el derecho (solo texto) (borrador)
 - 2026-11-18 19:30 · x · Estilo de vida: gym (falta foto o clip de Emi) (idea)
+- 2026-11-19 08:30 · linkedin · Portada 2027 de The Economist: la IA y el derecho (borrador)
 - 2026-11-19 09:00 · x · Opinión: ley de pagos digitales (solo texto) (lista para aprobar)
 - 2026-11-19 19:30 · tiktok · Video animado del DOF (tal cual): primer video, el día que abra la cuenta (idea)
 - 2026-11-20 09:00 · x · IA + Derecho: boletines (solo texto) (lista para aprobar)
@@ -49,10 +54,12 @@ Generado el 2026-11-17 por `redes.py tablero`. No se edita a mano.
 - 2026-11-26 19:30 · tiktok · Video 3 · Boletines (idea)
 - 2026-11-28 19:00 · instagram · Reel 4 · Vox, el estudio de video que construí (narrado con la voz de Emi) (idea)
 - 2026-11-28 19:30 · tiktok · Video 4 · Vox (idea)
+- 2026-12-01 08:30 · linkedin · Documento de 8 láminas: herramientas que construí (tentativo: pendiente de foto y capturas reales de Emi) (idea)
 
 ## Ideas abiertas
 
 - **2026-11-13-lanzamiento** · Soy abogado, no programador, y desde el 7 de noviembre construí con IA herramientas que me quitan tareas: la IA reemplaza tareas, no criterio. · ia-derecho · decidida
+- **2026-11-18-economist-2027** · The Economist resume la IA de 2027 en «aceleración, riesgos y reacción». En el derecho mexicano la reacción llegó antes que la aceleración: se prohíbe o se desconfía sin haberla usado. El riesgo no es el abogado que usa IA, sino el que firma sin verificar. · ia-derecho · decidida
 
 ## Avisos del validador
 

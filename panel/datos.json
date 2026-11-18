@@ -177,6 +177,84 @@
      "donde": ""
     }
    ]
+  },
+  {
+   "id": "2026-11-18-economist-2027",
+   "fecha_alta": "2026-11-18",
+   "origen": "emi",
+   "espacio": "personal",
+   "pilar": "ia-derecho",
+   "tesis": "The Economist resume la IA de 2027 en «aceleración, riesgos y reacción». En el derecho mexicano la reacción llegó antes que la aceleración: se prohíbe o se desconfía sin haberla usado. El riesgo no es el abogado que usa IA, sino el que firma sin verificar.",
+   "postura_emi": {
+    "texto": "la IA reemplaza tareas, no criterio",
+    "fuente": "chat de la Matriz de Redes, 13/11/2026; el ángulo de esta idea es propuesta de la Matriz y Emi lo confirma al reescribir y aprobar"
+   },
+   "tipo": "noticia",
+   "caduca": "2026-11-24",
+   "evidencia": [
+    {
+     "fuente": "https://x.com/TheEconomist/status/2122488851939606631 (17/11/2026 00:35 UTC): «Modern life can feel like being in a sci-fi story—all that is missing is the aliens. They probably won’t appear in 2027. Here are ten other things to watch out for»; 63,973 me gusta y 3,096 respuestas al 18/11",
+     "nivel": "oficial",
+     "tipo": "cita"
+    },
+    {
+     "fuente": "Portada «The World Ahead 2027» (ilustración de Cleon Peterson): «Artificial intelligence: Acceleration, risks and backlash»; «Trump’s final chapter: Not going quietly»; «After Iran: Regional and global reverberations»; «Climate change: Hottest year ever, again»; «Populism on the rise: What is mightier than Le Pen?»; «Hollywood reboots: Franchise fatigue»",
+     "nivel": "oficial",
+     "tipo": "cita"
+    },
+    {
+     "fuente": "El artículo de las diez tendencias (economist.com, de pago) NO se pudo leer: no se citan las diez tendencias, solo lo que dice la portada y el tuit",
+     "nivel": "criterio",
+     "tipo": "límite"
+    }
+   ],
+   "riesgo_juridico": {
+    "nivel": 1,
+    "motivo": "opinión sobre el uso de IA en la profesión; sin asuntos ni clientes. La portada es obra de The Economist: se cita o se enlaza, no se reproduce como material propio"
+   },
+   "riesgo_politico": {
+    "nivel": 1,
+    "motivo": "la portada toca a Trump, Irán y el populismo; el ángulo elegido se queda en IA y derecho"
+   },
+   "riesgo_reputacional": {
+    "nivel": 2,
+    "motivo": "decir que los despachos prohíben la IA puede leerse como alusión al despacho donde trabaja: se habla del gremio en general y nunca se nombra a nadie"
+   },
+   "activos_disponibles": [
+    "mapa de la Matriz General (imagen propia)",
+    "herramientas propias de Emi como ejemplo"
+   ],
+   "activos_necesarios": [
+    "postura de Emi con sus palabras al reescribir",
+    "guion del video aprobado por Emi"
+   ],
+   "costo": {
+    "minutos_emi": 30,
+    "creditos_kie": 0,
+    "caracteres_elevenlabs": 0,
+    "usd": 0
+   },
+   "estado": "decidida",
+   "pendiente_de_emi": [
+    {
+     "que": "Reescribir y aprobar el post de X sobre la portada 2027 de The Economist (miércoles 18, 9:00)",
+     "prioridad": 1,
+     "sesion": "x",
+     "donde": "#piezas"
+    },
+    {
+     "que": "Reescribir y aprobar el post de LinkedIn sobre la portada 2027 (jueves 19, 8:30)",
+     "prioridad": 1,
+     "sesion": "linkedin",
+     "donde": "#piezas"
+    },
+    {
+     "que": "Video de la portada 2027: dar tu opinión y aprobar el guion en la sesión de videos (paso 1)",
+     "prioridad": 2,
+     "sesion": "Videos",
+     "donde": ""
+    }
+   ]
   }
  ],
  "calendario": [
@@ -235,14 +313,16 @@
    "semana": "2026-W47"
   },
   {
-   "id": "li-documento",
-   "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-18T08:30:00-06:00",
-   "red": "linkedin",
-   "skill": "linkedin-pro",
-   "titulo": "Documento de 8 láminas: herramientas que construí (tentativo: pendiente de foto y capturas reales de Emi)",
-   "estado": "idea",
-   "minutos_emi": 20,
+   "id": "x-economist-2027",
+   "idea": "2026-11-18-economist-2027",
+   "fecha": "2026-11-18T09:00:00-06:00",
+   "red": "x",
+   "cuenta": "@emilianomilla_",
+   "skill": "x-viral",
+   "titulo": "Portada 2027 de The Economist: la IA y el derecho (solo texto)",
+   "estado": "borrador",
+   "minutos_emi": 10,
+   "en_panel": true,
    "semana": "2026-W47"
   },
   {
@@ -256,6 +336,19 @@
    "titulo": "Estilo de vida: gym (falta foto o clip de Emi)",
    "estado": "idea",
    "minutos_emi": 10,
+   "semana": "2026-W47"
+  },
+  {
+   "id": "li-economist-2027",
+   "idea": "2026-11-18-economist-2027",
+   "fecha": "2026-11-19T08:30:00-06:00",
+   "red": "linkedin",
+   "cuenta": "linkedin.com/in/emiliano-milla",
+   "skill": "linkedin-pro",
+   "titulo": "Portada 2027 de The Economist: la IA y el derecho",
+   "estado": "borrador",
+   "minutos_emi": 15,
+   "en_panel": true,
    "semana": "2026-W47"
   },
   {
@@ -414,6 +507,17 @@
    "minutos_emi": 10,
    "productora": "editor-studio",
    "semana": "2026-W48"
+  },
+  {
+   "id": "li-documento",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-12-01T08:30:00-06:00",
+   "red": "linkedin",
+   "skill": "linkedin-pro",
+   "titulo": "Documento de 8 láminas: herramientas que construí (tentativo: pendiente de foto y capturas reales de Emi)",
+   "estado": "idea",
+   "minutos_emi": 20,
+   "semana": "2026-W49"
   }
  ],
  "semana": [
@@ -445,14 +549,16 @@
    "semana": "2026-W47"
   },
   {
-   "id": "li-documento",
-   "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-18T08:30:00-06:00",
-   "red": "linkedin",
-   "skill": "linkedin-pro",
-   "titulo": "Documento de 8 láminas: herramientas que construí (tentativo: pendiente de foto y capturas reales de Emi)",
-   "estado": "idea",
-   "minutos_emi": 20,
+   "id": "x-economist-2027",
+   "idea": "2026-11-18-economist-2027",
+   "fecha": "2026-11-18T09:00:00-06:00",
+   "red": "x",
+   "cuenta": "@emilianomilla_",
+   "skill": "x-viral",
+   "titulo": "Portada 2027 de The Economist: la IA y el derecho (solo texto)",
+   "estado": "borrador",
+   "minutos_emi": 10,
+   "en_panel": true,
    "semana": "2026-W47"
   },
   {
@@ -466,6 +572,19 @@
    "titulo": "Estilo de vida: gym (falta foto o clip de Emi)",
    "estado": "idea",
    "minutos_emi": 10,
+   "semana": "2026-W47"
+  },
+  {
+   "id": "li-economist-2027",
+   "idea": "2026-11-18-economist-2027",
+   "fecha": "2026-11-19T08:30:00-06:00",
+   "red": "linkedin",
+   "cuenta": "linkedin.com/in/emiliano-milla",
+   "skill": "linkedin-pro",
+   "titulo": "Portada 2027 de The Economist: la IA y el derecho",
+   "estado": "borrador",
+   "minutos_emi": 15,
+   "en_panel": true,
    "semana": "2026-W47"
   },
   {
@@ -558,14 +677,16 @@
    "semana": "2026-W47"
   },
   {
-   "id": "li-documento",
-   "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-18T08:30:00-06:00",
-   "red": "linkedin",
-   "skill": "linkedin-pro",
-   "titulo": "Documento de 8 láminas: herramientas que construí (tentativo: pendiente de foto y capturas reales de Emi)",
-   "estado": "idea",
-   "minutos_emi": 20,
+   "id": "x-economist-2027",
+   "idea": "2026-11-18-economist-2027",
+   "fecha": "2026-11-18T09:00:00-06:00",
+   "red": "x",
+   "cuenta": "@emilianomilla_",
+   "skill": "x-viral",
+   "titulo": "Portada 2027 de The Economist: la IA y el derecho (solo texto)",
+   "estado": "borrador",
+   "minutos_emi": 10,
+   "en_panel": true,
    "semana": "2026-W47"
   },
   {
@@ -579,6 +700,19 @@
    "titulo": "Estilo de vida: gym (falta foto o clip de Emi)",
    "estado": "idea",
    "minutos_emi": 10,
+   "semana": "2026-W47"
+  },
+  {
+   "id": "li-economist-2027",
+   "idea": "2026-11-18-economist-2027",
+   "fecha": "2026-11-19T08:30:00-06:00",
+   "red": "linkedin",
+   "cuenta": "linkedin.com/in/emiliano-milla",
+   "skill": "linkedin-pro",
+   "titulo": "Portada 2027 de The Economist: la IA y el derecho",
+   "estado": "borrador",
+   "minutos_emi": 15,
+   "en_panel": true,
    "semana": "2026-W47"
   },
   {
@@ -737,9 +871,26 @@
    "minutos_emi": 10,
    "productora": "editor-studio",
    "semana": "2026-W48"
+  },
+  {
+   "id": "li-documento",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-12-01T08:30:00-06:00",
+   "red": "linkedin",
+   "skill": "linkedin-pro",
+   "titulo": "Documento de 8 láminas: herramientas que construí (tentativo: pendiente de foto y capturas reales de Emi)",
+   "estado": "idea",
+   "minutos_emi": 20,
+   "semana": "2026-W49"
   }
  ],
  "pendientes_emi": [
+  {
+   "que": "Reescribir y aprobar el post de LinkedIn sobre la portada 2027 (jueves 19, 8:30)",
+   "prioridad": 1,
+   "sesion": "linkedin",
+   "donde": "#piezas"
+  },
   {
    "que": "Aprobar: Opinión: ley de pagos digitales (solo texto)",
    "prioridad": 1,
@@ -759,6 +910,12 @@
    "donde": "#piezas"
   },
   {
+   "que": "Reescribir y aprobar el post de X sobre la portada 2027 de The Economist (miércoles 18, 9:00)",
+   "prioridad": 1,
+   "sesion": "x",
+   "donde": "#piezas"
+  },
+  {
    "que": "Abrir las cuentas de TikTok e Instagram (@emilianomilla_; Instagram tipo Creador)",
    "prioridad": 2,
    "sesion": "TikTok e Instagram",
@@ -769,6 +926,12 @@
    "prioridad": 2,
    "sesion": "Videos",
    "donde": "#ideas"
+  },
+  {
+   "que": "Video de la portada 2027: dar tu opinión y aprobar el guion en la sesión de videos (paso 1)",
+   "prioridad": 2,
+   "sesion": "Videos",
+   "donde": ""
   },
   {
    "que": "Mandar foto y capturas reales de tus herramientas para el documento de 8 láminas de LinkedIn (la primera muestra «se veía muy IA»)",
