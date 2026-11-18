@@ -34,6 +34,29 @@
       "minutos_emi": 10,
       "productora": "editor-studio",
       "cuenta": "@emiliano_milla_"
+    },
+    {
+      "id": "ig-reel-dof",
+      "idea": "2026-11-13-lanzamiento",
+      "fecha": "2026-12-03T19:00:00-06:00",
+      "red": "instagram",
+      "skill": "instagram-studio",
+      "titulo": "Reel 2 · DOF",
+      "estado": "idea",
+      "minutos_emi": 20,
+      "productora": "editor-studio"
+    },
+    {
+      "id": "tt-dof",
+      "idea": "2026-11-13-lanzamiento",
+      "fecha": "2026-12-03T19:30:00-06:00",
+      "red": "tiktok",
+      "skill": "tiktok-studio",
+      "titulo": "Video 2 · DOF",
+      "estado": "idea",
+      "minutos_emi": 10,
+      "productora": "editor-studio",
+      "cuenta": "@emiliano_milla_"
     }
   ]
 }

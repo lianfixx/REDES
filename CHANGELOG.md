@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-19 · TikTok: DOF 2 (perdón de multas) el martes 24
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: aviso de la sesión de TikTok: Emi pidió el DOF 2; la pieza está en el panel para aprobar.
+- Cambios: el DOF 2 de TikTok ocupa el martes 24 a las 19:30; el video grabado del DOF y su Reel pasan al jueves 3 de diciembre.
+- Archivos: `calendario/2026-W48.json`, `calendario/2026-W49.json`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado.
+- Pendiente: decisiones de Emi (sello final y su regla de mandar primero al WhatsApp de la firma).
+
 ## 2026-11-18 · Videos de The Economist: sábado 21 y domingo 22
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: Emi, 18/11/2026: audio «está bien»; «Que salgan sábado 21 y domingo 22»; la voz, «déjalos así».

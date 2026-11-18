@@ -3,27 +3,16 @@
   "tope_minutos_emi": 120,
   "items": [
     {
-      "id": "ig-reel-dof",
-      "idea": "2026-11-13-lanzamiento",
-      "fecha": "2026-11-24T19:00:00-06:00",
-      "red": "instagram",
-      "skill": "instagram-studio",
-      "titulo": "Reel 2 · DOF",
-      "estado": "idea",
-      "minutos_emi": 20,
-      "productora": "editor-studio"
-    },
-    {
-      "id": "tt-dof",
+      "id": "tt-dof2-multas",
       "idea": "2026-11-13-lanzamiento",
       "fecha": "2026-11-24T19:30:00-06:00",
       "red": "tiktok",
+      "cuenta": "@emiliano_milla_",
       "skill": "tiktok-studio",
-      "titulo": "Video 2 · DOF",
-      "estado": "idea",
+      "titulo": "DOF 2: perdón de multas del SAT (video animado)",
+      "estado": "lista para aprobar",
       "minutos_emi": 10,
-      "productora": "editor-studio",
-      "cuenta": "@emiliano_milla_"
+      "en_panel": true
     },
     {
       "id": "ig-carrusel",
