@@ -674,4 +674,22 @@ await t("Claude retira sus borradores sin aprobar; no los de Emi ni los aprobado
   const e = (await S("/api/pieza", { red: "x", texto: "De Emi, otra cosa." })).j;
   assert.equal((await can(e.id)).s, 400, "de Emi no");
 });
+await t("modo manual (TikTok): ajustes de la app, descarga con nombre legible, «la programé» y «ya la publiqué»", async () => {
+  const env = nuevoEnv(), c = llamar(env), S = await sesion(env);
+  const H = { Authorization: "Bearer " + "c".repeat(32) };
+  const a = (await c(req("/api/claude/archivo", { nombre: "raro nombre.mp4", tipo: "video/mp4", bytes: 1000 }, H))).j;
+  await W.fetch(new Request(`${O}/api/claude/archivo/${a.id}/0`, { method: "PUT", headers: { ...H, "Content-Type": "application/octet-stream" }, body: new Uint8Array(1000) }), env);
+  const p = (await c(req("/api/claude/pieza", { red: "tiktok", texto: "Descripción #derecho", archivos: [a.id], fecha: new Date(Date.now() + 864e5).toISOString(),
+    app: { ajustes: ["Etiqueta de IA: apagada", "", "Subtítulos automáticos: no"], portada: "Cuadro del segundo 0.3" } }, H))).j;
+  assert.deepEqual(p.app, { ajustes: ["Etiqueta de IA: apagada", "Subtítulos automáticos: no"], portada: "Cuadro del segundo 0.3" });
+  assert.equal((await c(req("/api/claude/pieza", { red: "tiktok", texto: "x".repeat(2201) }, H))).j.revision.errores.length, 1, "máximo 2200");
+  const r = await W.fetch(new Request(`${O}/api/claude/archivo/${a.id}?descargar=1&nombre=2026-11-19-tiktok-video../x`, { headers: H }), env);
+  assert.match(r.headers.get("Content-Disposition"), /attachment; filename\*=UTF-8''2026-11-19-tiktok-videox\.mp4/);
+  const ap = (await S(`/api/pieza/${p.id}/aprobar`, {})).j;
+  assert.equal(ap.estado, "aprobada", "TikTok no se programa en el panel");
+  const pr = (await S(`/api/pieza/${p.id}/resolver`, { programada: true })).j;
+  assert.equal(pr.estado, "programada en la red");
+  await tic(env, async () => assert.fail("el panel no publica TikTok"));
+  assert.equal((await S(`/api/pieza/${p.id}/resolver`, { salio: true, url: "https://www.tiktok.com/@emiliano_milla_/video/1" })).j.estado, "publicada");
+});
 console.log(`\n${ok} pruebas aprobadas`);

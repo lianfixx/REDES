@@ -65,7 +65,7 @@ function largoX(t) {
   for (const ch of sin) { const o = ch.codePointAt(0); if ([0x200d, 0xfe0f, 0xfe0e].includes(o) || (o >= 0x1f3fb && o <= 0x1f3ff)) continue; total += o > 0x10ff && !(o >= 0x2000 && o <= 0x206f) ? 2 : 1; }
   return total;
 }
-const LIMITES = { x: 280, linkedin: 3000, instagram: 2200, tiktok: 4000 };
+const LIMITES = { x: 280, linkedin: 3000, instagram: 2200, tiktok: 2200 };
 function revisar(texto, red) {
   const e = [], w = [], plano = ` ${aplanar(texto)} `;
   if (RE_AUTORIA.some((r) => r.test(aplanar(texto)))) e.push("Dice o insinúa que la pieza la hizo una IA.");
@@ -223,7 +223,7 @@ V.pieza = (id) => {
   const fechaLocal = p.fecha ? new Intl.DateTimeFormat("sv-SE", { timeZone: ZONA, dateStyle: "short", timeStyle: "short" }).format(new Date(p.fecha)).replace(" ", "T") : "";
   const publicable = API_PUBLICA.includes(p.red) && !p.solo_app;
   const cerrada = ["publicada", "publicando", "cancelada"].includes(p.estado);
-  return `<a href="#piezas" class="tenue chico">← Piezas</a><div class="dos" style="margin-top:10px">
+  return `<a href="#piezas" class="tenue chico">← Piezas</a>${id !== "nueva" && !publicable ? `<div style="margin-top:10px;max-width:640px">${fichaManual(p)}</div>` : ""}<div class="dos" style="margin-top:10px">
     <div><form id="editor" class="tarjeta vidrio"><h2>${id === "nueva" ? "Nueva pieza" : esc(p.titulo || "Pieza")}</h2>
       <div class="fila">${chipEstado(p.pausada ? "en pausa" : p.estado)} ${p.aprobado ? `<span class="chip ok">aprobada ${fmt(p.aprobado.fecha)}</span>` : ""}
         ${p.publicada?.url ? `<a class="chip ok" href="${esc(seguro(p.publicada.url))}" target="_blank" rel="noopener">ver publicada ↗</a>` : ""}</div>
@@ -255,7 +255,7 @@ V.pieza = (id) => {
         ${id !== "nueva" && publicable && ["aprobada", "programada"].includes(p.estado) && !p.pausada ? `<button class="boton" type="button" id="publicar">Publicar ahora</button>` : ""}
         ${id !== "nueva" && !cerrada ? `<button class="boton suave" type="button" id="pausa">${p.pausada ? "Reanudar" : "Pausar"}</button>` : ""}
         ${p.estado === "publicando" ? `<button class="boton suave" type="button" id="salio">Sí salió</button><button class="boton suave" type="button" id="nosalio">No salió</button>` : ""}
-        ${p.estado === "aprobada" && !publicable ? `<button class="boton acento" type="button" id="salio">Ya la publiqué</button>` : ""}
+        ${["aprobada", "programada en la red"].includes(p.estado) && !publicable ? `<button class="boton acento" type="button" id="salio">Ya la publiqué</button>` : ""}
         ${id !== "nueva" ? `<button class="boton suave" type="button" id="copiar">Copiar texto</button>` : ""}
         ${p.red === "x" && p.publicada?.id ? `<button class="boton suave" type="button" id="metricas">Leer métricas</button>` : ""}
         ${id !== "nueva" && !cerrada ? `<button class="boton peligro" type="button" id="cancelar">Cancelar</button>` : ""}
@@ -272,6 +272,39 @@ V.pieza = (id) => {
       ${(p.historial || []).length ? `<div class="tarjeta vidrio seccion"><h3>Historial</h3><ul class="lista">${p.historial.map((h) => `<li><span class="tenue chico">${fmt(h.fecha)}</span> ${esc(h.quien)}: ${esc(h.que)}</li>`).join("")}</ul></div>` : ""}
     </div></div>`;
 };
+// Ficha para subir la pieza a mano (TikTok, Instagram o «prefiero subirla yo»): fecha, descargas, texto, ajustes y pasos.
+const PASOS_APP = {
+  tiktok: "Abre TikTok → + → Subir → elige el video → Siguiente → pega la descripción → Editar portada → Publicar. También puedes programarla en tiktok.com/tiktokstudio (hasta 30 días antes).",
+  instagram: "Abre Instagram → + → Reel o Publicación → elige el archivo → pega el texto → Portada → Compartir.",
+  linkedin: "Abre LinkedIn → Crear publicación → agrega el archivo → pega el texto → Publicar (o el reloj para programar).",
+  x: "Abre X → Publicar → agrega el archivo → pega el texto → Publicar.",
+};
+function faltan(iso) {
+  const ms = Date.parse(iso) - Date.now();
+  if (ms <= 0) return "ya es hora";
+  const h = Math.floor(ms / 3600e3), d = Math.floor(h / 24);
+  return d >= 1 ? `faltan ${d} día${d > 1 ? "s" : ""} y ${h % 24} h` : h >= 1 ? `faltan ${h} h ${Math.floor((ms % 3600e3) / 60e3)} min` : `faltan ${Math.max(1, Math.floor(ms / 60e3))} min`;
+}
+function fichaManual(p) {
+  if (["cancelada"].includes(p.estado)) return "";
+  const arch = (p.archivos || []).map(archivoDe).filter((a) => a && a.estado === "listo");
+  const hayVideo = arch.some((a) => a.clase === "video"), dia = p.fecha ? diaClave(p.fecha) : hoyMX();
+  const rol = (a) => a.clase === "video" ? "video" : hayVideo && a.clase !== "pdf" ? "portada" : a.clase === "pdf" ? "documento" : "imagen";
+  const boton = (a, i) => `<a class="boton ${rol(a) === "video" ? "acento" : "suave"}" href="${srcArchivo(a)}?descargar=1&nombre=${dia}-${esc(p.red)}-${rol(a)}${arch.filter((x) => rol(x) === rol(a)).length > 1 ? "-" + (i + 1) : ""}">Descargar ${rol(a)}</a>`;
+  const aj = p.app?.ajustes || [], marcas = (() => { try { return JSON.parse(localStorage.getItem("ajustes:" + p.id) || "[]"); } catch { return []; } })();
+  const estado = p.estado === "publicada" ? "Publicada" : p.estado === "programada en la red" ? "Programada en la app" : p.estado === "aprobada" ? "Aprobada: súbela tú" : "Por aprobar";
+  return `<div class="tarjeta vidrio ficha" style="margin-bottom:14px"><div class="fila" style="justify-content:space-between">${chipRed(p.red)}<span class="chip ${p.estado === "lista para aprobar" || p.estado === "borrador" ? "aviso" : "ok"}">${estado}</span></div>
+    <p class="fecha-dia" style="margin:10px 0 0">${p.fecha ? mayus(diaLargo(p.fecha)) : "Sin fecha"}</p>
+    <p class="tenue">${p.fecha ? `${hora(p.fecha)} · hora de México${p.estado === "publicada" ? "" : " · " + faltan(p.fecha)}` : "Ponle fecha y guarda."}</p>
+    ${arch.length ? `<div class="fila" style="margin-top:12px">${arch.map(boton).join("")}</div>` : `<p class="tenue chico" style="margin-top:10px">Esta pieza no tiene archivos en el panel.</p>`}
+    ${p.app?.portada ? `<p class="chico" style="margin-top:8px"><b>Portada:</b> ${esc(p.app.portada)}</p>` : ""}
+    <div class="fila" style="margin-top:12px;justify-content:space-between"><h3>Descripción</h3><button class="boton suave" type="button" id="copiar-ficha">Copiar</button></div>
+    <p class="chico" style="white-space:pre-wrap">${esc(p.texto)}</p><p class="tenue chico">${[...String(p.texto || "")].length}${LIMITES[p.red] ? " / " + LIMITES[p.red] : ""} caracteres</p>
+    ${aj.length ? `<h3 style="margin-top:12px">Ajustes en la app</h3><ul class="lista">${aj.map((t, i) => `<li><label class="check" style="margin:0"><input type="checkbox" data-ajuste="${i}" ${marcas.includes(i) ? "checked" : ""}> ${esc(t)}</label></li>`).join("")}</ul>` : ""}
+    <h3 style="margin-top:12px">Pasos</h3><p class="chico">${esc(PASOS_APP[p.red] || "")}</p>
+    ${["aprobada", "programada en la red"].includes(p.estado) ? `<div class="fila" style="margin-top:12px"><button class="boton acento" type="button" id="salio-ficha">Ya la publiqué</button>${p.estado === "aprobada" ? `<button class="boton suave" type="button" id="programe-ficha">La programé en la app</button>` : ""}</div>` : ""}
+    ${["lista para aprobar", "borrador"].includes(p.estado) ? `<p class="tenue chico" style="margin-top:10px">Primero apruébala (botón «Aprobar»).</p>` : ""}</div>`;
+}
 const ESTADO_SUBIDA = { pendiente: "por subir", subiendo: "subiendo", procesando: "la red lo procesa", lista: "listo en la red" };
 function subidaHtml(p) {
   if (!(p.archivos || []).length || !p.subida) return p.publicar_al_terminar ? `<p class="tenue chico">Sale sola en cuanto la red termine de procesar los archivos.</p>` : "";
@@ -520,6 +553,16 @@ function conectar(vista, arg) {
     for (const [id, salio] of [["#salio", true], ["#nosalio", false]]) $(id)?.addEventListener("click", (ev) => accion(ev, async () => {
       const url = salio ? prompt("Pega el enlace del post (opcional):") || "" : "";
       await api(`/api/pieza/${arg}/resolver`, { salio, url }); aviso("Anotado.");
+    }));
+    $("#copiar-ficha")?.addEventListener("click", async () => { await navigator.clipboard.writeText(actual?.texto || ed.texto.value); aviso("Descripción copiada."); });
+    $("#salio-ficha")?.addEventListener("click", (ev) => accion(ev, async () => {
+      const url = prompt("Pega el enlace del video o post (opcional):") || "";
+      await api(`/api/pieza/${arg}/resolver`, { salio: true, url }); aviso("Anotada como publicada.");
+    }));
+    $("#programe-ficha")?.addEventListener("click", (ev) => accion(ev, async () => { await api(`/api/pieza/${arg}/resolver`, { programada: true }); aviso("Anotado: programada en la app."); }));
+    document.querySelectorAll("[data-ajuste]").forEach((c) => c.addEventListener("change", () => {
+      const m = [...document.querySelectorAll("[data-ajuste]")].filter((x) => x.checked).map((x) => Number(x.dataset.ajuste));
+      try { localStorage.setItem("ajustes:" + arg, JSON.stringify(m)); } catch {}
     }));
     $("#copiar")?.addEventListener("click", async () => { await navigator.clipboard.writeText(ed.texto.value); aviso("Texto copiado."); });
   }

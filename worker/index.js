@@ -87,7 +87,7 @@ export function parecido(a, b) {
   for (const w of va) if (vb.has(w)) comun++;
   return comun / (va.size + vb.size - comun);
 }
-const LIMITES = { x: 280, linkedin: 3000, instagram: 2200, tiktok: 4000 };
+const LIMITES = { x: 280, linkedin: 3000, instagram: 2200, tiktok: 2200 };
 const REDES = ["x", "linkedin", "instagram", "tiktok"];
 // X Premium permite posts largos (hasta 25,000). Se enciende con la variable X_PREMIUM_HASTA (AAAA-MM-DD, hora de México):
 // pasada esa fecha el límite vuelve solo a 280 (Emi activó la prueba de 7 días el 18/11/2026).
@@ -492,9 +492,16 @@ async function servirArchivo(env, id, request, url) {
     },
   });
   const h = { ...SEGURIDAD, "Content-Type": a.tipo, "Content-Length": String(hasta - desde + 1), "Accept-Ranges": "bytes", "Cache-Control": "private, max-age=3600",
-    "Content-Disposition": `${url.searchParams.get("descargar") ? "attachment" : "inline"}; filename*=UTF-8''${encodeURIComponent(a.nombre)}` };
+    "Content-Disposition": `${url.searchParams.get("descargar") ? "attachment" : "inline"}; filename*=UTF-8''${encodeURIComponent(nombreDescarga(a, url.searchParams.get("nombre")))}` };
   if (status === 206) h["Content-Range"] = `bytes ${desde}-${hasta}/${a.bytes}`;
   return new Response(cuerpo, { status, headers: h });
+}
+// Nombre legible al descargar (p. ej. 2026-11-19-tiktok-video): solo letras, números y guiones; conserva la extensión real.
+function nombreDescarga(a, pedido) {
+  const base = String(pedido || "").replace(/[^A-Za-z0-9_-]/g, "").slice(0, 60);
+  if (!base) return a.nombre;
+  const ext = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/gif": "gif", "video/mp4": "mp4", "video/quicktime": "mov", "application/pdf": "pdf" }[a.tipo] || "bin";
+  return `${base}.${ext}`;
 }
 const usosDe = (lista, id) => lista.filter((p) => (p.archivos || []).includes(id));
 async function borrarArchivo(env, id, quien) {
@@ -822,6 +829,12 @@ async function guardarPiezas(env, lista) {
   await guardar(env, "piezas", lista);
 }
 
+function limpiarApp(a) {
+  if (!a || typeof a !== "object") return null;
+  const ajustes = (Array.isArray(a.ajustes) ? a.ajustes : []).map((x) => limpiar(x, 200)).filter((x) => x.trim()).slice(0, 15);
+  const portada = limpiar(a.portada || "", 200);
+  return ajustes.length || portada ? { ajustes, portada } : null;
+}
 async function editarPieza(env, datos, quien) {
   const red = String(datos.red || "");
   if (!REDES.includes(red)) throw new Error("Red inválida.");
@@ -860,6 +873,8 @@ async function editarPieza(env, datos, quien) {
   Object.assign(p, {
     red, texto, titulo: limpiar(datos.titulo ?? p.titulo ?? "", 120), idea: limpiar(datos.idea ?? p.idea ?? "", 80),
     media: datos.media !== undefined ? limpiarUrl(datos.media) : p.media || "", nota: limpiar(datos.nota ?? p.nota ?? "", 600), archivos,
+    // Ajustes para subirla a mano en la app (lista de pasos marcables). No son contenido: no tocan la aprobación.
+    app: datos.app !== undefined ? limpiarApp(datos.app) : p.app || null,
     // Emi prefiere subirla él desde la app (o lleva algo que la API no sube, como un enlace de Drive).
     solo_app: datos.solo_app !== undefined ? !!datos.solo_app : !!p.solo_app,
     fecha: fecha ? fecha.toISOString() : datos.fecha === "" || datos.fecha === null ? null : p.fecha || null, actualizada: ahoraISO(),
@@ -1301,8 +1316,16 @@ export async function api(request, env, url) {
       if (accion === "resolver") {
         // Una pieza atorada en «publicando» (el servidor se cortó a la mitad): Emi revisa en la red y dice qué pasó.
         const p = await actualizarPieza(env, id, (x) => {
-          const manual = x.estado === "aprobada" && (x.solo_app || !PUBLICADORES[x.red]);
+          const manual = (x.estado === "aprobada" && (x.solo_app || !PUBLICADORES[x.red])) || x.estado === "programada en la red";
           if (x.estado !== "publicando" && !manual) throw new Error("Esa pieza no está atorada ni se publica desde la app.");
+          if (manual && cuerpo.programada) {
+            // Emi la dejó programada dentro de la app (TikTok Studio, LinkedIn…): el panel solo lo anota.
+            const f = cuerpo.fecha ? new Date(cuerpo.fecha) : null;
+            if (f && !Number.isNaN(f.getTime())) x.fecha = f.toISOString();
+            x.estado = "programada en la red"; x.externa = x.externa || { clave: x.id, fuente: "Emi" };
+            x.historial.unshift({ fecha: ahoraISO(), quien: "Emi", que: "la programó en la app" });
+            return;
+          }
           if (!manual && Date.now() - Date.parse(x.publicando_desde || 0) < 10 * 60e3) throw new Error("Espera 10 minutos antes de resolverla.");
           if (manual && !cuerpo.salio) throw new Error("Usa «Ya la publiqué» cuando la subas desde la app.");
           if (cuerpo.salio) { x.estado = "publicada"; x.publicada = { fecha: ahoraISO(), url: limpiarUrl(cuerpo.url), id: "" }; }

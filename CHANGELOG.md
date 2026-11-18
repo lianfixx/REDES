@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-18 · Ficha para subir a mano (TikTok e Instagram)
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: Emi, 17/11/2026, en el chat de TikTok (lo transmite esa sesión): «quiero que tik tok funcione para que me diga hora, fecha, pueda descargar el video y portada a subir, descripción y algo más si falta por favor (lo haré yo de forma manual)».
+- Cambios: en cada pieza que se sube a mano, una ficha con fecha y hora grandes y cuánto falta, botones «Descargar video» y «Descargar portada» (con nombre legible), descripción con «Copiar» y contador, ajustes de la app marcables (los manda la skill en `app.ajustes`), pasos, «Ya la publiqué» (con enlace) y «La programé en la app». TikTok: máximo 2,200 caracteres. El panel no publica TikTok (la API oficial deja en privado lo de apps sin auditar).
+- Archivos: `worker/{index.js,prueba.mjs}`, `panel/app.js`, `skills/matriz-redes/references/panel.md`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado. Recordatorio el día de la pieza → no se hizo (el panel no manda avisos al teléfono).
+- Pendiente: que tiktok-studio mande `app.ajustes` en sus piezas.
+
 ## 2026-11-18 · Claude puede retirar sus propios borradores sin aprobar
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: la sesión de x-viral informó que Emi pidió («Cancela tú») retirar las tres opciones cortas de The Economist.

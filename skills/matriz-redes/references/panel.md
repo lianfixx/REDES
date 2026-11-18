@@ -25,7 +25,8 @@ Cloudflare Worker (`worker/index.js`) con el panel (`panel/`). Se publica solo c
 
 ```
 GET  /api/claude/estado                       piezas, notas, encargos, inspiración, archivos, bitácora, conexiones
-POST /api/claude/pieza   {red, texto, titulo, fecha (ISO), idea, media, nota, archivos: [id, …]}
+POST /api/claude/pieza   {red, texto, titulo, fecha (ISO), idea, media, nota, archivos: [id, …], app: {ajustes: ["Etiqueta de IA: apagada (motivo)", …], portada: "cuadro del segundo 0.3"}}
+                         «app» arma la ficha para subir a mano (TikTok, Instagram): no es contenido y no toca la aprobación
 POST /api/claude/pieza/<id>/cancelar    {motivo}  retira un borrador de Claude que Emi no ha aprobado
 POST /api/claude/pieza/<id>/comentario  {texto}
 POST /api/claude/pieza/<id>/sugerencia  {hora (ISO), motivo}
