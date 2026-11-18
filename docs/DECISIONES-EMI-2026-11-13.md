@@ -84,3 +84,7 @@ Sobre el post del DOF en X, Emi escribió: «HAZLO TÚ, TODO TIENE QUE ESTAR AUT
 ## Octava ronda (15/11/2026, chat de la Matriz)
 - Lanzamiento del martes 17 (X): «tú haz la captura o recrea lo de obsidian». La Matriz recrea el grafo de su Matriz General, sin nombres de clientes ni despachos, y lo propone en la pieza.
 - Archivos: «que siempre pida mi aprobación». Se retira la excepción del 14/11 (adjuntar sin aprobación). La Matriz solo PROPONE archivos; él acepta con «Agregar y aprobar».
+
+## Décima ronda (18/11/2026, chat de la Matriz)
+- Post de LinkedIn sobre la portada 2027 de The Economist: sale el jueves 19 a las 8:30. «Te dije que sea el jueves, jamás me desobedezcas». Es excepción suya al tope de 2 piezas por semana en LinkedIn.
+- Regla: cuando Emi fija un día, ese día manda sobre la cadencia; la Matriz avisa del choque, pero no cambia la fecha.

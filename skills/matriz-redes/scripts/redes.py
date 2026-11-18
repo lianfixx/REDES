@@ -314,8 +314,10 @@ def revisar_cadencia(lista: list[tuple], cfg: dict, donde: str, semanal: bool) -
     for red, l in por_red.items():
         cad = cfg["redes"][red]["cadencia"]
         l.sort(key=lambda x: x[0])
-        if semanal and len(l) > cad["max_por_semana"]:
-            err.append(f"{donde}: {red} lleva {len(l)} piezas y su tope semanal es {cad['max_por_semana']} ({cfg['redes'][red]['fuente_cadencia']})")
+        # Una pieza con «excepcion_emi» (cita y fuente de Emi) no cuenta contra el tope semanal: él fijó ese día.
+        contadas = [x for x in l if not (isinstance(x[1].get("excepcion_emi"), dict) and x[1]["excepcion_emi"].get("texto") and x[1]["excepcion_emi"].get("fuente"))]
+        if semanal and len(contadas) > cad["max_por_semana"]:
+            err.append(f"{donde}: {red} lleva {len(contadas)} piezas y su tope semanal es {cad['max_por_semana']} ({cfg['redes'][red]['fuente_cadencia']})")
         conteo: dict[dt.date, int] = {}
         for f, _ in l:
             conteo[f.date()] = conteo.get(f.date(), 0) + 1

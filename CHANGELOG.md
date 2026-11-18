@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-18 · LinkedIn: The Economist vuelve al jueves 19 (decisión de Emi)
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: Emi, 18/11/2026: «Te dije que sea el jueves, jamás me desobedezcas».
+- Cambios: el post de LinkedIn sobre la portada 2027 queda el jueves 19 a las 8:30, como tercera pieza de la semana por excepción de Emi. Regla anotada: el día que fija Emi manda sobre la cadencia; el validador acepta una pieza con «excepcion_emi» (cita y fuente) fuera del tope semanal.
+- Archivos: `skills/matriz-redes/scripts/redes.py`, `calendario/2026-W47.json`, `calendario/2026-W48.json`, `ideas/2026-11-18-economist-2027.json`, `decisiones/2026-11-18-economist-2027.json`, `docs/DECISIONES-EMI-2026-11-13.md`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado.
+- Pendiente: que Emi elija la opción A o B en la sesión de LinkedIn.
+
 ## 2026-11-18 · LinkedIn: The Economist pasa al lunes 23; post del mapa el miércoles 18
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: aviso de la sesión de LinkedIn: esta semana ya tiene 2 piezas (tope que fijó Emi).

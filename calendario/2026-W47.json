@@ -65,6 +65,22 @@
       "minutos_emi": 10
     },
     {
+      "id": "li-economist-2027",
+      "idea": "2026-11-18-economist-2027",
+      "fecha": "2026-11-19T08:30:00-06:00",
+      "red": "linkedin",
+      "cuenta": "linkedin.com/in/emiliano-milla",
+      "skill": "linkedin-pro",
+      "titulo": "Portada 2027 de The Economist: la IA y el derecho",
+      "estado": "borrador",
+      "minutos_emi": 15,
+      "en_panel": true,
+      "excepcion_emi": {
+        "texto": "Te dije que sea el jueves",
+        "fuente": "chat de la Matriz de Redes, 18/11/2026"
+      }
+    },
+    {
       "idea": "2026-11-13-lanzamiento",
       "red": "x",
       "cuenta": "@emilianomilla_",

@@ -3,18 +3,6 @@
   "tope_minutos_emi": 120,
   "items": [
     {
-      "id": "li-economist-2027",
-      "idea": "2026-11-18-economist-2027",
-      "fecha": "2026-11-23T08:30:00-06:00",
-      "red": "linkedin",
-      "cuenta": "linkedin.com/in/emiliano-milla",
-      "skill": "linkedin-pro",
-      "titulo": "Portada 2027 de The Economist: la IA y el derecho",
-      "estado": "borrador",
-      "minutos_emi": 15,
-      "en_panel": true
-    },
-    {
       "id": "ig-reel-dof",
       "idea": "2026-11-13-lanzamiento",
       "fecha": "2026-11-24T19:00:00-06:00",
