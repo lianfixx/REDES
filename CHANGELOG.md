@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-18 · LinkedIn: The Economist pasa al lunes 23; post del mapa el miércoles 18
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: aviso de la sesión de LinkedIn: esta semana ya tiene 2 piezas (tope que fijó Emi).
+- Cambios: el post de LinkedIn sobre la portada 2027 pasa al lunes 23 a las 8:30; se agrega al calendario el post del mapa (aprobado por Emi el 17/11) del miércoles 18 a las 8:30.
+- Archivos: `calendario/2026-W47.json`, `calendario/2026-W48.json`, `ideas/2026-11-18-economist-2027.json`, `decisiones/2026-11-18-economist-2027.json`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado.
+- Pendiente: que Emi elija la opción A o B en la sesión de LinkedIn.
+
 ## 2026-11-18 · Idea de coyuntura: portada «The World Ahead 2027» de The Economist
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: Emi, 18/11/2026: post «dándole al clavo» sobre el tuit de The Economist, uno serio para X y otro para LinkedIn en sus sesiones, y un video hecho con código, paso por paso.
