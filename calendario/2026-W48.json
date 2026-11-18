@@ -22,7 +22,8 @@
       "titulo": "Video 2 · DOF",
       "estado": "idea",
       "minutos_emi": 10,
-      "productora": "editor-studio"
+      "productora": "editor-studio",
+      "cuenta": "@emiliano_milla_"
     },
     {
       "id": "ig-carrusel",
@@ -54,7 +55,8 @@
       "titulo": "Video 3 · Boletines",
       "estado": "idea",
       "minutos_emi": 10,
-      "productora": "editor-studio"
+      "productora": "editor-studio",
+      "cuenta": "@emiliano_milla_"
     },
     {
       "id": "ig-reel-vox",
@@ -76,7 +78,8 @@
       "titulo": "Video 4 · Vox",
       "estado": "idea",
       "minutos_emi": 10,
-      "productora": "editor-studio"
+      "productora": "editor-studio",
+      "cuenta": "@emiliano_milla_"
     }
   ],
   "nota": "Videos grabados recorridos el 18/11: dependen de que Emi grabe y de que existan las cuentas. TikTok: 48 h entre videos y máximo 3 por semana (criterio de su skill)."

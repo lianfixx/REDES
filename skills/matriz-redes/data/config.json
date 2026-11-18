@@ -56,8 +56,8 @@
     "tiktok": {
       "skill": "tiktok-studio",
       "repo": "lianfixx/TikTok",
-      "cuenta": "",
-      "activa": false,
+      "cuenta": "@emiliano_milla_",
+      "activa": true,
       "cadencia": {
         "max_por_dia": 1,
         "separacion_min_h": 48,

@@ -100,7 +100,8 @@
       "skill": "tiktok-studio",
       "titulo": "Video animado del DOF (tal cual): primer video, el día que abra la cuenta",
       "estado": "idea",
-      "minutos_emi": 10
+      "minutos_emi": 10,
+      "cuenta": "@emiliano_milla_"
     },
     {
       "idea": "2026-11-13-lanzamiento",
@@ -146,7 +147,8 @@
       "titulo": "Video 1 · Matriz",
       "estado": "idea",
       "minutos_emi": 10,
-      "productora": "editor-studio"
+      "productora": "editor-studio",
+      "cuenta": "@emiliano_milla_"
     }
   ]
 }

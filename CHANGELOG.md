@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-18 · TikTok: cuenta @emiliano_milla_ activa
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: la sesión de TikTok informó las respuestas de Emi (17/11).
+- Cambios: TikTok queda activa con la cuenta @emiliano_milla_ (existía desde 2020); calendario y pendientes al día; decisiones registradas.
+- Archivos: `skills/matriz-redes/data/config.json`, `calendario/2026-W47.json`, `calendario/2026-W48.json`, `ideas/2026-11-13-lanzamiento.json`, `docs/DECISIONES-EMI-2026-11-13.md`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado.
+- Pendiente: aprobación de la descripción del DOF; cuenta de Instagram.
+
 ## 2026-11-18 · X Premium: posts largos en el panel
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: la sesión de x-viral avisó que Emi activó la prueba de 7 días de X Premium (18/11) y pidió un texto largo; el panel cortaba X en 280.

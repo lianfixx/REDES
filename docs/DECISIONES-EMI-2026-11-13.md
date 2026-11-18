@@ -88,3 +88,8 @@ Sobre el post del DOF en X, Emi escribió: «HAZLO TÚ, TODO TIENE QUE ESTAR AUT
 ## Décima ronda (18/11/2026, chat de la Matriz)
 - Post de LinkedIn sobre la portada 2027 de The Economist: sale el jueves 19 a las 8:30. «Te dije que sea el jueves, jamás me desobedezcas». Es excepción suya al tope de 2 piezas por semana en LinkedIn.
 - Regla: cuando Emi fija un día, ese día manda sobre la cadencia; la Matriz avisa del choque, pero no cambia la fecha.
+
+## Undécima ronda (17/11/2026, chat de TikTok; lo informa esa sesión)
+- TikTok: reusa su cuenta @emiliano_milla_ (de 2020, personal; 1,007 seguidores). Bio: «Disciplina > motivación. Derecho, gym y opiniones que incomodan.» (frases cortas, sin decir «abogado»).
+- Pilares en TikTok: tercios iguales, adaptados al material. Grabará gym o vlogs cada semana. Revisión de fuentes: mensual.
+- Video del DOF: eligió la descripción B; la versión ajustada por la skill espera su aprobación.
