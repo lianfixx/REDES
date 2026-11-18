@@ -243,10 +243,10 @@
      "donde": "#piezas"
     },
     {
-     "que": "Reescribir y aprobar el post de LinkedIn sobre la portada 2027 (jueves 19, 8:30)",
+     "que": "Elegir y reescribir la opción A o B del post de LinkedIn sobre la portada 2027 (en la sesión de LinkedIn); sale el lunes 23 a las 8:30",
      "prioridad": 1,
      "sesion": "linkedin",
-     "donde": "#piezas"
+     "donde": ""
     },
     {
      "que": "Video de la portada 2027: dar tu opinión y aprobar el guion en la sesión de videos (paso 1)",
@@ -313,6 +313,19 @@
    "semana": "2026-W47"
   },
   {
+   "id": "li-mapa",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-18T08:30:00-06:00",
+   "red": "linkedin",
+   "cuenta": "linkedin.com/in/emiliano-milla",
+   "skill": "linkedin-pro",
+   "titulo": "Post del mapa de la Matriz General (aprobado por Emi el 17/11; lo publica él desde el teléfono)",
+   "estado": "aprobada",
+   "minutos_emi": 5,
+   "en_panel": true,
+   "semana": "2026-W47"
+  },
+  {
    "id": "x-economist-2027",
    "idea": "2026-11-18-economist-2027",
    "fecha": "2026-11-18T09:00:00-06:00",
@@ -336,19 +349,6 @@
    "titulo": "Estilo de vida: gym (falta foto o clip de Emi)",
    "estado": "idea",
    "minutos_emi": 10,
-   "semana": "2026-W47"
-  },
-  {
-   "id": "li-economist-2027",
-   "idea": "2026-11-18-economist-2027",
-   "fecha": "2026-11-19T08:30:00-06:00",
-   "red": "linkedin",
-   "cuenta": "linkedin.com/in/emiliano-milla",
-   "skill": "linkedin-pro",
-   "titulo": "Portada 2027 de The Economist: la IA y el derecho",
-   "estado": "borrador",
-   "minutos_emi": 15,
-   "en_panel": true,
    "semana": "2026-W47"
   },
   {
@@ -424,6 +424,19 @@
    "minutos_emi": 10,
    "productora": "editor-studio",
    "semana": "2026-W47"
+  },
+  {
+   "id": "li-economist-2027",
+   "idea": "2026-11-18-economist-2027",
+   "fecha": "2026-11-23T08:30:00-06:00",
+   "red": "linkedin",
+   "cuenta": "linkedin.com/in/emiliano-milla",
+   "skill": "linkedin-pro",
+   "titulo": "Portada 2027 de The Economist: la IA y el derecho",
+   "estado": "borrador",
+   "minutos_emi": 15,
+   "en_panel": true,
+   "semana": "2026-W48"
   },
   {
    "id": "ig-reel-dof",
@@ -549,6 +562,19 @@
    "semana": "2026-W47"
   },
   {
+   "id": "li-mapa",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-18T08:30:00-06:00",
+   "red": "linkedin",
+   "cuenta": "linkedin.com/in/emiliano-milla",
+   "skill": "linkedin-pro",
+   "titulo": "Post del mapa de la Matriz General (aprobado por Emi el 17/11; lo publica él desde el teléfono)",
+   "estado": "aprobada",
+   "minutos_emi": 5,
+   "en_panel": true,
+   "semana": "2026-W47"
+  },
+  {
    "id": "x-economist-2027",
    "idea": "2026-11-18-economist-2027",
    "fecha": "2026-11-18T09:00:00-06:00",
@@ -572,19 +598,6 @@
    "titulo": "Estilo de vida: gym (falta foto o clip de Emi)",
    "estado": "idea",
    "minutos_emi": 10,
-   "semana": "2026-W47"
-  },
-  {
-   "id": "li-economist-2027",
-   "idea": "2026-11-18-economist-2027",
-   "fecha": "2026-11-19T08:30:00-06:00",
-   "red": "linkedin",
-   "cuenta": "linkedin.com/in/emiliano-milla",
-   "skill": "linkedin-pro",
-   "titulo": "Portada 2027 de The Economist: la IA y el derecho",
-   "estado": "borrador",
-   "minutos_emi": 15,
-   "en_panel": true,
    "semana": "2026-W47"
   },
   {
@@ -677,6 +690,19 @@
    "semana": "2026-W47"
   },
   {
+   "id": "li-mapa",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-11-18T08:30:00-06:00",
+   "red": "linkedin",
+   "cuenta": "linkedin.com/in/emiliano-milla",
+   "skill": "linkedin-pro",
+   "titulo": "Post del mapa de la Matriz General (aprobado por Emi el 17/11; lo publica él desde el teléfono)",
+   "estado": "aprobada",
+   "minutos_emi": 5,
+   "en_panel": true,
+   "semana": "2026-W47"
+  },
+  {
    "id": "x-economist-2027",
    "idea": "2026-11-18-economist-2027",
    "fecha": "2026-11-18T09:00:00-06:00",
@@ -700,19 +726,6 @@
    "titulo": "Estilo de vida: gym (falta foto o clip de Emi)",
    "estado": "idea",
    "minutos_emi": 10,
-   "semana": "2026-W47"
-  },
-  {
-   "id": "li-economist-2027",
-   "idea": "2026-11-18-economist-2027",
-   "fecha": "2026-11-19T08:30:00-06:00",
-   "red": "linkedin",
-   "cuenta": "linkedin.com/in/emiliano-milla",
-   "skill": "linkedin-pro",
-   "titulo": "Portada 2027 de The Economist: la IA y el derecho",
-   "estado": "borrador",
-   "minutos_emi": 15,
-   "en_panel": true,
    "semana": "2026-W47"
   },
   {
@@ -788,6 +801,19 @@
    "minutos_emi": 10,
    "productora": "editor-studio",
    "semana": "2026-W47"
+  },
+  {
+   "id": "li-economist-2027",
+   "idea": "2026-11-18-economist-2027",
+   "fecha": "2026-11-23T08:30:00-06:00",
+   "red": "linkedin",
+   "cuenta": "linkedin.com/in/emiliano-milla",
+   "skill": "linkedin-pro",
+   "titulo": "Portada 2027 de The Economist: la IA y el derecho",
+   "estado": "borrador",
+   "minutos_emi": 15,
+   "en_panel": true,
+   "semana": "2026-W48"
   },
   {
    "id": "ig-reel-dof",
@@ -886,10 +912,10 @@
  ],
  "pendientes_emi": [
   {
-   "que": "Reescribir y aprobar el post de LinkedIn sobre la portada 2027 (jueves 19, 8:30)",
+   "que": "Elegir y reescribir la opción A o B del post de LinkedIn sobre la portada 2027 (en la sesión de LinkedIn); sale el lunes 23 a las 8:30",
    "prioridad": 1,
    "sesion": "linkedin",
-   "donde": "#piezas"
+   "donde": ""
   },
   {
    "que": "Aprobar: Opinión: ley de pagos digitales (solo texto)",
