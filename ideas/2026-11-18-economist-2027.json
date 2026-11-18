@@ -1,0 +1,78 @@
+{
+  "id": "2026-11-18-economist-2027",
+  "fecha_alta": "2026-11-18",
+  "origen": "emi",
+  "espacio": "personal",
+  "pilar": "ia-derecho",
+  "tesis": "The Economist resume la IA de 2027 en «aceleración, riesgos y reacción». En el derecho mexicano la reacción llegó antes que la aceleración: se prohíbe o se desconfía sin haberla usado. El riesgo no es el abogado que usa IA, sino el que firma sin verificar.",
+  "postura_emi": {
+    "texto": "la IA reemplaza tareas, no criterio",
+    "fuente": "chat de la Matriz de Redes, 13/11/2026; el ángulo de esta idea es propuesta de la Matriz y Emi lo confirma al reescribir y aprobar"
+  },
+  "tipo": "noticia",
+  "caduca": "2026-11-24",
+  "evidencia": [
+    {
+      "fuente": "https://x.com/TheEconomist/status/2122488851939606631 (17/11/2026 00:35 UTC): «Modern life can feel like being in a sci-fi story—all that is missing is the aliens. They probably won’t appear in 2027. Here are ten other things to watch out for»; 63,973 me gusta y 3,096 respuestas al 18/11",
+      "nivel": "oficial",
+      "tipo": "cita"
+    },
+    {
+      "fuente": "Portada «The World Ahead 2027» (ilustración de Cleon Peterson): «Artificial intelligence: Acceleration, risks and backlash»; «Trump’s final chapter: Not going quietly»; «After Iran: Regional and global reverberations»; «Climate change: Hottest year ever, again»; «Populism on the rise: What is mightier than Le Pen?»; «Hollywood reboots: Franchise fatigue»",
+      "nivel": "oficial",
+      "tipo": "cita"
+    },
+    {
+      "fuente": "El artículo de las diez tendencias (economist.com, de pago) NO se pudo leer: no se citan las diez tendencias, solo lo que dice la portada y el tuit",
+      "nivel": "criterio",
+      "tipo": "límite"
+    }
+  ],
+  "riesgo_juridico": {
+    "nivel": 1,
+    "motivo": "opinión sobre el uso de IA en la profesión; sin asuntos ni clientes. La portada es obra de The Economist: se cita o se enlaza, no se reproduce como material propio"
+  },
+  "riesgo_politico": {
+    "nivel": 1,
+    "motivo": "la portada toca a Trump, Irán y el populismo; el ángulo elegido se queda en IA y derecho"
+  },
+  "riesgo_reputacional": {
+    "nivel": 2,
+    "motivo": "decir que los despachos prohíben la IA puede leerse como alusión al despacho donde trabaja: se habla del gremio en general y nunca se nombra a nadie"
+  },
+  "activos_disponibles": [
+    "mapa de la Matriz General (imagen propia)",
+    "herramientas propias de Emi como ejemplo"
+  ],
+  "activos_necesarios": [
+    "postura de Emi con sus palabras al reescribir",
+    "guion del video aprobado por Emi"
+  ],
+  "costo": {
+    "minutos_emi": 30,
+    "creditos_kie": 0,
+    "caracteres_elevenlabs": 0,
+    "usd": 0
+  },
+  "estado": "decidida",
+  "pendiente_de_emi": [
+    {
+      "que": "Reescribir y aprobar el post de X sobre la portada 2027 de The Economist (miércoles 18, 9:00)",
+      "prioridad": 1,
+      "sesion": "x",
+      "donde": "#piezas"
+    },
+    {
+      "que": "Reescribir y aprobar el post de LinkedIn sobre la portada 2027 (jueves 19, 8:30)",
+      "prioridad": 1,
+      "sesion": "linkedin",
+      "donde": "#piezas"
+    },
+    {
+      "que": "Video de la portada 2027: dar tu opinión y aprobar el guion en la sesión de videos (paso 1)",
+      "prioridad": 2,
+      "sesion": "Videos",
+      "donde": ""
+    }
+  ]
+}

@@ -29,14 +29,16 @@
       "url": "https://x.com/emilianomilla_/status/2122706559125901364"
     },
     {
-      "id": "li-documento",
-      "idea": "2026-11-13-lanzamiento",
-      "fecha": "2026-11-18T08:30:00-06:00",
-      "red": "linkedin",
-      "skill": "linkedin-pro",
-      "titulo": "Documento de 8 láminas: herramientas que construí (tentativo: pendiente de foto y capturas reales de Emi)",
-      "estado": "idea",
-      "minutos_emi": 20
+      "id": "x-economist-2027",
+      "idea": "2026-11-18-economist-2027",
+      "fecha": "2026-11-18T09:00:00-06:00",
+      "red": "x",
+      "cuenta": "@emilianomilla_",
+      "skill": "x-viral",
+      "titulo": "Portada 2027 de The Economist: la IA y el derecho (solo texto)",
+      "estado": "borrador",
+      "minutos_emi": 10,
+      "en_panel": true
     },
     {
       "idea": "2026-11-13-lanzamiento",
@@ -49,6 +51,18 @@
       "titulo": "Estilo de vida: gym (falta foto o clip de Emi)",
       "estado": "idea",
       "minutos_emi": 10
+    },
+    {
+      "id": "li-economist-2027",
+      "idea": "2026-11-18-economist-2027",
+      "fecha": "2026-11-19T08:30:00-06:00",
+      "red": "linkedin",
+      "cuenta": "linkedin.com/in/emiliano-milla",
+      "skill": "linkedin-pro",
+      "titulo": "Portada 2027 de The Economist: la IA y el derecho",
+      "estado": "borrador",
+      "minutos_emi": 15,
+      "en_panel": true
     },
     {
       "idea": "2026-11-13-lanzamiento",

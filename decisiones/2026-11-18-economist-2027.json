@@ -1,0 +1,50 @@
+{
+  "id": "dec-2026-11-18-economist-2027",
+  "fecha": "2026-11-18",
+  "idea": "2026-11-18-economist-2027",
+  "piezas": [
+    {
+      "red": "x",
+      "formato": "post original de solo texto (serio)",
+      "skill": "x-viral",
+      "fecha_objetivo": "2026-11-18"
+    },
+    {
+      "red": "linkedin",
+      "formato": "post de texto",
+      "skill": "linkedin-pro",
+      "fecha_objetivo": "2026-11-19"
+    },
+    {
+      "red": "x",
+      "formato": "video vertical corto hecho con código (después del guion)",
+      "skill": "x-viral",
+      "fecha_objetivo": "2026-11-21"
+    }
+  ],
+  "productoras": {
+    "video": "vox-studio (espacio personal): collage con código, por pasos; primero opinión y guion de Emi"
+  },
+  "alternativas": [
+    {
+      "opcion": "IA: aceleración, riesgos y reacción, llevado al derecho mexicano",
+      "puntuacion": 0,
+      "nota": "elegida: es el pilar de Emi y ya existe su postura"
+    },
+    {
+      "opcion": "México no aparece en la portada / elecciones de 2027",
+      "puntuacion": 0,
+      "nota": "es política: necesita la postura de Emi dicha por él"
+    },
+    {
+      "opcion": "descifrar los símbolos de la portada",
+      "puntuacion": 0,
+      "nota": "lo hace todo el mundo; no es su terreno"
+    }
+  ],
+  "gano": "IA y derecho: es el único renglón de la portada donde Emi tiene algo propio que decir y pruebas (sus herramientas)",
+  "perdio": "política y descifrado de símbolos: más ruido, pero sin postura dictada por Emi o fuera de su perfil",
+  "razonamiento": "La conversación es la portada de 2027; el renglón de IA dice «aceleración, riesgos y reacción». Emi entra por ahí con su tesis («reemplaza tareas, no criterio») y con una afirmación discutible sobre el gremio. X sale primero (miércoles 9:00) porque la tendencia caduca; LinkedIn el jueves 8:30, con texto propio y sin empatar día. Video con código al estilo collage, no pizarra: una portada se comenta mejor con recortes y texto que con trazos; se construye por pasos y empieza por la opinión de Emi. Puntuación: no se usó (pesos sin aprobar). Emi pidió las piezas; el ángulo es propuesta de la Matriz y él lo confirma al reescribir y aprobar cada pieza.",
+  "decidio": "emi",
+  "fuente_emi": "chat de la Matriz de Redes, 18/11/2026: «Crea un post perfecto de acuerdo a mi perfil… que genere polémica, que esté bien pensada, natural y humana. Una seria para X y otra para LinkedIn… Además genera un video»"
+}

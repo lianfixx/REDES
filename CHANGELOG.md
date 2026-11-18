@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-18 · Idea de coyuntura: portada «The World Ahead 2027» de The Economist
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: Emi, 18/11/2026: post «dándole al clavo» sobre el tuit de The Economist, uno serio para X y otro para LinkedIn en sus sesiones, y un video hecho con código, paso por paso.
+- Cambios: idea y decisión registradas (ángulo: IA «aceleración, riesgos y reacción» llevado al derecho; solo se cita la portada y el tuit, porque el artículo de pago no se pudo leer). Calendario: X miércoles 18 a las 9:00, LinkedIn jueves 19 a las 8:30; el documento de 8 láminas pasa al martes 1 de diciembre (la semana 48 ya llena los 120 minutos de Emi). Encargos enviados a las sesiones de X, LinkedIn y videos.
+- Archivos: `ideas/2026-11-18-economist-2027.json`, `decisiones/2026-11-18-economist-2027.json`, `calendario/2026-W47.json`, `calendario/2026-W48.json`, `calendario/2026-W49.json`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado.
+- Pendiente: borradores de las skills en el panel y aprobación de Emi; opinión de Emi para el guion del video.
+
 ## 2026-11-18 · TikTok responde: reglas de crecimiento, cadencia y calendario recorrido; lanzamiento publicado
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: respuesta de la sesión de TikTok (18/11) a las peticiones de la Matriz; sincronía pedida por Emi.
