@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-18 · Videos de The Economist: sábado 21 y domingo 22
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: Emi, 18/11/2026: audio «está bien»; «Que salgan sábado 21 y domingo 22»; la voz, «déjalos así».
+- Cambios: calendario con la parte 1 el sábado 21 y la parte 2 el domingo 22, en X (10:00) y TikTok (19:30); el video grabado de la Matriz pasa al 1 de diciembre. Encargos a las sesiones de videos, X y TikTok.
+- Archivos: `calendario/2026-W47.json`, `calendario/2026-W49.json`, `docs/DECISIONES-EMI-2026-11-13.md`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado.
+- Pendiente: que la sesión de videos suba los MP4 al panel y cada red deje su pieza; aprobación de Emi.
+
 ## 2026-11-18 · Ficha para subir a mano (TikTok e Instagram)
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: Emi, 17/11/2026, en el chat de TikTok (lo transmite esa sesión): «quiero que tik tok funcione para que me diga hora, fecha, pueda descargar el video y portada a subir, descripción y algo más si falta por favor (lo haré yo de forma manual)».

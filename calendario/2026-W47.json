@@ -116,39 +116,80 @@
       "minutos_emi": 10
     },
     {
+      "idea": "2026-11-18-economist-2027",
+      "minutos_emi": 5,
+      "estado": "en produccion",
+      "en_panel": true,
+      "excepcion_emi": {
+        "texto": "Que salgan sábado 21 y domingo 22",
+        "fuente": "chat de la Matriz de Redes, 18/11/2026"
+      },
+      "id": "x-economist-video-1",
+      "fecha": "2026-11-21T10:00:00-06:00",
+      "red": "x",
+      "cuenta": "@emilianomilla_",
+      "skill": "x-viral",
+      "titulo": "Video The Economist 2027, parte 1: ¿Profecía o agenda?"
+    },
+    {
       "idea": "2026-11-13-lanzamiento",
       "red": "x",
       "cuenta": "@emilianomilla_",
       "skill": "x-viral",
       "en_panel": true,
       "id": "x-vida-sabado",
-      "fecha": "2026-11-21T10:00:00-06:00",
+      "fecha": "2026-11-21T14:30:00-06:00",
       "titulo": "Estilo de vida: entreno, trabajo y maestría (falta material de Emi)",
       "estado": "idea",
       "minutos_emi": 10
     },
     {
-      "id": "ig-reel-matriz",
-      "idea": "2026-11-13-lanzamiento",
-      "fecha": "2026-11-21T19:00:00-06:00",
-      "red": "instagram",
-      "skill": "instagram-studio",
-      "titulo": "Reel 1 · Matriz",
-      "estado": "idea",
-      "minutos_emi": 20,
-      "productora": "editor-studio"
-    },
-    {
-      "id": "tt-matriz",
-      "idea": "2026-11-13-lanzamiento",
+      "idea": "2026-11-18-economist-2027",
+      "minutos_emi": 5,
+      "estado": "en produccion",
+      "en_panel": true,
+      "excepcion_emi": {
+        "texto": "Que salgan sábado 21 y domingo 22",
+        "fuente": "chat de la Matriz de Redes, 18/11/2026"
+      },
+      "id": "tt-economist-video-1",
       "fecha": "2026-11-21T19:30:00-06:00",
       "red": "tiktok",
+      "cuenta": "@emiliano_milla_",
       "skill": "tiktok-studio",
-      "titulo": "Video 1 · Matriz",
-      "estado": "idea",
-      "minutos_emi": 10,
-      "productora": "editor-studio",
-      "cuenta": "@emiliano_milla_"
+      "titulo": "Video The Economist 2027, parte 1: ¿Profecía o agenda?"
+    },
+    {
+      "idea": "2026-11-18-economist-2027",
+      "minutos_emi": 5,
+      "estado": "en produccion",
+      "en_panel": true,
+      "excepcion_emi": {
+        "texto": "Que salgan sábado 21 y domingo 22",
+        "fuente": "chat de la Matriz de Redes, 18/11/2026"
+      },
+      "id": "x-economist-video-2",
+      "fecha": "2026-11-22T10:00:00-06:00",
+      "red": "x",
+      "cuenta": "@emilianomilla_",
+      "skill": "x-viral",
+      "titulo": "Video The Economist 2027, parte 2: Firma sin leer"
+    },
+    {
+      "idea": "2026-11-18-economist-2027",
+      "minutos_emi": 5,
+      "estado": "en produccion",
+      "en_panel": true,
+      "excepcion_emi": {
+        "texto": "Que salgan sábado 21 y domingo 22",
+        "fuente": "chat de la Matriz de Redes, 18/11/2026"
+      },
+      "id": "tt-economist-video-2",
+      "fecha": "2026-11-22T19:30:00-06:00",
+      "red": "tiktok",
+      "cuenta": "@emiliano_milla_",
+      "skill": "tiktok-studio",
+      "titulo": "Video The Economist 2027, parte 2: Firma sin leer"
     }
   ]
 }

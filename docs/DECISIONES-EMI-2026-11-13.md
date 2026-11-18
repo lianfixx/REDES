@@ -93,3 +93,8 @@ Sobre el post del DOF en X, Emi escribió: «HAZLO TÚ, TODO TIENE QUE ESTAR AUT
 - TikTok: reusa su cuenta @emiliano_milla_ (de 2020, personal; 1,007 seguidores). Bio: «Disciplina > motivación. Derecho, gym y opiniones que incomodan.» (frases cortas, sin decir «abogado»).
 - Pilares en TikTok: tercios iguales, adaptados al material. Grabará gym o vlogs cada semana. Revisión de fuentes: mensual.
 - Video del DOF: eligió la descripción B; la versión ajustada por la skill espera su aprobación.
+
+## Duodécima ronda (18/11/2026, chat de la Matriz): videos de The Economist
+- Audio de los dos videos: «Está bien».
+- Fechas: «Que salgan sábado 21 y domingo 22» (parte 1 el sábado, parte 2 el domingo).
+- Voz sintética: «Déjalos así».

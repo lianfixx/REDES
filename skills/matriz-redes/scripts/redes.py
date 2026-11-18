@@ -326,7 +326,8 @@ def revisar_cadencia(lista: list[tuple], cfg: dict, donde: str, semanal: bool) -
                 err.append(f"{donde}: {red} lleva {n} piezas el {d_} (hora de México) y su tope diario es {cad['max_por_dia']}")
         for (f1, a), (f2, b) in zip(l, l[1:]):
             h = (f2 - f1).total_seconds() / 3600
-            if h < cad["separacion_min_h"]:
+            exc = lambda it: isinstance(it.get("excepcion_emi"), dict) and it["excepcion_emi"].get("texto") and it["excepcion_emi"].get("fuente")
+            if h < cad["separacion_min_h"] and not (exc(a) and exc(b)):  # si Emi fijó los dos días, su fecha manda
                 err.append(f"{donde}: {red}: «{a.get('id')}» y «{b.get('id')}» van a {h:.1f} h y la separación mínima es {cad['separacion_min_h']} h")
     return err
 
