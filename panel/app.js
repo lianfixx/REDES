@@ -72,7 +72,9 @@ function revisar(texto, red) {
   if (/\b(castorena|indep)\b/.test(plano)) e.push("Nombra al despacho o a un cliente.");
   if (/(comenta|escribe|responde|pon) \S+ (y|para) (te|les) (mando|paso|envio|comparto)/.test(plano)) e.push("Anzuelo de interacción: las redes lo castigan.");
   const largo = red === "x" ? largoX(texto) : [...String(texto || "")].length;
-  if (LIMITES[red] && largo > LIMITES[red]) e.push(`Pasa de ${LIMITES[red]} caracteres.`);
+  const max = red === "x" ? (S.estado?.limite_x || 280) : LIMITES[red];
+  if (max && largo > max) e.push(`Pasa de ${max} caracteres.`);
+  if (red === "x" && largo > 280 && max > 280) w.push("Post largo (X Premium): antes de «Mostrar más» se ven los primeros 280 caracteres.");
   if (red === "linkedin" && [...String(texto || "").split("\n")[0]].length > 140) w.push("La primera línea pasa de 140 caracteres (se corta antes de «ver más»).");
   if (red === "x" && /#\w/.test(texto)) w.push("En X los hashtags no suman.");
   return { e, w, largo };
@@ -437,7 +439,7 @@ function conectar(vista, arg) {
     const actualizar = () => {
       const p = { red: ed.red.value, texto: ed.texto.value, media: ed.media.value, archivos: ed.archivos.value ? ed.archivos.value.split(",") : [], fecha: ed.fecha.value ? mxAISO(ed.fecha.value) : null };
       const r = revisar(p.texto, p.red);
-      $("#cont").textContent = `${r.largo}${LIMITES[p.red] ? " / " + LIMITES[p.red] : ""}${p.red === "x" ? " (enlace = 23, emoji = 2)" : ""}`;
+      $("#cont").textContent = `${r.largo}${LIMITES[p.red] ? " / " + (p.red === "x" ? (S.estado?.limite_x || 280).toLocaleString("es-MX") : LIMITES[p.red]) : ""}${p.red === "x" ? " (enlace = 23, emoji = 2)" : ""}`;
       $("#cont").classList.toggle("malo", r.e.some((x) => x.includes("caracteres")));
       $("#rev").innerHTML = r.e.map((x) => `<p class="e">✕ ${esc(x)}</p>`).join("") + r.w.map((x) => `<p class="w">⚠ ${esc(x)}</p>`).join("") || `<p class="tenue">✓ Sin errores.</p>`;
       $("#previa").innerHTML = previa(p); masLi();

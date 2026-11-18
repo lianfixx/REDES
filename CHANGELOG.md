@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-18 · X Premium: posts largos en el panel
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: la sesión de x-viral avisó que Emi activó la prueba de 7 días de X Premium (18/11) y pidió un texto largo; el panel cortaba X en 280.
+- Cambios: variable `X_PREMIUM_HASTA` (2026-11-25): hasta esa fecha X acepta hasta 25,000 caracteres; después vuelve solo a 280. El editor muestra el límite vigente y avisa que antes de «Mostrar más» se ven los primeros 280. Si X rechaza un texto largo, la pieza queda en «fallo» sin reintentos.
+- Archivos: `worker/{index.js,prueba.mjs}`, `panel/app.js`, `wrangler.jsonc`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado. Publicación real de un texto largo por la API → aún no ejecutada.
+- Pendiente: si Emi conserva Premium, cambiar la fecha de `X_PREMIUM_HASTA`.
+
 ## 2026-11-18 · LinkedIn: The Economist vuelve al jueves 19 (decisión de Emi)
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: Emi, 18/11/2026: «Te dije que sea el jueves, jamás me desobedezcas».

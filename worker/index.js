@@ -89,14 +89,22 @@ export function parecido(a, b) {
 }
 const LIMITES = { x: 280, linkedin: 3000, instagram: 2200, tiktok: 4000 };
 const REDES = ["x", "linkedin", "instagram", "tiktok"];
-export function revisarTexto(texto, red, titulo = "") {
+// X Premium permite posts largos (hasta 25,000). Se enciende con la variable X_PREMIUM_HASTA (AAAA-MM-DD, hora de México):
+// pasada esa fecha el límite vuelve solo a 280 (Emi activó la prueba de 7 días el 18/11/2026).
+export function limiteX(env, ahora = Date.now()) {
+  const h = String(env?.X_PREMIUM_HASTA || "");
+  return /^\d{4}-\d{2}-\d{2}$/.test(h) && ahora < Date.parse(`${h}T23:59:59-06:00`) ? 25000 : 280;
+}
+export function revisarTexto(texto, red, titulo = "", tope = null) {
   const errores = [], avisos = [];
   const plano = ` ${aplanar(texto)} ${aplanar(titulo)} `;
   if (autoriaIA(texto) || autoriaIA(titulo)) errores.push("Dice o insinúa que la pieza la hizo una IA: ninguna pieza lo dice (regla de Emi).");
   if (/\b(castorena|indep)\b/.test(plano)) errores.push("Nombra al despacho o a un cliente: no va en la cuenta personal.");
   if (/(comenta|escribe|responde|pon) \S+ (y|para) (te|les) (mando|paso|envio|comparto)/.test(plano)) errores.push("Anzuelo de interacción («comenta X y te mando…»): las redes lo castigan.");
   const largo = red === "x" ? largoX(texto) : [...String(texto || "")].length;
-  if (LIMITES[red] && largo > LIMITES[red]) errores.push(`Pasa de ${LIMITES[red]} caracteres (${largo}).`);
+  const max = red === "x" && tope ? tope : LIMITES[red];
+  if (max && largo > max) errores.push(`Pasa de ${max} caracteres (${largo}).`);
+  if (red === "x" && largo > 280 && max > 280) avisos.push("Post largo: solo sale con X Premium activo; lo que se ve antes de «Mostrar más» son los primeros 280 caracteres.");
   if (!String(texto || "").trim()) errores.push("El texto está vacío.");
   if (red === "linkedin" && [...String(texto || "").split("\n")[0]].length > 140) avisos.push("La primera línea pasa de 140 caracteres: en LinkedIn se corta antes de «ver más».");
   return { errores, avisos, largo };
@@ -817,7 +825,7 @@ async function guardarPiezas(env, lista) {
 async function editarPieza(env, datos, quien) {
   const red = String(datos.red || "");
   if (!REDES.includes(red)) throw new Error("Red inválida.");
-  const texto = limpiar(datos.texto, 5000);
+  const texto = limpiar(datos.texto, 26000);
   const fecha = datos.fecha ? new Date(datos.fecha) : null;
   if (fecha && Number.isNaN(fecha.getTime())) throw new Error("Fecha inválida.");
   const lista = await piezas(env);
@@ -864,7 +872,7 @@ async function editarPieza(env, datos, quien) {
   }
   p.historial.unshift({ fecha: ahoraISO(), quien, que: nueva ? "creada" : cambio ? "editada (la aprobación se reinicia)" : "datos editados" });
   p.historial = p.historial.slice(0, 50);
-  p.revision = revisarTexto(texto, red, p.titulo);
+  p.revision = revisarTexto(texto, red, p.titulo, limiteX(env));
   await guardarPiezas(env, lista);
   await bitacora(env, quien, `${nueva ? "Pieza nueva" : "Pieza editada"} (${red}): ${p.titulo || texto.slice(0, 60)}`);
   return p;
@@ -877,7 +885,7 @@ async function aprobar(env, id, cuerpo = {}) {
   if (FINALES.includes(p.estado)) throw new Error("Ya se publicó o se está publicando: no se vuelve a aprobar.");
   if (p.estado === "fallo" && !cuerpo.confirmo_que_no_salio)
     throw new Error("Esta pieza falló al publicarse. Antes de aprobarla otra vez, revisa en la red que no haya salido.");
-  const rev = revisarTexto(p.texto, p.red, p.titulo);
+  const rev = revisarTexto(p.texto, p.red, p.titulo, limiteX(env));
   if (rev.errores.length) throw new Error("No se puede aprobar: " + rev.errores.join(" "));
   if ((p.archivos || []).length) {
     const todos = await archivosDe(env), arch = p.archivos.map((x) => todos.find((a) => a.id === x));
@@ -1066,7 +1074,7 @@ export async function publicar(env, id, fetcher = fetch) {
   if (!["aprobada", "programada"].includes(p.estado)) throw new Error("Solo se publica lo aprobado.");
   const esperada = await huellaAprobacion(p);
   if (p.aprobado_huella !== esperada) throw new Error("La pieza cambió después de aprobarse: vuelve a aprobarla.");
-  const rev = revisarTexto(p.texto, p.red, p.titulo);
+  const rev = revisarTexto(p.texto, p.red, p.titulo, limiteX(env));
   if (rev.errores.length) throw new Error(rev.errores.join(" "));
   // Primero los archivos: se suben a la red (sin publicar nada). Si la red aún los procesa, sale sola en cuanto estén.
   if ((p.archivos || []).length && !(await prepararArchivos(env, id, fetcher))) {
@@ -1256,7 +1264,7 @@ export async function api(request, env, url) {
       return json({
         piezas: await piezas(env), notas: await leer(env, "notas", []), encargos: await leer(env, "encargos", []),
         enlaces: await leer(env, "enlaces", []), inspiracion: await leer(env, "inspiracion", []), bitacora: (await leer(env, "bitacora", [])).slice(0, 80),
-        gasto_x: await leer(env, `gasto:x:${mes}`, { usd: 0, llamadas: [] }), tope_x: topeX(env), archivos: (await archivosDe(env)).map(resumenArchivo),
+        gasto_x: await leer(env, `gasto:x:${mes}`, { usd: 0, llamadas: [] }), tope_x: topeX(env), limite_x: limiteX(env), archivos: (await archivosDe(env)).map(resumenArchivo),
         llave_claude_auto: (await leer(env, "llave_claude_auto", null))?.fecha || null,
         conexiones: { x: !!((await leer(env, "cred:x", null)) || (await leer(env, "cred:x2", null))), x_app: !!(await leer(env, "cred:x_app", null)), linkedin: !!(await leer(env, "cred:linkedin", null)), linkedin_app: !!(await leer(env, "cred:linkedin_app", null)),
           // Para subir archivos a X hace falta el permiso «media.write» (se pide al conectar desde el 13/11/2026).

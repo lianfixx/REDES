@@ -645,4 +645,20 @@ await t("auditoría 15/11: sin presupuesto no hay «fallo»; dos renovaciones de
   assert.equal(n, 1, "una sola renovación");
   assert.equal((await leerSecreto(env2, "x2"))?.access_token, "nuevo", "el permiso sigue guardado");
 });
+await t("X Premium: posts largos solo mientras esté vigente; si X los rechaza, falla cerrado", async () => {
+  const { limiteX } = await import("./index.js");
+  assert.equal(limiteX({}), 280); assert.equal(limiteX({ X_PREMIUM_HASTA: "2020-01-01" }), 280); assert.equal(limiteX({ X_PREMIUM_HASTA: "2999-01-01" }), 25000);
+  const largo = "Texto largo de prueba. ".repeat(100);
+  const env = nuevoEnv(), S = await sesion(env);
+  const p = (await S("/api/pieza", { red: "x", texto: largo })).j;
+  assert.match((await S(`/api/pieza/${p.id}/aprobar`, {})).j.error, /280/);
+  const env2 = nuevoEnv({ X_PREMIUM_HASTA: "2999-01-01" }), S2 = await sesion(env2);
+  await S2("/api/llaves/x", llavesX);
+  const q = (await S2("/api/pieza", { red: "x", texto: largo })).j;
+  assert.equal(q.texto.length, largo.length, "no se recorta");
+  assert.ok((await S2(`/api/pieza/${q.id}/aprobar`, {})).j.aprobado_huella);
+  let n = 0;
+  const r = await publicar(env2, q.id, async () => { n++; return Response.json({ detail: "Tweet text is too long" }, { status: 403 }); });
+  assert.equal(r.estado, "fallo"); assert.equal(n, 1, "sin reintentos");
+});
 console.log(`\n${ok} pruebas aprobadas`);
