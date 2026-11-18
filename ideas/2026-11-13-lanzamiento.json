@@ -82,12 +82,6 @@
       "donde": "https://x.com/settings/profile"
     },
     {
-      "que": "Martes 17, de 9:00 a 11:00: responder a quien comente el lanzamiento en X",
-      "prioridad": 1,
-      "sesion": "x",
-      "donde": ""
-    },
-    {
       "que": "Reescribir con tus palabras y aprobar los dos posts nuevos de X (jueves: pagos digitales; viernes: boletines)",
       "prioridad": 1,
       "sesion": "x",
@@ -109,6 +103,12 @@
       "que": "Opcional, domingo 22: qué decisión pública de la semana te importa y qué piensas, en dos líneas tuyas",
       "prioridad": 3,
       "sesion": "x",
+      "donde": ""
+    },
+    {
+      "que": "TikTok: decidir usuario, nombre visible, biografía, tipo de cuenta y pilares (preguntas en el chat de la Matriz, 18/11)",
+      "prioridad": 2,
+      "sesion": "tiktok",
       "donde": ""
     }
   ]

@@ -54,16 +54,16 @@
       "fuente_cadencia": "sesión de LinkedIn, 13/11/2026: cadencia fijada por Emi"
     },
     "tiktok": {
-      "skill": "tiktok",
+      "skill": "tiktok-studio",
       "repo": "lianfixx/TikTok",
       "cuenta": "",
       "activa": false,
       "cadencia": {
         "max_por_dia": 1,
-        "separacion_min_h": 0,
-        "max_por_semana": 5
+        "separacion_min_h": 48,
+        "max_por_semana": 3
       },
-      "fuente_cadencia": "provisional de la Matriz hasta que la skill de TikTok la declare"
+      "fuente_cadencia": "sesión de TikTok, 18/11/2026: criterio de la skill mientras se aprende (TikTok no publica una cadencia oficial)"
     },
     "instagram": {
       "skill": "instagram-studio",

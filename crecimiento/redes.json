@@ -1,6 +1,6 @@
 {
   "_doc": "Lo que sirve para crecer en cada red, con fuente y certeza (oficial | terceros | criterio). Lo llenan las skills de cada red; la Matriz lo junta. Una regla de una red pasa a otra solo como hipótesis. Lo marcado «hipótesis» se ajusta con las métricas de Emi.",
-  "actualizado": "2026-11-13",
+  "actualizado": "2026-11-18",
   "redes": {
     "x": {
       "skill": "x-viral",
@@ -158,32 +158,63 @@
       "emergencia": "Historia (Historias Studio) el mismo día; Reel solo si hay material propio y postura."
     },
     "tiktok": {
-      "skill": "tiktok",
-      "fuente": "pendiente: la skill de TikTok aún no responde",
+      "skill": "tiktok-studio",
+      "fuente": "sesión de TikTok, 18/11/2026 (Creator Academy, Normas de la comunidad, TikTok for Business, informe DSA 2025, estudios de terceros); detalle en lianfixx/tiktok docs/investigacion/",
       "cuando": [
         {
-          "regla": "Provisional: 1 al día como máximo, 3 a 5 por semana, hasta que la skill lo declare.",
+          "regla": "No hay «mejor hora» oficial: después de los primeros videos se usan tus «horas más activas» de Analytics. Mientras no haya datos: 19:30.",
           "certeza": "criterio"
+        },
+        {
+          "regla": "48 horas entre videos y máximo 3 por semana mientras se aprende; la constancia importa más que la cantidad.",
+          "certeza": "criterio"
+        },
+        {
+          "regla": "Se puede programar hasta con 30 días de anticipación desde TikTok Studio web (lo programas tú).",
+          "certeza": "oficial"
         }
       ],
       "que_premia": [
         {
-          "regla": "Pendiente de la skill de TikTok.",
+          "regla": "Gancho en los primeros 3 segundos (5 como máximo), con texto grande que diga qué se va a aprender.",
+          "certeza": "oficial"
+        },
+        {
+          "regla": "Que el video se vea completo es una señal fuerte. No hay duración ideal oficial; para estos videos, 45 a 75 segundos.",
+          "certeza": "criterio"
+        },
+        {
+          "regla": "Una cuenta nueva no arranca castigada: seguidores y éxitos previos no son factores directos. No existe «calentar» la cuenta.",
+          "certeza": "oficial"
+        },
+        {
+          "regla": "Una sola idea por video, subtítulos (más del 30 % ve sin sonido) y una pregunta al final.",
+          "certeza": "oficial"
+        },
+        {
+          "regla": "Cuenta personal, no de empresa: conserva la biblioteca completa de sonidos y el programa de recompensas.",
+          "certeza": "oficial"
+        },
+        {
+          "regla": "Texto clave lejos de los bordes: libres unos 160 px arriba, 440 abajo, 60 a la izquierda y 140 a la derecha (1080×1920).",
           "certeza": "criterio"
         }
       ],
       "hashtags": {
-        "regla": "Pendiente de la skill de TikTok.",
-        "certeza": "criterio"
+        "regla": "2 o 3 hashtags relevantes y palabras clave reales en la descripción y en el texto del video (la búsqueda los lee). #fyp no tiene efecto demostrado.",
+        "certeza": "oficial"
       },
       "enlaces": {
-        "regla": "Pendiente.",
-        "certeza": "criterio"
+        "regla": "Sin datos de contacto de negocio en el perfil si se quiere el programa de recompensas.",
+        "certeza": "oficial"
       },
       "evitar": [
-        "subir el archivo con marca de agua de otra red"
+        "subir el archivo con marca de agua o logo de otra red (queda fuera de «Para ti»)",
+        "dos videos casi iguales (el contenido duplicado no se recomienda)",
+        "anzuelos del tipo «comenta X y te mando…»",
+        "promocionar un negocio con sonidos de la biblioteca general (no tienen licencia comercial)"
       ],
-      "emergencia": "Pendiente de la skill de TikTok."
+      "emergencia": "Un video de una sola idea, de 45 a 60 segundos, a cámara, con gancho escrito en pantalla y pregunta final; mismo máster limpio que en Reels y descripción propia."
     }
   },
   "comunes": [

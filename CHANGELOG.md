@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-18 · TikTok responde: reglas de crecimiento, cadencia y calendario recorrido; lanzamiento publicado
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: respuesta de la sesión de TikTok (18/11) a las peticiones de la Matriz; sincronía pedida por Emi.
+- Cambios: «Crecer» ya tiene las reglas de TikTok con su certeza (antes decía «pendiente»). Cadencia de TikTok: 1 al día, 48 h entre videos y máximo 3 por semana (criterio de su skill, `tiktok-studio`). Calendario: el lanzamiento en X salió el 17/11 a las 9:00 (con enlace); los videos de TikTok y los Reels se recorren porque aún no hay cuentas ni grabación (DOF animado el jueves 19 si abre la cuenta; Matriz sábado 21; DOF martes 24; Boletines jueves 26; Vox sábado 28). Pendiente nuevo de Emi: decisiones de la cuenta de TikTok.
+- Archivos: `crecimiento/redes.json`, `skills/matriz-redes/data/config.json`, `calendario/2026-W47.json`, `calendario/2026-W48.json`, `ideas/2026-11-13-lanzamiento.json`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado.
+- Pendiente: respuestas de Emi sobre TikTok; que TikTok publique su `red/estado.json`.
+
 ## 2026-11-16 · Semana de X en el calendario y pendientes de Emi
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: paquete de la sesión de x-viral para la semana W47 (información para calendario y pendientes).
