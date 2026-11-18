@@ -1,5 +1,5 @@
 {
- "generado": "2026-11-17",
+ "generado": "2026-11-18",
  "redes": {
   "x": {
    "skill": "x-viral",
@@ -407,41 +407,84 @@
    "semana": "2026-W47"
   },
   {
+   "idea": "2026-11-18-economist-2027",
+   "minutos_emi": 5,
+   "estado": "en produccion",
+   "en_panel": true,
+   "excepcion_emi": {
+    "texto": "Que salgan sábado 21 y domingo 22",
+    "fuente": "chat de la Matriz de Redes, 18/11/2026"
+   },
+   "id": "x-economist-video-1",
+   "fecha": "2026-11-21T10:00:00-06:00",
+   "red": "x",
+   "cuenta": "@emilianomilla_",
+   "skill": "x-viral",
+   "titulo": "Video The Economist 2027, parte 1: ¿Profecía o agenda?",
+   "semana": "2026-W47"
+  },
+  {
    "idea": "2026-11-13-lanzamiento",
    "red": "x",
    "cuenta": "@emilianomilla_",
    "skill": "x-viral",
    "en_panel": true,
    "id": "x-vida-sabado",
-   "fecha": "2026-11-21T10:00:00-06:00",
+   "fecha": "2026-11-21T14:30:00-06:00",
    "titulo": "Estilo de vida: entreno, trabajo y maestría (falta material de Emi)",
    "estado": "idea",
    "minutos_emi": 10,
    "semana": "2026-W47"
   },
   {
-   "id": "ig-reel-matriz",
-   "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-21T19:00:00-06:00",
-   "red": "instagram",
-   "skill": "instagram-studio",
-   "titulo": "Reel 1 · Matriz",
-   "estado": "idea",
-   "minutos_emi": 20,
-   "productora": "editor-studio",
+   "idea": "2026-11-18-economist-2027",
+   "minutos_emi": 5,
+   "estado": "en produccion",
+   "en_panel": true,
+   "excepcion_emi": {
+    "texto": "Que salgan sábado 21 y domingo 22",
+    "fuente": "chat de la Matriz de Redes, 18/11/2026"
+   },
+   "id": "tt-economist-video-1",
+   "fecha": "2026-11-21T19:30:00-06:00",
+   "red": "tiktok",
+   "cuenta": "@emiliano_milla_",
+   "skill": "tiktok-studio",
+   "titulo": "Video The Economist 2027, parte 1: ¿Profecía o agenda?",
    "semana": "2026-W47"
   },
   {
-   "id": "tt-matriz",
-   "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-21T19:30:00-06:00",
+   "idea": "2026-11-18-economist-2027",
+   "minutos_emi": 5,
+   "estado": "en produccion",
+   "en_panel": true,
+   "excepcion_emi": {
+    "texto": "Que salgan sábado 21 y domingo 22",
+    "fuente": "chat de la Matriz de Redes, 18/11/2026"
+   },
+   "id": "x-economist-video-2",
+   "fecha": "2026-11-22T10:00:00-06:00",
+   "red": "x",
+   "cuenta": "@emilianomilla_",
+   "skill": "x-viral",
+   "titulo": "Video The Economist 2027, parte 2: Firma sin leer",
+   "semana": "2026-W47"
+  },
+  {
+   "idea": "2026-11-18-economist-2027",
+   "minutos_emi": 5,
+   "estado": "en produccion",
+   "en_panel": true,
+   "excepcion_emi": {
+    "texto": "Que salgan sábado 21 y domingo 22",
+    "fuente": "chat de la Matriz de Redes, 18/11/2026"
+   },
+   "id": "tt-economist-video-2",
+   "fecha": "2026-11-22T19:30:00-06:00",
    "red": "tiktok",
-   "skill": "tiktok-studio",
-   "titulo": "Video 1 · Matriz",
-   "estado": "idea",
-   "minutos_emi": 10,
-   "productora": "editor-studio",
    "cuenta": "@emiliano_milla_",
+   "skill": "tiktok-studio",
+   "titulo": "Video The Economist 2027, parte 2: Firma sin leer",
    "semana": "2026-W47"
   },
   {
@@ -539,6 +582,31 @@
    "titulo": "Documento de 8 láminas: herramientas que construí (tentativo: pendiente de foto y capturas reales de Emi)",
    "estado": "idea",
    "minutos_emi": 20,
+   "semana": "2026-W49"
+  },
+  {
+   "id": "ig-reel-matriz",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-12-01T19:00:00-06:00",
+   "red": "instagram",
+   "skill": "instagram-studio",
+   "titulo": "Reel 1 · Matriz",
+   "estado": "idea",
+   "minutos_emi": 20,
+   "productora": "editor-studio",
+   "semana": "2026-W49"
+  },
+  {
+   "id": "tt-matriz",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-12-01T19:30:00-06:00",
+   "red": "tiktok",
+   "skill": "tiktok-studio",
+   "titulo": "Video 1 · Matriz",
+   "estado": "idea",
+   "minutos_emi": 10,
+   "productora": "editor-studio",
+   "cuenta": "@emiliano_milla_",
    "semana": "2026-W49"
   }
  ],
@@ -665,58 +733,88 @@
    "semana": "2026-W47"
   },
   {
+   "idea": "2026-11-18-economist-2027",
+   "minutos_emi": 5,
+   "estado": "en produccion",
+   "en_panel": true,
+   "excepcion_emi": {
+    "texto": "Que salgan sábado 21 y domingo 22",
+    "fuente": "chat de la Matriz de Redes, 18/11/2026"
+   },
+   "id": "x-economist-video-1",
+   "fecha": "2026-11-21T10:00:00-06:00",
+   "red": "x",
+   "cuenta": "@emilianomilla_",
+   "skill": "x-viral",
+   "titulo": "Video The Economist 2027, parte 1: ¿Profecía o agenda?",
+   "semana": "2026-W47"
+  },
+  {
    "idea": "2026-11-13-lanzamiento",
    "red": "x",
    "cuenta": "@emilianomilla_",
    "skill": "x-viral",
    "en_panel": true,
    "id": "x-vida-sabado",
-   "fecha": "2026-11-21T10:00:00-06:00",
+   "fecha": "2026-11-21T14:30:00-06:00",
    "titulo": "Estilo de vida: entreno, trabajo y maestría (falta material de Emi)",
    "estado": "idea",
    "minutos_emi": 10,
    "semana": "2026-W47"
   },
   {
-   "id": "ig-reel-matriz",
-   "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-21T19:00:00-06:00",
-   "red": "instagram",
-   "skill": "instagram-studio",
-   "titulo": "Reel 1 · Matriz",
-   "estado": "idea",
-   "minutos_emi": 20,
-   "productora": "editor-studio",
+   "idea": "2026-11-18-economist-2027",
+   "minutos_emi": 5,
+   "estado": "en produccion",
+   "en_panel": true,
+   "excepcion_emi": {
+    "texto": "Que salgan sábado 21 y domingo 22",
+    "fuente": "chat de la Matriz de Redes, 18/11/2026"
+   },
+   "id": "tt-economist-video-1",
+   "fecha": "2026-11-21T19:30:00-06:00",
+   "red": "tiktok",
+   "cuenta": "@emiliano_milla_",
+   "skill": "tiktok-studio",
+   "titulo": "Video The Economist 2027, parte 1: ¿Profecía o agenda?",
    "semana": "2026-W47"
   },
   {
-   "id": "tt-matriz",
-   "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-21T19:30:00-06:00",
+   "idea": "2026-11-18-economist-2027",
+   "minutos_emi": 5,
+   "estado": "en produccion",
+   "en_panel": true,
+   "excepcion_emi": {
+    "texto": "Que salgan sábado 21 y domingo 22",
+    "fuente": "chat de la Matriz de Redes, 18/11/2026"
+   },
+   "id": "x-economist-video-2",
+   "fecha": "2026-11-22T10:00:00-06:00",
+   "red": "x",
+   "cuenta": "@emilianomilla_",
+   "skill": "x-viral",
+   "titulo": "Video The Economist 2027, parte 2: Firma sin leer",
+   "semana": "2026-W47"
+  },
+  {
+   "idea": "2026-11-18-economist-2027",
+   "minutos_emi": 5,
+   "estado": "en produccion",
+   "en_panel": true,
+   "excepcion_emi": {
+    "texto": "Que salgan sábado 21 y domingo 22",
+    "fuente": "chat de la Matriz de Redes, 18/11/2026"
+   },
+   "id": "tt-economist-video-2",
+   "fecha": "2026-11-22T19:30:00-06:00",
    "red": "tiktok",
-   "skill": "tiktok-studio",
-   "titulo": "Video 1 · Matriz",
-   "estado": "idea",
-   "minutos_emi": 10,
-   "productora": "editor-studio",
    "cuenta": "@emiliano_milla_",
+   "skill": "tiktok-studio",
+   "titulo": "Video The Economist 2027, parte 2: Firma sin leer",
    "semana": "2026-W47"
   }
  ],
  "proximas": [
-  {
-   "id": "x-lanzamiento",
-   "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-17T09:00:00-06:00",
-   "red": "x",
-   "skill": "x-viral",
-   "titulo": "Post de lanzamiento (opción A, con el mapa de la Matriz General)",
-   "estado": "publicada",
-   "minutos_emi": 30,
-   "en_panel": true,
-   "url": "https://x.com/emilianomilla_/status/2122706559125901364",
-   "semana": "2026-W47"
-  },
   {
    "id": "li-mapa",
    "idea": "2026-11-13-lanzamiento",
@@ -812,41 +910,84 @@
    "semana": "2026-W47"
   },
   {
+   "idea": "2026-11-18-economist-2027",
+   "minutos_emi": 5,
+   "estado": "en produccion",
+   "en_panel": true,
+   "excepcion_emi": {
+    "texto": "Que salgan sábado 21 y domingo 22",
+    "fuente": "chat de la Matriz de Redes, 18/11/2026"
+   },
+   "id": "x-economist-video-1",
+   "fecha": "2026-11-21T10:00:00-06:00",
+   "red": "x",
+   "cuenta": "@emilianomilla_",
+   "skill": "x-viral",
+   "titulo": "Video The Economist 2027, parte 1: ¿Profecía o agenda?",
+   "semana": "2026-W47"
+  },
+  {
    "idea": "2026-11-13-lanzamiento",
    "red": "x",
    "cuenta": "@emilianomilla_",
    "skill": "x-viral",
    "en_panel": true,
    "id": "x-vida-sabado",
-   "fecha": "2026-11-21T10:00:00-06:00",
+   "fecha": "2026-11-21T14:30:00-06:00",
    "titulo": "Estilo de vida: entreno, trabajo y maestría (falta material de Emi)",
    "estado": "idea",
    "minutos_emi": 10,
    "semana": "2026-W47"
   },
   {
-   "id": "ig-reel-matriz",
-   "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-21T19:00:00-06:00",
-   "red": "instagram",
-   "skill": "instagram-studio",
-   "titulo": "Reel 1 · Matriz",
-   "estado": "idea",
-   "minutos_emi": 20,
-   "productora": "editor-studio",
+   "idea": "2026-11-18-economist-2027",
+   "minutos_emi": 5,
+   "estado": "en produccion",
+   "en_panel": true,
+   "excepcion_emi": {
+    "texto": "Que salgan sábado 21 y domingo 22",
+    "fuente": "chat de la Matriz de Redes, 18/11/2026"
+   },
+   "id": "tt-economist-video-1",
+   "fecha": "2026-11-21T19:30:00-06:00",
+   "red": "tiktok",
+   "cuenta": "@emiliano_milla_",
+   "skill": "tiktok-studio",
+   "titulo": "Video The Economist 2027, parte 1: ¿Profecía o agenda?",
    "semana": "2026-W47"
   },
   {
-   "id": "tt-matriz",
-   "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-21T19:30:00-06:00",
+   "idea": "2026-11-18-economist-2027",
+   "minutos_emi": 5,
+   "estado": "en produccion",
+   "en_panel": true,
+   "excepcion_emi": {
+    "texto": "Que salgan sábado 21 y domingo 22",
+    "fuente": "chat de la Matriz de Redes, 18/11/2026"
+   },
+   "id": "x-economist-video-2",
+   "fecha": "2026-11-22T10:00:00-06:00",
+   "red": "x",
+   "cuenta": "@emilianomilla_",
+   "skill": "x-viral",
+   "titulo": "Video The Economist 2027, parte 2: Firma sin leer",
+   "semana": "2026-W47"
+  },
+  {
+   "idea": "2026-11-18-economist-2027",
+   "minutos_emi": 5,
+   "estado": "en produccion",
+   "en_panel": true,
+   "excepcion_emi": {
+    "texto": "Que salgan sábado 21 y domingo 22",
+    "fuente": "chat de la Matriz de Redes, 18/11/2026"
+   },
+   "id": "tt-economist-video-2",
+   "fecha": "2026-11-22T19:30:00-06:00",
    "red": "tiktok",
-   "skill": "tiktok-studio",
-   "titulo": "Video 1 · Matriz",
-   "estado": "idea",
-   "minutos_emi": 10,
-   "productora": "editor-studio",
    "cuenta": "@emiliano_milla_",
+   "skill": "tiktok-studio",
+   "titulo": "Video The Economist 2027, parte 2: Firma sin leer",
    "semana": "2026-W47"
   },
   {
@@ -1161,9 +1302,9 @@
      "fecha": "2026-11-19T08:30:00-06:00",
      "espacio": "personal",
      "pilar": "ia-derecho",
-     "formato": "texto",
-     "huella_texto": "2dbb89d562ef0d0a4090ef2f121f52885a4d21ff9ccc4fe88df8fc1823aee323",
-     "donde": "se comparte en vivo el jueves (LinkedIn no programa contenido compartido)"
+     "formato": "imagen",
+     "huella_texto": "adada91577fc7a1fb1fbe0fc5e6de33bbab0ba1de3c1e2ee9000898d23b5a11d",
+     "donde": "Emi lo programa desde su teléfono (Chrome en box se cae al adjuntar foto)"
     }
    ],
    "lecciones": [
@@ -1221,7 +1362,7 @@
    "contrato": "redes-estado/0.1.1",
    "skill": "tiktok-studio",
    "red": "tiktok",
-   "version_skill": "1.1.0",
+   "version_skill": "1.2.0",
    "actualizado": "2026-11-17",
    "cuentas": [
     {
@@ -1263,7 +1404,13 @@
    "lecciones": [
     {
      "fecha": "2026-11-17",
-     "texto": "El video del DOF del espacio Castorena se puede subir a la cuenta personal porque no muestra la marca ni el nombre del despacho (revisado cuadro por cuadro); cualquier otro video de otro espacio se revisa igual antes de subirlo.",
+     "texto": "Un video hecho para otro espacio de Vox Studio solo va a la cuenta personal si no muestra ninguna marca ni nombre de ese espacio; se revisa cuadro por cuadro antes de subirlo.",
+     "evidencia": "cuenta/aprendizajes.md",
+     "alcance": "red"
+    },
+    {
+     "fecha": "2026-11-17",
+     "texto": "Emi aprobó la descripción del video del DOF tras corregirse «la ley te manda al cheque» por el texto real del art. 15: en descripciones legales, precisión antes que punch.",
      "evidencia": "cuenta/aprendizajes.md",
      "alcance": "red"
     }
@@ -1271,7 +1418,7 @@
    "ideas_para_otras": [],
    "pendientes_de_emi": [
     {
-     "que": "Aprobar la descripción B ajustada del video del DOF (o reescribirla)",
+     "que": "Aprobar en el panel la pieza de TikTok del DOF y subirla desde la app el jue 19/11 a las 19:30",
      "desde": "2026-11-17",
      "bloquea": "primer video"
     },
