@@ -65,8 +65,9 @@ export async function huella(texto) {
 async function huellaAprobacion(p) {
   const arch = (p.archivos || []).length ? `\n${p.archivos.join(",")}` : "";
   // Las respuestas propias (hilo) también son contenido aprobado: si cambian, la aprobación deja de valer.
+  const resp = p.responde_a ? `\n--responde-a--${p.responde_a}` : "";
   const hilo = (p.hilo || []).length ? `\n--hilo--\n${p.hilo.map((t) => String(t).normalize("NFC").trim()).join("\n--\n")}` : "";
-  return huella(`${p.red}\n${p.fecha || ""}\n${p.media || ""}\n${String(p.texto || "").normalize("NFC").trim()}${arch}${hilo}`);
+  return huella(`${p.red}\n${p.fecha || ""}\n${p.media || ""}\n${String(p.texto || "").normalize("NFC").trim()}${arch}${hilo}${resp}`);
 }
 const URL_RE = () => /https?:\/\/\S+|\b[a-z0-9-]+(?:\.[a-z0-9-]+)*\.(?:com|mx|org|net|site|dev|io|gob\.mx|ai)(?:\/\S*)?/gi;
 export function largoX(texto) {
@@ -323,6 +324,8 @@ async function publicarX(env, pieza, fetcher = fetch) {
   const auth = await autorizacionX(env, "POST", url, fetcher);
   await gastoX(env, URL_RE().test(pieza.texto) ? COSTO_X.post_con_enlace : COSTO_X.post, `post ${pieza.id}`);
   const cuerpoX = { text: pieza.texto };
+  // Respuesta a un post ya publicado (p. ej., colgar un hilo del post del mapa de la Matriz General).
+  if (pieza.responde_a) cuerpoX.reply = { in_reply_to_tweet_id: pieza.responde_a };
   const ids = (pieza.subida?.items || []).map((i) => i.remoto).filter(Boolean);
   if ((pieza.archivos || []).length) {
     if (ids.length !== pieza.archivos.length) throw new Error("Los archivos aún no terminan de subir a X.");
@@ -876,13 +879,20 @@ async function editarPieza(env, datos, quien) {
   }
   const nueva = !p;
   if (!p) { p = { id: nuevoId(), creada: ahoraISO(), creada_por: quien, historial: [] }; lista.unshift(p); }
-  const antes = { red: p.red, texto: p.texto, fecha: p.fecha || null, media: p.media || "", archivos: (p.archivos || []).join(","), solo_app: !!p.solo_app, hilo: (p.hilo || []).join("\n--\n") };
+  const antes = { red: p.red, texto: p.texto, fecha: p.fecha || null, media: p.media || "", archivos: (p.archivos || []).join(","), solo_app: !!p.solo_app, hilo: (p.hilo || []).join("\n--\n"), responde_a: p.responde_a || "" };
   // Hilo de X: hasta 5 respuestas propias que salen justo después del post (Emi, 18/11/2026). En el editor van separadas por una línea «---».
   let hilo = p.hilo || [];
   if (datos.hilo !== undefined) {
     hilo = (Array.isArray(datos.hilo) ? datos.hilo : String(datos.hilo || "").split(/\n\s*-{3,}\s*\n/)).map((t) => limpiar(t, 26000).trim()).filter(Boolean);
     if (hilo.length && red !== "x") throw new Error("Las respuestas encadenadas solo existen en X.");
     if (hilo.length > 5) throw new Error("Máximo 5 respuestas en el hilo.");
+  }
+  let respondeA = p.responde_a || "";
+  if (datos.responde_a !== undefined) {
+    const m = String(datos.responde_a || "").match(/(?:status\/)?(\d{5,25})\s*$/);
+    respondeA = m ? m[1] : "";
+    if (String(datos.responde_a || "").trim() && !m) throw new Error("«Responde a» debe ser el enlace o el número del post de X.");
+    if (respondeA && red !== "x") throw new Error("Responder a un post solo existe en X.");
   }
   let archivos = p.archivos || [];
   if (datos.archivos !== undefined) {
@@ -908,7 +918,7 @@ async function editarPieza(env, datos, quien) {
     solo_app: datos.solo_app !== undefined ? !!datos.solo_app : !!p.solo_app,
     fecha: fecha ? fecha.toISOString() : datos.fecha === "" || datos.fecha === null ? null : p.fecha || null, actualizada: ahoraISO(),
   });
-  const cambio = nueva || antes.red !== p.red || antes.texto !== p.texto || antes.fecha !== p.fecha || antes.media !== p.media || antes.archivos !== p.archivos.join(",") || antes.solo_app !== !!p.solo_app || antes.hilo !== hilo.join("\n--\n");
+  const cambio = nueva || antes.red !== p.red || antes.texto !== p.texto || antes.fecha !== p.fecha || antes.media !== p.media || antes.archivos !== p.archivos.join(",") || antes.solo_app !== !!p.solo_app || antes.hilo !== hilo.join("\n--\n") || antes.responde_a !== respondeA;
   if (cambio) {
     // Si cambia el texto, la red, la fecha o el archivo, la aprobación anterior deja de valer.
     delete p.aprobado; delete p.aprobado_huella; delete p.error; delete p.publicar_al_terminar; delete p.intentos_publicar;
@@ -917,6 +927,7 @@ async function editarPieza(env, datos, quien) {
   p.historial.unshift({ fecha: ahoraISO(), quien, que: nueva ? "creada" : cambio ? "editada (la aprobación se reinicia)" : "datos editados" });
   p.historial = p.historial.slice(0, 50);
   p.hilo = hilo.length ? hilo : undefined;
+  p.responde_a = respondeA || undefined;
   p.revision = revisarTexto(texto, red, p.titulo, limiteX(env));
   (p.hilo || []).forEach((t, i) => { const r = revisarTexto(t, red, "", limiteX(env)); r.errores.forEach((e) => p.revision.errores.push(`Respuesta ${i + 1}: ${e}`)); });
   await guardarPiezas(env, lista);

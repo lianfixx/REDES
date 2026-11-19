@@ -2,6 +2,14 @@
 
 Lo más reciente arriba. Formato en `ia/PROTOCOLO.md`, sección 3.
 
+## 2026-11-19 · X: responder a un post ya publicado
+- Agente: Claude Code (sesión en la nube)
+- Solicitud: Emi, 19/11/2026: las respuestas propias eran «para el post del cerebro… el de matriz general» (el lanzamiento con el mapa, ya publicado el 17/11).
+- Cambios: una pieza de X puede llevar `responde_a` (enlace o número del post): sale como respuesta a ese post y su hilo cuelga de ella. La huella lo cubre. Campo nuevo en el editor.
+- Archivos: `worker/{index.js,prueba.mjs}`, `panel/app.js`, este registro.
+- Verificación: `python3 ia/verificar.py ci` → aprobado.
+- Pendiente: la sesión de X arma la pieza del hilo del mapa; Emi la aprueba; el PDF debe ser público.
+
 ## 2026-11-19 · Hilo de X: respuestas propias bajo la misma aprobación
 - Agente: Claude Code (sesión en la nube)
 - Solicitud: decisión de Emi (18/11, chat de X; la informa esa sesión): los mejores posts llevan de 1 a 5 respuestas propias; primer caso, el video del domingo 22.

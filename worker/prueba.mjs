@@ -715,4 +715,20 @@ await t("hilo de X: respuestas encadenadas bajo la misma aprobación; si una fal
   assert.equal(r2.estado, "publicada"); assert.match(r2.error, /Respuesta 1 no salió/); assert.equal(m, 2, "sin reintentos");
   assert.equal((await S("/api/pieza", { red: "linkedin", texto: "LI", hilo: ["no"] })).s, 400);
 });
+await t("responder a un post ya publicado (con hilo); la huella cubre a qué post responde", async () => {
+  const env = nuevoEnv(), S = await sesion(env);
+  await S("/api/llaves/x", llavesX);
+  const p = (await S("/api/pieza", { red: "x", texto: "Respuesta al mapa.", hilo: ["Segunda."], responde_a: "https://x.com/emilianomilla_/status/2122706559125901364" })).j;
+  assert.equal(p.responde_a, "2122706559125901364");
+  await S(`/api/pieza/${p.id}/aprobar`, {});
+  const otro = (await S("/api/pieza", { id: p.id, red: "x", texto: "Respuesta al mapa.", hilo: ["Segunda."], responde_a: "999999" })).j;
+  assert.equal(otro.aprobado_huella, undefined, "cambiar a quién responde reinicia la aprobación");
+  await S("/api/pieza", { id: p.id, red: "x", texto: "Respuesta al mapa.", hilo: ["Segunda."], responde_a: "2122706559125901364" });
+  await S(`/api/pieza/${p.id}/aprobar`, {});
+  const vistos = []; let n = 0;
+  const r = await publicar(env, p.id, async (u, o) => { vistos.push(JSON.parse(o.body)); n++; return Response.json({ data: { id: String(700 + n) } }, { status: 201 }); });
+  assert.equal(r.estado, "publicada");
+  assert.equal(vistos[0].reply.in_reply_to_tweet_id, "2122706559125901364"); assert.equal(vistos[1].reply.in_reply_to_tweet_id, "701");
+  assert.equal((await S("/api/pieza", { red: "x", texto: "x", responde_a: "no es enlace" })).s, 400);
+});
 console.log(`\n${ok} pruebas aprobadas`);

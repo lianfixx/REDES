@@ -249,6 +249,8 @@ V.pieza = (id) => {
         <p class="tenue chico">«Agregar y aprobar» pone esto en la pieza y la aprueba con la misma hora. No cambia el texto.</p></div>` : ""}
       <details ${p.media ? "open" : ""}><summary class="tenue chico">Enlace de referencia (Drive)</summary><input name="media" value="${esc(p.media)}" placeholder="https://drive.google.com/…"></details>
       <label class="check"><input type="checkbox" name="solo_app" value="1" ${p.solo_app ? "checked" : ""}> Prefiero subirla yo desde la app</label>
+      ${p.red === "x" || p.responde_a ? `<label>Responde a (opcional, X): enlace del post</label><input name="responde_a" value="${p.responde_a ? `https://x.com/emilianomilla_/status/${esc(p.responde_a)}` : ""}" placeholder="https://x.com/emilianomilla_/status/…">
+      <p class="tenue chico">Si lo llenas, esta pieza sale como respuesta a ese post (sirve para colgar un hilo de un post que ya salió).</p>` : ""}
       ${p.red === "x" || (p.hilo || []).length ? `<label>Respuestas propias (hilo, opcional, X)</label><textarea name="hilo" style="min-height:80px" placeholder="Primera respuesta&#10;---&#10;Segunda respuesta">${esc((p.hilo || []).join("\n---\n"))}</textarea>
       <p class="tenue chico">Salen justo después del post, cada una contestando a la anterior. Sepáralas con una línea «---». Máximo 5. Forman parte de lo que apruebas.</p>` : ""}
       <label>Nota interna</label><input name="nota" value="${esc(p.nota)}" maxlength="600">
