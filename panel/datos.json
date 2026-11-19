@@ -1,5 +1,5 @@
 {
- "generado": "2026-11-18",
+ "generado": "2026-11-19",
  "redes": {
   "x": {
    "skill": "x-viral",
@@ -829,45 +829,6 @@
  ],
  "proximas": [
   {
-   "id": "li-mapa",
-   "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-18T08:30:00-06:00",
-   "red": "linkedin",
-   "cuenta": "linkedin.com/in/emiliano-milla",
-   "skill": "linkedin-pro",
-   "titulo": "Post del mapa de la Matriz General (aprobado por Emi el 17/11; lo publica él desde el teléfono)",
-   "estado": "aprobada",
-   "minutos_emi": 5,
-   "en_panel": true,
-   "semana": "2026-W47"
-  },
-  {
-   "id": "x-economist-2027",
-   "idea": "2026-11-18-economist-2027",
-   "fecha": "2026-11-18T09:00:00-06:00",
-   "red": "x",
-   "cuenta": "@emilianomilla_",
-   "skill": "x-viral",
-   "titulo": "Portada 2027 de The Economist: la IA y el derecho (solo texto)",
-   "estado": "borrador",
-   "minutos_emi": 10,
-   "en_panel": true,
-   "semana": "2026-W47"
-  },
-  {
-   "idea": "2026-11-13-lanzamiento",
-   "red": "x",
-   "cuenta": "@emilianomilla_",
-   "skill": "x-viral",
-   "en_panel": true,
-   "id": "x-vida-gym",
-   "fecha": "2026-11-18T19:30:00-06:00",
-   "titulo": "Estilo de vida: gym (falta foto o clip de Emi)",
-   "estado": "idea",
-   "minutos_emi": 10,
-   "semana": "2026-W47"
-  },
-  {
    "id": "li-economist-2027",
    "idea": "2026-11-18-economist-2027",
    "fecha": "2026-11-19T08:30:00-06:00",
@@ -1098,6 +1059,44 @@
    "estado": "idea",
    "minutos_emi": 20,
    "productora": "editor-studio",
+   "semana": "2026-W49"
+  },
+  {
+   "id": "tt-matriz",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-12-01T19:30:00-06:00",
+   "red": "tiktok",
+   "skill": "tiktok-studio",
+   "titulo": "Video 1 · Matriz",
+   "estado": "idea",
+   "minutos_emi": 10,
+   "productora": "editor-studio",
+   "cuenta": "@emiliano_milla_",
+   "semana": "2026-W49"
+  },
+  {
+   "id": "ig-reel-dof",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-12-03T19:00:00-06:00",
+   "red": "instagram",
+   "skill": "instagram-studio",
+   "titulo": "Reel 2 · DOF",
+   "estado": "idea",
+   "minutos_emi": 20,
+   "productora": "editor-studio",
+   "semana": "2026-W49"
+  },
+  {
+   "id": "tt-dof",
+   "idea": "2026-11-13-lanzamiento",
+   "fecha": "2026-12-03T19:30:00-06:00",
+   "red": "tiktok",
+   "skill": "tiktok-studio",
+   "titulo": "Video 2 · DOF",
+   "estado": "idea",
+   "minutos_emi": 10,
+   "productora": "editor-studio",
+   "cuenta": "@emiliano_milla_",
    "semana": "2026-W49"
   }
  ],
@@ -1382,13 +1381,13 @@
    "skill": "tiktok-studio",
    "red": "tiktok",
    "version_skill": "1.2.0",
-   "actualizado": "2026-11-17",
+   "actualizado": "2026-11-18",
    "cuentas": [
     {
      "espacio": "personal",
      "usuario": "@emiliano_milla_",
      "activa": true,
-     "notas": "cuenta de Emi creada el 08/02/2020 (reusada por decisión de Emi el 17/11/2026). Vista pública el 17/11/2026 a las 21:50 (hora de México): 1,007 seguidores, unos 55,000 likes, 1 video, sin biografía"
+     "notas": "cuenta de Emi creada el 08/02/2020 y reusada desde el 17/11/2026; el 19/11/2026 ya tiene 2 videos públicos (uno nuevo de la campaña)"
     }
    ],
    "cadencia": {
@@ -1440,16 +1439,6 @@
      "que": "Aprobar en el panel la pieza de TikTok del DOF y subirla desde la app el jue 19/11 a las 19:30",
      "desde": "2026-11-17",
      "bloquea": "primer video"
-    },
-    {
-     "que": "Poner nombre visible y la bio «Disciplina > motivación. Derecho, gym y opiniones que incomodan.» en la app",
-     "desde": "2026-11-17",
-     "bloquea": "perfil"
-    },
-    {
-     "que": "Revisar el video viejo de la cuenta (2020): dejarlo o pasarlo a privado",
-     "desde": "2026-11-17",
-     "bloquea": "nada"
     },
     {
      "que": "Grabar los 4 videos del lanzamiento y uno de gym o vlog por semana",
