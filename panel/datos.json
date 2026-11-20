@@ -1,5 +1,5 @@
 {
- "generado": "2026-11-19",
+ "generado": "2026-11-20",
  "redes": {
   "x": {
    "skill": "x-viral",
@@ -829,48 +829,6 @@
  ],
  "proximas": [
   {
-   "id": "li-economist-2027",
-   "idea": "2026-11-18-economist-2027",
-   "fecha": "2026-11-19T08:30:00-06:00",
-   "red": "linkedin",
-   "cuenta": "linkedin.com/in/emiliano-milla",
-   "skill": "linkedin-pro",
-   "titulo": "Portada 2027 de The Economist: la IA y el derecho",
-   "estado": "borrador",
-   "minutos_emi": 15,
-   "en_panel": true,
-   "excepcion_emi": {
-    "texto": "Te dije que sea el jueves",
-    "fuente": "chat de la Matriz de Redes, 18/11/2026"
-   },
-   "semana": "2026-W47"
-  },
-  {
-   "idea": "2026-11-13-lanzamiento",
-   "red": "x",
-   "cuenta": "@emilianomilla_",
-   "skill": "x-viral",
-   "en_panel": true,
-   "id": "x-pagos-digitales",
-   "fecha": "2026-11-19T09:00:00-06:00",
-   "titulo": "Opinión: ley de pagos digitales (solo texto)",
-   "estado": "lista para aprobar",
-   "minutos_emi": 10,
-   "semana": "2026-W47"
-  },
-  {
-   "id": "tt-dof-animado",
-   "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-19T19:30:00-06:00",
-   "red": "tiktok",
-   "skill": "tiktok-studio",
-   "titulo": "Video animado del DOF (tal cual): primer video, el día que abra la cuenta",
-   "estado": "idea",
-   "minutos_emi": 10,
-   "cuenta": "@emiliano_milla_",
-   "semana": "2026-W47"
-  },
-  {
    "idea": "2026-11-13-lanzamiento",
    "red": "x",
    "cuenta": "@emilianomilla_",
@@ -1205,7 +1163,7 @@
    "skill": "linkedin-pro",
    "red": "linkedin",
    "version_skill": "1.0.0",
-   "actualizado": "2026-11-17",
+   "actualizado": "2026-11-19",
    "cuentas": [
     {
      "espacio": "personal",
@@ -1284,9 +1242,13 @@
      "idea_matriz": "",
      "huella_texto": "6a76d07ef0fbd3c0e47668c91249efd9c6bc80bd9399a24a68b975f157313245",
      "metricas": {
-      "capturado": "",
-      "fuente": "",
-      "valores": {}
+      "capturado": "2026-11-19",
+      "fuente": "actividad del perfil leída con la sesión de Emi en box, 19/11/2026 (6 días; el comentario es el de fuentes de Emi)",
+      "valores": {
+       "impresiones": 55,
+       "reacciones": 1,
+       "comentarios": 1
+      }
      }
     },
     {
@@ -1381,7 +1343,7 @@
    "skill": "tiktok-studio",
    "red": "tiktok",
    "version_skill": "1.2.0",
-   "actualizado": "2026-11-18",
+   "actualizado": "2026-11-19",
    "cuentas": [
     {
      "espacio": "personal",
@@ -1418,7 +1380,18 @@
     "video-emi": 30,
     "fotos": 15
    },
-   "publicados": [],
+   "publicados": [
+    {
+     "id": "tt-sat-perdon",
+     "fecha": "2026-11-19T16:35:12-06:00",
+     "espacio": "personal",
+     "pilar": "ia-derecho",
+     "formato": "video",
+     "url": "https://www.tiktok.com/@emiliano_milla_/video/7710014785680624903",
+     "idea_matriz": "dof-2-perdon-sat",
+     "huella_texto": "923a8730b95b"
+    }
+   ],
    "lecciones": [
     {
      "fecha": "2026-11-17",

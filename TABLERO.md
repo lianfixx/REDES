@@ -1,6 +1,6 @@
 # Tablero de la Matriz de Redes
 
-Generado el 2026-11-19 por `redes.py tablero`. No se edita a mano.
+Generado el 2026-11-20 por `redes.py tablero`. No se edita a mano.
 
 ## Pendiente de Emi
 
@@ -41,9 +41,6 @@ Generado el 2026-11-19 por `redes.py tablero`. No se edita a mano.
 
 ## Próximas
 
-- 2026-11-19 08:30 · linkedin · Portada 2027 de The Economist: la IA y el derecho (borrador)
-- 2026-11-19 09:00 · x · Opinión: ley de pagos digitales (solo texto) (lista para aprobar)
-- 2026-11-19 19:30 · tiktok · Video animado del DOF (tal cual): primer video, el día que abra la cuenta (idea)
 - 2026-11-20 09:00 · x · IA + Derecho: boletines (solo texto) (lista para aprobar)
 - 2026-11-21 10:00 · x · Video The Economist 2027, parte 1: ¿Profecía o agenda? (en produccion)
 - 2026-11-21 14:30 · x · Estilo de vida: entreno, trabajo y maestría (falta material de Emi) (idea)
@@ -76,8 +73,8 @@ Generado el 2026-11-19 por `redes.py tablero`. No se edita a mano.
 | Skill | Leído | Publicados | Lecciones |
 |---|---|---|---|
 | x | no se pudo leer | — | — |
-| linkedin | 2026-11-17 | 2 | 1 |
-| tiktok | 2026-11-18 | 0 | 2 |
+| linkedin | 2026-11-19 | 2 | 1 |
+| tiktok | 2026-11-19 | 1 | 2 |
 | instagram | 2026-11-12 | 0 | 3 |
 | instagram-historias | no se pudo leer | — | — |
 
