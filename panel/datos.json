@@ -1,5 +1,5 @@
 {
- "generado": "2026-11-20",
+ "generado": "2026-11-21",
  "redes": {
   "x": {
    "skill": "x-viral",
@@ -829,19 +829,6 @@
  ],
  "proximas": [
   {
-   "idea": "2026-11-13-lanzamiento",
-   "red": "x",
-   "cuenta": "@emilianomilla_",
-   "skill": "x-viral",
-   "en_panel": true,
-   "id": "x-boletines",
-   "fecha": "2026-11-20T09:00:00-06:00",
-   "titulo": "IA + Derecho: boletines (solo texto)",
-   "estado": "lista para aprobar",
-   "minutos_emi": 10,
-   "semana": "2026-W47"
-  },
-  {
    "idea": "2026-11-18-economist-2027",
    "minutos_emi": 5,
    "estado": "en produccion",
@@ -1059,6 +1046,12 @@
   }
  ],
  "pendientes_emi": [
+  {
+   "que": "Caduca en 3 días: The Economist resume la IA de 2027 en «aceleración, riesgos y reacción». En el derecho mexicano la reacción llegó antes que la aceleración: se prohíbe o se desconfía sin haberla usado. El riesgo no es el abogado que usa IA, sino el que firma sin verificar.",
+   "prioridad": 1,
+   "sesion": "ideas",
+   "donde": "#ideas"
+  },
   {
    "que": "Elegir y reescribir la opción A o B del post de LinkedIn sobre la portada 2027 (en la sesión de LinkedIn); sale el jueves 19 a las 8:30",
    "prioridad": 1,
