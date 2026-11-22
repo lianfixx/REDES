@@ -1,5 +1,5 @@
 {
- "generado": "2026-11-21",
+ "generado": "2026-11-22",
  "redes": {
   "x": {
    "skill": "x-viral",
@@ -837,53 +837,6 @@
     "texto": "Que salgan sábado 21 y domingo 22",
     "fuente": "chat de la Matriz de Redes, 18/11/2026"
    },
-   "id": "x-economist-video-1",
-   "fecha": "2026-11-21T10:00:00-06:00",
-   "red": "x",
-   "cuenta": "@emilianomilla_",
-   "skill": "x-viral",
-   "titulo": "Video The Economist 2027, parte 1: ¿Profecía o agenda?",
-   "semana": "2026-W47"
-  },
-  {
-   "idea": "2026-11-13-lanzamiento",
-   "red": "x",
-   "cuenta": "@emilianomilla_",
-   "skill": "x-viral",
-   "en_panel": true,
-   "id": "x-vida-sabado",
-   "fecha": "2026-11-21T14:30:00-06:00",
-   "titulo": "Estilo de vida: entreno, trabajo y maestría (falta material de Emi)",
-   "estado": "idea",
-   "minutos_emi": 10,
-   "semana": "2026-W47"
-  },
-  {
-   "idea": "2026-11-18-economist-2027",
-   "minutos_emi": 5,
-   "estado": "en produccion",
-   "en_panel": true,
-   "excepcion_emi": {
-    "texto": "Que salgan sábado 21 y domingo 22",
-    "fuente": "chat de la Matriz de Redes, 18/11/2026"
-   },
-   "id": "tt-economist-video-1",
-   "fecha": "2026-11-21T19:30:00-06:00",
-   "red": "tiktok",
-   "cuenta": "@emiliano_milla_",
-   "skill": "tiktok-studio",
-   "titulo": "Video The Economist 2027, parte 1: ¿Profecía o agenda?",
-   "semana": "2026-W47"
-  },
-  {
-   "idea": "2026-11-18-economist-2027",
-   "minutos_emi": 5,
-   "estado": "en produccion",
-   "en_panel": true,
-   "excepcion_emi": {
-    "texto": "Que salgan sábado 21 y domingo 22",
-    "fuente": "chat de la Matriz de Redes, 18/11/2026"
-   },
    "id": "x-economist-video-2",
    "fecha": "2026-11-22T10:00:00-06:00",
    "red": "x",
@@ -1047,7 +1000,7 @@
  ],
  "pendientes_emi": [
   {
-   "que": "Caduca en 3 días: The Economist resume la IA de 2027 en «aceleración, riesgos y reacción». En el derecho mexicano la reacción llegó antes que la aceleración: se prohíbe o se desconfía sin haberla usado. El riesgo no es el abogado que usa IA, sino el que firma sin verificar.",
+   "que": "Caduca en 2 días: The Economist resume la IA de 2027 en «aceleración, riesgos y reacción». En el derecho mexicano la reacción llegó antes que la aceleración: se prohíbe o se desconfía sin haberla usado. El riesgo no es el abogado que usa IA, sino el que firma sin verificar.",
    "prioridad": 1,
    "sesion": "ideas",
    "donde": "#ideas"

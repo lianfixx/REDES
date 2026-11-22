@@ -1,10 +1,10 @@
 # Tablero de la Matriz de Redes
 
-Generado el 2026-11-21 por `redes.py tablero`. No se edita a mano.
+Generado el 2026-11-22 por `redes.py tablero`. No se edita a mano.
 
 ## Pendiente de Emi
 
-- [ ] **alta** · ideas · Caduca en 3 días: The Economist resume la IA de 2027 en «aceleración, riesgos y reacción». En el derecho mexicano la reacción llegó antes que la aceleración: se prohíbe o se desconfía sin haberla usado. El riesgo no es el abogado que usa IA, sino el que firma sin verificar.
+- [ ] **alta** · ideas · Caduca en 2 días: The Economist resume la IA de 2027 en «aceleración, riesgos y reacción». En el derecho mexicano la reacción llegó antes que la aceleración: se prohíbe o se desconfía sin haberla usado. El riesgo no es el abogado que usa IA, sino el que firma sin verificar.
 - [ ] **alta** · linkedin · Elegir y reescribir la opción A o B del post de LinkedIn sobre la portada 2027 (en la sesión de LinkedIn); sale el jueves 19 a las 8:30
 - [ ] **alta** · tiktok · Aprobar: DOF 2: perdón de multas del SAT (video animado)
 - [ ] **alta** · x · Aprobar: Opinión: ley de pagos digitales (solo texto)
@@ -42,9 +42,6 @@ Generado el 2026-11-21 por `redes.py tablero`. No se edita a mano.
 
 ## Próximas
 
-- 2026-11-21 10:00 · x · Video The Economist 2027, parte 1: ¿Profecía o agenda? (en produccion)
-- 2026-11-21 14:30 · x · Estilo de vida: entreno, trabajo y maestría (falta material de Emi) (idea)
-- 2026-11-21 19:30 · tiktok · Video The Economist 2027, parte 1: ¿Profecía o agenda? (en produccion)
 - 2026-11-22 10:00 · x · Video The Economist 2027, parte 2: Firma sin leer (en produccion)
 - 2026-11-22 19:30 · tiktok · Video The Economist 2027, parte 2: Firma sin leer (en produccion)
 - 2026-11-24 19:30 · tiktok · DOF 2: perdón de multas del SAT (video animado) (lista para aprobar)
