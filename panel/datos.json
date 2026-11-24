@@ -1,5 +1,5 @@
 {
- "generado": "2026-11-22",
+ "generado": "2026-11-23",
  "redes": {
   "x": {
    "skill": "x-viral",
@@ -625,243 +625,81 @@
  ],
  "semana": [
   {
-   "id": "li-doc-pagos",
+   "id": "tt-dof2-multas",
    "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-16T10:30:00-06:00",
-   "red": "linkedin",
-   "cuenta": "linkedin.com/in/emiliano-milla",
-   "skill": "linkedin-pro",
-   "titulo": "Documento de 6 láminas: ¿Adiós al efectivo? (publicado por la skill de LinkedIn)",
-   "estado": "publicada",
-   "minutos_emi": 0,
-   "en_panel": true,
-   "url": "https://www.linkedin.com/feed/update/urn:li:activity:7528132303097692160/",
-   "semana": "2026-W47"
-  },
-  {
-   "id": "x-lanzamiento",
-   "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-17T09:00:00-06:00",
-   "red": "x",
-   "skill": "x-viral",
-   "titulo": "Post de lanzamiento (opción A, con el mapa de la Matriz General)",
-   "estado": "publicada",
-   "minutos_emi": 30,
-   "en_panel": true,
-   "url": "https://x.com/emilianomilla_/status/2122706559125901364",
-   "semana": "2026-W47"
-  },
-  {
-   "id": "li-mapa",
-   "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-18T08:30:00-06:00",
-   "red": "linkedin",
-   "cuenta": "linkedin.com/in/emiliano-milla",
-   "skill": "linkedin-pro",
-   "titulo": "Post del mapa de la Matriz General (aprobado por Emi el 17/11; lo publica él desde el teléfono)",
-   "estado": "aprobada",
-   "minutos_emi": 5,
-   "en_panel": true,
-   "semana": "2026-W47"
-  },
-  {
-   "id": "x-economist-2027",
-   "idea": "2026-11-18-economist-2027",
-   "fecha": "2026-11-18T09:00:00-06:00",
-   "red": "x",
-   "cuenta": "@emilianomilla_",
-   "skill": "x-viral",
-   "titulo": "Portada 2027 de The Economist: la IA y el derecho (solo texto)",
-   "estado": "borrador",
+   "fecha": "2026-11-24T19:30:00-06:00",
+   "red": "tiktok",
+   "cuenta": "@emiliano_milla_",
+   "skill": "tiktok-studio",
+   "titulo": "DOF 2: perdón de multas del SAT (video animado)",
+   "estado": "lista para aprobar",
    "minutos_emi": 10,
    "en_panel": true,
-   "semana": "2026-W47"
+   "semana": "2026-W48"
   },
   {
+   "id": "ig-carrusel",
    "idea": "2026-11-13-lanzamiento",
-   "red": "x",
-   "cuenta": "@emilianomilla_",
-   "skill": "x-viral",
-   "en_panel": true,
-   "id": "x-vida-gym",
-   "fecha": "2026-11-18T19:30:00-06:00",
-   "titulo": "Estilo de vida: gym (falta foto o clip de Emi)",
+   "fecha": "2026-11-25T13:00:00-06:00",
+   "red": "instagram",
+   "skill": "instagram-studio",
+   "titulo": "Carrusel · 4 herramientas",
    "estado": "idea",
-   "minutos_emi": 10,
-   "semana": "2026-W47"
-  },
-  {
-   "id": "li-economist-2027",
-   "idea": "2026-11-18-economist-2027",
-   "fecha": "2026-11-19T08:30:00-06:00",
-   "red": "linkedin",
-   "cuenta": "linkedin.com/in/emiliano-milla",
-   "skill": "linkedin-pro",
-   "titulo": "Portada 2027 de The Economist: la IA y el derecho",
-   "estado": "borrador",
    "minutos_emi": 15,
-   "en_panel": true,
-   "excepcion_emi": {
-    "texto": "Te dije que sea el jueves",
-    "fuente": "chat de la Matriz de Redes, 18/11/2026"
-   },
-   "semana": "2026-W47"
+   "semana": "2026-W48"
   },
   {
+   "id": "ig-reel-boletines",
    "idea": "2026-11-13-lanzamiento",
-   "red": "x",
-   "cuenta": "@emilianomilla_",
-   "skill": "x-viral",
-   "en_panel": true,
-   "id": "x-pagos-digitales",
-   "fecha": "2026-11-19T09:00:00-06:00",
-   "titulo": "Opinión: ley de pagos digitales (solo texto)",
-   "estado": "lista para aprobar",
-   "minutos_emi": 10,
-   "semana": "2026-W47"
+   "fecha": "2026-11-26T19:00:00-06:00",
+   "red": "instagram",
+   "skill": "instagram-studio",
+   "titulo": "Reel 3 · Boletines (datos de ejemplo)",
+   "estado": "idea",
+   "minutos_emi": 20,
+   "productora": "editor-studio",
+   "semana": "2026-W48"
   },
   {
-   "id": "tt-dof-animado",
+   "id": "tt-boletines",
    "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-19T19:30:00-06:00",
+   "fecha": "2026-11-26T19:30:00-06:00",
    "red": "tiktok",
    "skill": "tiktok-studio",
-   "titulo": "Video animado del DOF (tal cual): primer video, el día que abra la cuenta",
+   "titulo": "Video 3 · Boletines",
    "estado": "idea",
    "minutos_emi": 10,
+   "productora": "editor-studio",
    "cuenta": "@emiliano_milla_",
-   "semana": "2026-W47"
+   "semana": "2026-W48"
   },
   {
+   "id": "ig-reel-vox",
    "idea": "2026-11-13-lanzamiento",
-   "red": "x",
-   "cuenta": "@emilianomilla_",
-   "skill": "x-viral",
-   "en_panel": true,
-   "id": "x-boletines",
-   "fecha": "2026-11-20T09:00:00-06:00",
-   "titulo": "IA + Derecho: boletines (solo texto)",
-   "estado": "lista para aprobar",
-   "minutos_emi": 10,
-   "semana": "2026-W47"
+   "fecha": "2026-11-28T19:00:00-06:00",
+   "red": "instagram",
+   "skill": "instagram-studio",
+   "titulo": "Reel 4 · Vox, el estudio de video que construí (narrado con la voz de Emi)",
+   "estado": "idea",
+   "minutos_emi": 20,
+   "productora": "editor-studio",
+   "semana": "2026-W48"
   },
   {
-   "idea": "2026-11-18-economist-2027",
-   "minutos_emi": 5,
-   "estado": "en produccion",
-   "en_panel": true,
-   "excepcion_emi": {
-    "texto": "Que salgan sábado 21 y domingo 22",
-    "fuente": "chat de la Matriz de Redes, 18/11/2026"
-   },
-   "id": "x-economist-video-1",
-   "fecha": "2026-11-21T10:00:00-06:00",
-   "red": "x",
-   "cuenta": "@emilianomilla_",
-   "skill": "x-viral",
-   "titulo": "Video The Economist 2027, parte 1: ¿Profecía o agenda?",
-   "semana": "2026-W47"
-  },
-  {
+   "id": "tt-vox",
    "idea": "2026-11-13-lanzamiento",
-   "red": "x",
-   "cuenta": "@emilianomilla_",
-   "skill": "x-viral",
-   "en_panel": true,
-   "id": "x-vida-sabado",
-   "fecha": "2026-11-21T14:30:00-06:00",
-   "titulo": "Estilo de vida: entreno, trabajo y maestría (falta material de Emi)",
+   "fecha": "2026-11-28T19:30:00-06:00",
+   "red": "tiktok",
+   "skill": "tiktok-studio",
+   "titulo": "Video 4 · Vox",
    "estado": "idea",
    "minutos_emi": 10,
-   "semana": "2026-W47"
-  },
-  {
-   "idea": "2026-11-18-economist-2027",
-   "minutos_emi": 5,
-   "estado": "en produccion",
-   "en_panel": true,
-   "excepcion_emi": {
-    "texto": "Que salgan sábado 21 y domingo 22",
-    "fuente": "chat de la Matriz de Redes, 18/11/2026"
-   },
-   "id": "tt-economist-video-1",
-   "fecha": "2026-11-21T19:30:00-06:00",
-   "red": "tiktok",
+   "productora": "editor-studio",
    "cuenta": "@emiliano_milla_",
-   "skill": "tiktok-studio",
-   "titulo": "Video The Economist 2027, parte 1: ¿Profecía o agenda?",
-   "semana": "2026-W47"
-  },
-  {
-   "idea": "2026-11-18-economist-2027",
-   "minutos_emi": 5,
-   "estado": "en produccion",
-   "en_panel": true,
-   "excepcion_emi": {
-    "texto": "Que salgan sábado 21 y domingo 22",
-    "fuente": "chat de la Matriz de Redes, 18/11/2026"
-   },
-   "id": "x-economist-video-2",
-   "fecha": "2026-11-22T10:00:00-06:00",
-   "red": "x",
-   "cuenta": "@emilianomilla_",
-   "skill": "x-viral",
-   "titulo": "Video The Economist 2027, parte 2: Firma sin leer",
-   "semana": "2026-W47"
-  },
-  {
-   "idea": "2026-11-18-economist-2027",
-   "minutos_emi": 5,
-   "estado": "en produccion",
-   "en_panel": true,
-   "excepcion_emi": {
-    "texto": "Que salgan sábado 21 y domingo 22",
-    "fuente": "chat de la Matriz de Redes, 18/11/2026"
-   },
-   "id": "tt-economist-video-2",
-   "fecha": "2026-11-22T19:30:00-06:00",
-   "red": "tiktok",
-   "cuenta": "@emiliano_milla_",
-   "skill": "tiktok-studio",
-   "titulo": "Video The Economist 2027, parte 2: Firma sin leer",
-   "semana": "2026-W47"
+   "semana": "2026-W48"
   }
  ],
  "proximas": [
-  {
-   "idea": "2026-11-18-economist-2027",
-   "minutos_emi": 5,
-   "estado": "en produccion",
-   "en_panel": true,
-   "excepcion_emi": {
-    "texto": "Que salgan sábado 21 y domingo 22",
-    "fuente": "chat de la Matriz de Redes, 18/11/2026"
-   },
-   "id": "x-economist-video-2",
-   "fecha": "2026-11-22T10:00:00-06:00",
-   "red": "x",
-   "cuenta": "@emilianomilla_",
-   "skill": "x-viral",
-   "titulo": "Video The Economist 2027, parte 2: Firma sin leer",
-   "semana": "2026-W47"
-  },
-  {
-   "idea": "2026-11-18-economist-2027",
-   "minutos_emi": 5,
-   "estado": "en produccion",
-   "en_panel": true,
-   "excepcion_emi": {
-    "texto": "Que salgan sábado 21 y domingo 22",
-    "fuente": "chat de la Matriz de Redes, 18/11/2026"
-   },
-   "id": "tt-economist-video-2",
-   "fecha": "2026-11-22T19:30:00-06:00",
-   "red": "tiktok",
-   "cuenta": "@emiliano_milla_",
-   "skill": "tiktok-studio",
-   "titulo": "Video The Economist 2027, parte 2: Firma sin leer",
-   "semana": "2026-W47"
-  },
   {
    "id": "tt-dof2-multas",
    "idea": "2026-11-13-lanzamiento",
@@ -1000,7 +838,7 @@
  ],
  "pendientes_emi": [
   {
-   "que": "Caduca en 2 días: The Economist resume la IA de 2027 en «aceleración, riesgos y reacción». En el derecho mexicano la reacción llegó antes que la aceleración: se prohíbe o se desconfía sin haberla usado. El riesgo no es el abogado que usa IA, sino el que firma sin verificar.",
+   "que": "Caduca en 1 días: The Economist resume la IA de 2027 en «aceleración, riesgos y reacción». En el derecho mexicano la reacción llegó antes que la aceleración: se prohíbe o se desconfía sin haberla usado. El riesgo no es el abogado que usa IA, sino el que firma sin verificar.",
    "prioridad": 1,
    "sesion": "ideas",
    "donde": "#ideas"
