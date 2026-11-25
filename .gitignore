@@ -4,3 +4,8 @@ node_modules/
 __pycache__/
 .dev.vars
 .wrangler/
+
+# Credenciales locales: nunca en git.
+.env
+.env.*
+!.env.example
