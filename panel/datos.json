@@ -1,5 +1,5 @@
 {
- "generado": "2026-11-24",
+ "generado": "2026-11-25",
  "redes": {
   "x": {
    "skill": "x-viral",
@@ -701,19 +701,6 @@
  ],
  "proximas": [
   {
-   "id": "tt-dof2-multas",
-   "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-24T19:30:00-06:00",
-   "red": "tiktok",
-   "cuenta": "@emiliano_milla_",
-   "skill": "tiktok-studio",
-   "titulo": "DOF 2: perdón de multas del SAT (video animado)",
-   "estado": "lista para aprobar",
-   "minutos_emi": 10,
-   "en_panel": true,
-   "semana": "2026-W48"
-  },
-  {
    "id": "ig-carrusel",
    "idea": "2026-11-13-lanzamiento",
    "fecha": "2026-11-25T13:00:00-06:00",
@@ -838,7 +825,7 @@
  ],
  "pendientes_emi": [
   {
-   "que": "Caduca hoy: The Economist resume la IA de 2027 en «aceleración, riesgos y reacción». En el derecho mexicano la reacción llegó antes que la aceleración: se prohíbe o se desconfía sin haberla usado. El riesgo no es el abogado que usa IA, sino el que firma sin verificar.",
+   "que": "Caduca YA CADUCÓ: The Economist resume la IA de 2027 en «aceleración, riesgos y reacción». En el derecho mexicano la reacción llegó antes que la aceleración: se prohíbe o se desconfía sin haberla usado. El riesgo no es el abogado que usa IA, sino el que firma sin verificar.",
    "prioridad": 1,
    "sesion": "ideas",
    "donde": "#ideas"
