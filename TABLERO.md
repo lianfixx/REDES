@@ -1,6 +1,6 @@
 # Tablero de la Matriz de Redes
 
-Generado el 2026-11-25 por `redes.py tablero`. No se edita a mano.
+Generado el 2026-11-26 por `redes.py tablero`. No se edita a mano.
 
 ## Pendiente de Emi
 
@@ -34,7 +34,6 @@ Generado el 2026-11-25 por `redes.py tablero`. No se edita a mano.
 
 ## Próximas
 
-- 2026-11-25 13:00 · instagram · Carrusel · 4 herramientas (idea)
 - 2026-11-26 19:00 · instagram · Reel 3 · Boletines (datos de ejemplo) (idea)
 - 2026-11-26 19:30 · tiktok · Video 3 · Boletines (idea)
 - 2026-11-28 19:00 · instagram · Reel 4 · Vox, el estudio de video que construí (narrado con la voz de Emi) (idea)

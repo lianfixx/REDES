@@ -1,5 +1,5 @@
 {
- "generado": "2026-11-25",
+ "generado": "2026-11-26",
  "redes": {
   "x": {
    "skill": "x-viral",
@@ -700,17 +700,6 @@
   }
  ],
  "proximas": [
-  {
-   "id": "ig-carrusel",
-   "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-25T13:00:00-06:00",
-   "red": "instagram",
-   "skill": "instagram-studio",
-   "titulo": "Carrusel · 4 herramientas",
-   "estado": "idea",
-   "minutos_emi": 15,
-   "semana": "2026-W48"
-  },
   {
    "id": "ig-reel-boletines",
    "idea": "2026-11-13-lanzamiento",
