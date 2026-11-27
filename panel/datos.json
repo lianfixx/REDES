@@ -1,5 +1,5 @@
 {
- "generado": "2026-11-26",
+ "generado": "2026-11-27",
  "redes": {
   "x": {
    "skill": "x-viral",
@@ -700,31 +700,6 @@
   }
  ],
  "proximas": [
-  {
-   "id": "ig-reel-boletines",
-   "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-26T19:00:00-06:00",
-   "red": "instagram",
-   "skill": "instagram-studio",
-   "titulo": "Reel 3 · Boletines (datos de ejemplo)",
-   "estado": "idea",
-   "minutos_emi": 20,
-   "productora": "editor-studio",
-   "semana": "2026-W48"
-  },
-  {
-   "id": "tt-boletines",
-   "idea": "2026-11-13-lanzamiento",
-   "fecha": "2026-11-26T19:30:00-06:00",
-   "red": "tiktok",
-   "skill": "tiktok-studio",
-   "titulo": "Video 3 · Boletines",
-   "estado": "idea",
-   "minutos_emi": 10,
-   "productora": "editor-studio",
-   "cuenta": "@emiliano_milla_",
-   "semana": "2026-W48"
-  },
   {
    "id": "ig-reel-vox",
    "idea": "2026-11-13-lanzamiento",
